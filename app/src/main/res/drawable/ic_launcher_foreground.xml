@@ -1,9 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- a TV with an install arrow and a stand, inside the 66dp safe zone of the 108dp adaptive icon -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
   android:width="108dp"
   android:height="108dp"
   android:viewportWidth="108"
   android:viewportHeight="108">
-  <path
-    android:fillColor="#FFFFFF"
-    android:pathData="M54,34a20,20 0,1 1,0 40a20,20 0,1 1,0 -40z" />
+  <!-- the stand makes the drawing taller below than above: shifted up so its bounds sit in the middle -->
+  <group android:translateY="-3.5">
+    <!-- screen -->
+    <path
+      android:pathData="M36,34h36a9,9 0,0 1,9 9v20a9,9 0,0 1,-9 9h-36a9,9 0,0 1,-9 -9v-20a9,9 0,0 1,9 -9z"
+      android:strokeWidth="6"
+      android:strokeColor="#FFFFFF"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round" />
+    <!-- install arrow, its base line and the stand -->
+    <path
+      android:pathData="M54,42v13M47.5,49L54,55.5L60.5,49M46,63h16M45,81h18"
+      android:strokeWidth="6"
+      android:strokeColor="#FFFFFF"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round" />
+  </group>
 </vector>

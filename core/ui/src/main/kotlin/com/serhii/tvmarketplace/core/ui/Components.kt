@@ -1,6 +1,6 @@
 package com.serhii.tvmarketplace.core.ui
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,7 +20,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Border
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
@@ -30,14 +30,6 @@ import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 
 private const val FOCUSED_SCALE = 1.1F
-
-// the focus ring sits 2dp outside the element, so it reads on any container color
-@Composable
-private fun focusBorder(shape: Shape) = Border(
-  border = BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface),
-  inset = (-4).dp,
-  shape = shape,
-)
 
 // every button is quiet at rest and takes the primary color when focused: the focus is always the loudest thing
 @Composable
@@ -50,11 +42,13 @@ fun PillButton(
   trailing: (@Composable () -> Unit)? = null,
 ) {
   val colors = MaterialTheme.colorScheme
+  val interactionSource = remember { MutableInteractionSource() }
   Button(
     onClick = onClick,
-    modifier = modifier.height(40.dp),
+    modifier = modifier.focusRing(interactionSource, FOCUSED_SCALE).height(40.dp),
+    interactionSource = interactionSource,
     shape = ButtonDefaults.shape(CircleShape),
-    scale = ButtonDefaults.scale(focusedScale = FOCUSED_SCALE),
+    scale = ButtonDefaults.scale(focusedScale = 1F),
     colors = ButtonDefaults.colors(
       containerColor = AppTheme.surfaces.mid,
       contentColor = colors.onSurface,
@@ -63,7 +57,6 @@ fun PillButton(
       pressedContainerColor = colors.primary,
       pressedContentColor = colors.onPrimary,
     ),
-    border = ButtonDefaults.border(focusedBorder = focusBorder(CircleShape), pressedBorder = focusBorder(CircleShape)),
     contentPadding = PaddingValues(start = if (leadingIcon != null) 18.dp else 22.dp, end = if (trailingIcon != null) 18.dp else 22.dp),
   ) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -86,12 +79,14 @@ fun FocusCard(
   content: @Composable BoxScope.() -> Unit,
 ) {
   val shape = RoundedCornerShape(cornerRadius)
+  val interactionSource = remember { MutableInteractionSource() }
   Surface(
     onClick = onClick,
     onLongClick = onLongClick,
-    modifier = modifier,
+    modifier = modifier.focusRing(interactionSource, focusedScale, cornerRadius),
+    interactionSource = interactionSource,
     shape = ClickableSurfaceDefaults.shape(shape),
-    scale = ClickableSurfaceDefaults.scale(focusedScale = focusedScale),
+    scale = ClickableSurfaceDefaults.scale(focusedScale = 1F),
     colors = ClickableSurfaceDefaults.colors(
       containerColor = AppTheme.surfaces.low,
       contentColor = MaterialTheme.colorScheme.onSurface,
@@ -99,7 +94,6 @@ fun FocusCard(
       focusedContentColor = MaterialTheme.colorScheme.onSurface,
       pressedContainerColor = AppTheme.surfaces.high,
     ),
-    border = ClickableSurfaceDefaults.border(focusedBorder = focusBorder(shape)),
     content = content,
   )
 }

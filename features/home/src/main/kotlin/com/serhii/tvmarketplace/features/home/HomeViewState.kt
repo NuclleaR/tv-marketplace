@@ -1,12 +1,19 @@
 package com.serhii.tvmarketplace.features.home
 
-sealed interface HomeViewState {
-  data object Loading : HomeViewState
-  data class Content(val items: List<Row>) : HomeViewState
+data class HomeViewState(
+  val apps: List<App>,
+  val inboxCount: Int = 0,
+  val notice: Notice? = null,
+) {
+  data class App(
+    val id: Long,
+    val name: String,
+    val ownerAndRepo: String,
+    val iconUrl: String? = null,
+  )
 
-  data class Row(
-    val id: String,
-    val title: String,
-    val description: String,
+  data class Notice(
+    val linkId: Long,
+    val sender: String,
   )
 }

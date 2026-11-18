@@ -11,7 +11,10 @@ class ComposePlugin : Plugin<Project> {
 
   override fun apply(target: Project) {
     target.pluginManager.withPlugin("com.android.application") { configureCompose(target) }
-    target.pluginManager.withPlugin("com.android.library") { configureCompose(target) }
+    target.pluginManager.withPlugin("com.android.library") {
+      configureCompose(target)
+      if (target.path != ":core:snapshot") target.configurePreviewSnapshots()
+    }
   }
 
   private fun configureCompose(target: Project) {
@@ -21,6 +24,8 @@ class ComposePlugin : Plugin<Project> {
     target.dependencies.add("implementation", libs.findBundle("compose").get())
     target.dependencies.add("debugImplementation", libs.findLibrary("compose-ui-tooling").get())
     target.dependencies.add("testImplementation", libs.findLibrary("molecule").get())
+    target.dependencies.add("testImplementation", libs.findLibrary("compose-ui-test-junit4").get())
+    target.dependencies.add("debugImplementation", libs.findLibrary("compose-ui-test-manifest").get())
     target.extensions.configure<ComposeCompilerGradlePluginExtension> {
       if (target.providers.gradleProperty("app.composeCompilerReports").orNull?.toBooleanStrictOrNull() == true) {
         reportsDestination.set(target.layout.buildDirectory.dir("compose_compiler"))

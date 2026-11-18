@@ -5,7 +5,7 @@ import android.content.Intent
 import android.content.pm.ApplicationInfo
 
 // debug builds open any back stack from an extra, so an agent or a test can jump to a screen:
-// adb shell am start -n <package>/com.serhii.tvmarketplace.MainActivity --es debugBackStack '[{"type":"Home"},{"type":"Detail","itemId":"1"}]'
+// adb shell am start -n <package>/com.serhii.tvmarketplace.MainActivity --es debugBackStack '[{"type":"Home"},{"type":"AddApp"}]'
 fun startDestinations(
   context: Context,
   intent: Intent,

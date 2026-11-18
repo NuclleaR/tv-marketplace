@@ -1,12 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <string name="app_name">TV Marketplace</string>
-  <!-- Title of the start screen that lists all items -->
-  <string name="home_title">Items</string>
-  <!-- Shown on the start screen while there are no items -->
-  <string name="home_empty">Nothing here yet</string>
-  <!-- Content description of the back arrow in the top app bar -->
-  <string name="common_back">Back</string>
-  <!-- Shown when an item was deleted or never existed -->
-  <string name="detail_missing">This item is gone</string>
+
+  <!-- Home: button that opens the screen for adding an app -->
+  <string name="home_add_app">Add app</string>
+  <!-- Home: heading above the list of apps the user added -->
+  <string name="home_tracked_apps">Your apps</string>
+  <!-- Home: shown instead of the list while no app was added -->
+  <string name="home_empty">No apps yet. Add one from your phone.</string>
+
+  <!-- Add app: screen title -->
+  <string name="add_app_title">Add an app</string>
+  <!-- Add app: first step next to the QR code -->
+  <string name="add_app_step_scan">Scan the code with your phone camera</string>
+  <!-- Add app: second step next to the QR code -->
+  <string name="add_app_step_send">Paste a GitHub link and tap Send</string>
+  <!-- Add app: manual alternative to scanning. %1$s is an address like http://192.168.1.42:8765, %2$s a 6-digit code -->
+  <string name="add_app_manual">Or open %1$s on your phone and enter the code</string>
+  <!-- Add app: hint below the QR code -->
+  <string name="add_app_same_wifi">Your phone and TV must be on the same Wi-Fi.</string>
+  <!-- Add app: button to type the link with the remote instead -->
+  <string name="add_app_type_it">Type it instead</string>
+  <!-- Add app: shown when the TV has no Wi-Fi or Ethernet connection -->
+  <string name="add_app_no_network">Connect the TV to Wi-Fi or Ethernet</string>
+  <!-- Under the no-network title on Add app -->
+  <string name="add_app_no_network_body">Your phone sends links to the TV over your home network. When the TV is connected, the code appears here.</string>
+  <!-- Opens the system network settings -->
+  <string name="add_app_network_settings">Network settings</string>
+  <!-- Add app: shown when the TV couldn't start receiving links -->
+  <string name="add_app_failed">Couldn\'t start receiving links.</string>
+  <!-- Add app: content description of the QR code image -->
+  <string name="add_app_qr_description">QR code to send a link from your phone</string>
+
+  <!-- Preview: badge when the app is already in the list -->
+  <string name="preview_already_added">Already added</string>
+  <!-- Preview: shown instead of a version when the repository has no releases -->
+  <string name="preview_no_releases">No releases found</string>
+  <!-- Preview: latest version. %1$s is a tag like v1.2.3 -->
+  <string name="preview_latest_version">Latest version: %1$s</string>
+  <!-- Preview: button that adds the app to the list -->
+  <string name="preview_add">Add</string>
+  <!-- Preview: button that opens the app that is already in the list -->
+  <string name="preview_open">Open</string>
+  <!-- Generic cancel button -->
+  <string name="common_cancel">Cancel</string>
+  <!-- Generic retry button -->
+  <string name="common_retry">Retry</string>
+  <!-- Preview: confirmation after adding. %1$s is the app name -->
+  <string name="preview_added">Added %1$s</string>
+  <!-- Under the placeholder while the app's details load -->
+  <string name="preview_loading">Loading from GitHub…</string>
+  <!-- Preview: error when the repository doesn't exist -->
+  <string name="preview_not_found">This repository doesn\'t exist or is private.</string>
+  <!-- Preview: error when GitHub limits requests -->
+  <string name="preview_rate_limited">GitHub is limiting requests right now. Try again in a few minutes.</string>
+  <!-- Preview: error without internet -->
+  <string name="preview_network_error">Couldn\'t reach GitHub. Check the TV\'s internet connection.</string>
+  <!-- Preview: error when an incoming link is gone -->
+  <string name="preview_link_missing">This link is no longer available.</string>
+  <!-- Preview: who sent the link. %1$s is a device label like "Safari on iPhone" -->
+  <string name="preview_sent_from">Sent from %1$s</string>
+
+  <!-- Type it: placeholder of the text field -->
+  <string name="type_it_title">Type a GitHub link</string>
+  <!-- Label above the repository field -->
+  <string name="type_it_label">Repository</string>
+  <!-- Under the field, before anything is wrong -->
+  <string name="type_it_example">For example ImranR98/Obtainium or https://github.com/ImranR98/Obtainium</string>
+  <string name="type_it_hint">owner/repo or GitHub link</string>
+  <!-- Type it: error under the text field -->
+  <string name="type_it_invalid">Enter owner/repo or a GitHub link.</string>
+  <!-- Type it: button that opens the preview -->
+  <string name="type_it_continue">Continue</string>
+
+  <!-- Home: button that opens received links. %1$d is how many are waiting -->
+  <string name="home_inbox">Inbox</string>
+  <!-- Home: button that opens settings -->
+  <string name="home_settings">Settings</string>
+  <!-- Home: notice when a link arrives. %1$s is a device label like "Safari on iPhone" -->
+  <string name="home_notice">Link received from %1$s</string>
+  <string name="home_notice_hint">Press Menu to open it</string>
+
+  <!-- Inbox: screen title -->
+  <string name="inbox_title">Inbox</string>
+  <!-- Inbox: shown while no link is waiting -->
+  <string name="inbox_empty">No links yet. Send one from your phone.</string>
+  <!-- Inbox: who sent a link and when. %1$s is a device label, %2$s a relative time like "5 minutes ago" -->
+  <string name="inbox_sender">From %1$s, %2$s</string>
+  <!-- Inbox: hint how to remove a link -->
+  <string name="inbox_dismiss_hint">Press Menu to dismiss a link.</string>
+
+  <!-- Settings: screen title -->
+  <string name="settings_title">Settings</string>
+  <!-- Settings: toggle that keeps the TV listening for links while the app is closed -->
+  <string name="settings_background">Receive links in the background</string>
+  <!-- Settings: explanation under the background toggle -->
+  <string name="settings_background_summary">Links sent while the app is closed wait in the Inbox.</string>
+  <!-- Settings: state of a toggle -->
+  <string name="settings_on">On</string>
+  <!-- Settings: state of a toggle -->
+  <string name="settings_off">Off</string>
+  <!-- Settings: heading above the list of remembered phones -->
+  <string name="settings_phones">Remembered phones</string>
+  <!-- Settings: shown while no phone is remembered -->
+  <string name="settings_no_phones">No phones are remembered yet.</string>
+  <!-- Settings: when a phone last sent a link. %1$s is a relative time like "yesterday" -->
+  <string name="settings_last_used">Last used %1$s</string>
+  <!-- Settings: title of the dialog that forgets a phone. %1$s is a device label -->
+  <string name="settings_remove_title">Forget %1$s?</string>
+  <!-- Settings: body of the dialog that forgets a phone -->
+  <string name="settings_remove_body">This phone will have to scan the code on the TV again to send links.</string>
+  <!-- Settings: confirm button of the dialog that forgets a phone -->
+  <string name="settings_remove">Forget</string>
+  <!-- Settings: tip below the phones -->
+  <string name="settings_ip_tip">Reserve this TV\'s IP address in your router, so pages saved on phones keep working.</string>
+  <!-- Heading of the tip card -->
+  <string name="settings_tip">Tip</string>
+  <!-- Under the tip; the address phones use, like 192.168.1.42:8765 -->
+  <string name="settings_tv_address">This TV: %1$s</string>
+  <!-- On the focused phone row -->
+  <string name="settings_select_to_forget">Select to forget</string>
+  <string name="settings_kind_browser">Browser</string>
+  <string name="settings_kind_companion">Companion app</string>
+
+  <!-- Notification channel of the background link receiver -->
+  <string name="notification_channel">Receiving links</string>
+  <!-- Notification of the background link receiver -->
+  <string name="notification_text">Ready to receive links from your phone</string>
+
+  <!-- Relative time for something that happened less than a minute ago -->
+  <string name="time_just_now">just now</string>
 </resources>

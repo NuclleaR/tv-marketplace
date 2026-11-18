@@ -4,7 +4,7 @@ import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// short serial names keep the debug back stack extra readable: [{"type":"Detail","itemId":"1"}]
+// short serial names keep the debug back stack extra readable: [{"type":"Preview","owner":"a","repo":"b"}]
 @Serializable
 sealed interface Destination : NavKey {
 
@@ -13,6 +13,27 @@ sealed interface Destination : NavKey {
   data object Home : Destination
 
   @Serializable
-  @SerialName("Detail")
-  data class Detail(val itemId: String) : Destination
+  @SerialName("AddApp")
+  data object AddApp : Destination
+
+  @Serializable
+  @SerialName("TypeIt")
+  data object TypeIt : Destination
+
+  // from a received link (linkId) or from typed input (owner + repo)
+  @Serializable
+  @SerialName("Preview")
+  data class Preview(
+    val linkId: Long? = null,
+    val owner: String? = null,
+    val repo: String? = null,
+  ) : Destination
+
+  @Serializable
+  @SerialName("Inbox")
+  data object Inbox : Destination
+
+  @Serializable
+  @SerialName("Settings")
+  data object Settings : Destination
 }

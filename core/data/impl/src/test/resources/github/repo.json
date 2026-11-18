@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "name": "Obtainium",
+  "full_name": "ImranR98/Obtainium",
+  "description": "Get Android app updates straight from the source.",
+  "owner": {
+    "login": "ImranR98",
+    "avatar_url": "https://avatars.githubusercontent.com/u/1?v=4"
+  },
+  "stargazers_count": 10,
+  "default_branch": "main"
+}

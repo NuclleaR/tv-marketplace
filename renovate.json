@@ -1,0 +1,24 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "schedule": ["before 6am on monday"],
+  "packageRules": [
+    {
+      "description": "Patch and minor updates merge themselves once CI is green",
+      "matchUpdateTypes": ["patch", "minor"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true
+    },
+    {
+      "description": "Kotlin and the compiler plugins built against it move together",
+      "groupName": "Kotlin",
+      "matchPackageNames": ["org.jetbrains.kotlin{/,}**", "com.google.devtools.ksp{/,}**", "dev.zacsweers.metro{/,}**"]
+    },
+    {
+      "description": "AGP and Gradle majors change the DSL: review by hand",
+      "matchPackageNames": ["com.android.tools.build:gradle", "com.android.application", "com.android.library", "gradle"],
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ]
+}

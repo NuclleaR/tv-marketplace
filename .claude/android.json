@@ -1,0 +1,7 @@
+{
+  "package": "com.serhii.tvmarketplace.debug",
+  "installTask": ":app:installDebug",
+  "api": 36,
+  "device": "tv_1080p",
+  "imageTag": "google-tv"
+}

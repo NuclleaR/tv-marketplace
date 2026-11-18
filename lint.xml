@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+  <issue id="UnusedResources" severity="error" />
+  <!-- the TV banner is a 320x180dp vector on purpose: replace it with a PNG once you have artwork -->
+  <issue id="VectorRaster" severity="informational" />
+  <!-- renovate takes care of these -->
+  <issue id="GradleDependency" severity="ignore" />
+  <issue id="NewerVersionAvailable" severity="informational" />
+  <issue id="AndroidGradlePluginVersion" severity="informational" />
+</lint>

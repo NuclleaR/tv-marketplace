@@ -44,9 +44,9 @@ class IncomingNoticeTest {
   fun `the notice opens the preview, the buttons open inbox and settings`() {
     viewModel.onOpenNotice(7)
     verify { navigator.goTo(Destination.Preview(linkId = 7)) }
-    viewModel.onInbox()
+    viewModel.onOpen(Destination.Inbox)
     verify { navigator.goTo(Destination.Inbox) }
-    viewModel.onSettings()
+    viewModel.onOpen(Destination.Settings)
     verify { navigator.goTo(Destination.Settings) }
   }
 }

@@ -35,9 +35,7 @@ fun HomeScreen() {
   val viewModel = retain { rootGraphAs<HomeGraph>().homeViewModel }
   HomeView(
     viewState = viewModel.viewState(),
-    onAddApp = viewModel::onAddApp,
-    onInbox = viewModel::onInbox,
-    onSettings = viewModel::onSettings,
+    onOpen = viewModel::onOpen,
     onOpenNotice = viewModel::onOpenNotice,
   )
 }

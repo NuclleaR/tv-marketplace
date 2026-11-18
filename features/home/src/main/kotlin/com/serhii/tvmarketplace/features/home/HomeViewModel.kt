@@ -49,7 +49,6 @@ class HomeViewModel(
           name = it.displayName,
           ownerAndRepo = "${it.ref.owner}/${it.ref.repo}",
           iconUrl = it.iconUrl,
-          avatarUrl = it.avatarUrl,
         )
       },
       inboxCount = inboxCount,
@@ -57,16 +56,8 @@ class HomeViewModel(
     )
   }
 
-  fun onAddApp() {
-    navigator.goTo(Destination.AddApp)
-  }
-
-  fun onInbox() {
-    navigator.goTo(Destination.Inbox)
-  }
-
-  fun onSettings() {
-    navigator.goTo(Destination.Settings)
+  fun onOpen(destination: Destination) {
+    navigator.goTo(destination)
   }
 
   fun onOpenNotice(linkId: Long) {

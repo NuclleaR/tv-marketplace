@@ -51,4 +51,20 @@ class MigrationTest {
       }
     }
   }
+
+  @Test
+  fun `version 3 tracked apps come to version 4 with their icon unchecked`() {
+    helper.createDatabase("migration-test-4", 3).use { db ->
+      db.execSQL(
+        "INSERT INTO tracked_app (owner, repo, repoKey, sourceUrl, displayName, latestVersion, avatarUrl, addedAt, iconUrl) " +
+          "VALUES ('ImranR98', 'Obtainium', 'imranr98/obtainium', 'https://github.com/ImranR98/Obtainium', 'Obtainium', 'v1', NULL, 0, NULL)",
+      )
+    }
+    helper.runMigrationsAndValidate("migration-test-4", 4, true).use { db ->
+      db.query("SELECT iconChecked FROM tracked_app").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(0, cursor.getInt(0))
+      }
+    }
+  }
 }

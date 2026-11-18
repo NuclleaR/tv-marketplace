@@ -19,13 +19,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -128,6 +132,12 @@ internal fun InboxView(
   modifier: Modifier = Modifier,
 ) {
   val firstFocus = remember { FocusRequester() }
+  val listFocus = remember { FocusRequester() }
+  val openedFocus = remember { FocusRequester() }
+  // the link that opened a preview: back here, focus returns to it. A restorer's own memory doesn't survive
+  // the screen leaving the composition, so the link is saved here and given to it as the fallback
+  var opened by rememberSaveable { mutableStateOf<Long?>(null) }
+  val openedShown = viewState.items.any { it.id == opened }
   TvScreen(modifier) {
     if (viewState.items.isEmpty()) {
       ScreenTitle(stringResource(StringsR.string.inbox_title))
@@ -168,16 +178,21 @@ internal fun InboxView(
         )
       }
       LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        // a link that was added or dismissed meanwhile is gone, then focus starts at the top
+        modifier = Modifier.fillMaxWidth().focusRequester(listFocus).focusRestorer(if (openedShown) openedFocus else firstFocus),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(top = 32.dp, bottom = 27.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
       ) {
         items(viewState.items, key = { it.id }) { item ->
-          val focus = if (item == viewState.items.first()) Modifier.focusRequester(firstFocus) else Modifier
+          val first = if (item == viewState.items.first()) Modifier.focusRequester(firstFocus) else Modifier
+          val focus = if (item.id == opened) first.focusRequester(openedFocus) else first
           InboxRow(
             item = item,
-            onOpen = { onOpen(item.id) },
+            onOpen = {
+              opened = item.id
+              onOpen(item.id)
+            },
             onDismiss = { onDismiss(item.id) },
             modifier = focus.onPreviewKeyEvent { event ->
               val menu = event.key == Key.Menu && event.type == KeyEventType.KeyUp
@@ -189,7 +204,10 @@ internal fun InboxView(
       }
     }
   }
-  LaunchedEffect(viewState.items.isEmpty()) { firstFocus.requestFocus() }
+  // entering the list goes through its restorer: the first link, or the one a preview was opened from
+  LaunchedEffect(viewState.items.isEmpty()) {
+    if (viewState.items.isEmpty()) firstFocus.requestFocus() else listFocus.requestFocus()
+  }
 }
 
 @Composable
@@ -212,7 +230,7 @@ private fun InboxRow(
       horizontalArrangement = Arrangement.spacedBy(16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      AppIcon(name = item.name, iconUrl = null, avatarUrl = null, size = 52.dp)
+      AppIcon(name = item.name, iconUrl = null, size = 52.dp)
       Column(Modifier.weight(1F), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
           item.name,

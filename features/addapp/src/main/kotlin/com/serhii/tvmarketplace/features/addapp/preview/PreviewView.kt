@@ -90,7 +90,7 @@ private fun RowScope.Content(
   primaryFocus: FocusRequester,
 ) {
   // the app's own icon is the hero; the owner's avatar sits next to their name
-  AppIcon(name = viewState.name, iconUrl = viewState.iconUrl, avatarUrl = null, size = heroSize)
+  AppIcon(name = viewState.name, iconUrl = viewState.iconUrl, size = heroSize)
   Column(Modifier.weight(1F)) {
     Row(horizontalArrangement = Arrangement.spacedBy(14.dp), verticalAlignment = Alignment.CenterVertically) {
       Text(

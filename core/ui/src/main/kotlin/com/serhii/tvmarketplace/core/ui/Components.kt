@@ -98,20 +98,20 @@ fun FocusCard(
   )
 }
 
-// the app's own icon when it has one, the owner's avatar otherwise, or the first letter on a tonal tile
+// the app's own icon when it has one, otherwise its first letter on a tonal tile: never a person's avatar,
+// which reads as a portrait rather than an app
 @Composable
 fun AppIcon(
   name: String,
   iconUrl: String?,
-  avatarUrl: String?,
   size: Dp,
   modifier: Modifier = Modifier,
 ) {
   val shape = RoundedCornerShape(size / 4)
-  when {
-    iconUrl != null -> AsyncImage(model = iconUrl, contentDescription = null, modifier = modifier.size(size).clip(shape))
-    avatarUrl != null -> AsyncImage(model = avatarUrl, contentDescription = null, modifier = modifier.size(size).clip(shape))
-    else -> LetterTile(name, size, shape, modifier)
+  if (iconUrl != null) {
+    AsyncImage(model = iconUrl, contentDescription = null, modifier = modifier.size(size).clip(shape))
+  } else {
+    LetterTile(name, size, shape, modifier)
   }
 }
 

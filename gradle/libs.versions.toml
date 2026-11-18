@@ -37,6 +37,7 @@ compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
+compose-runtime-saveable = { module = "androidx.compose.runtime:runtime-saveable" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
 activity-compose = "androidx.activity:activity-compose:1.13.0"
 tv-material = "androidx.tv:tv-material:1.1.0"

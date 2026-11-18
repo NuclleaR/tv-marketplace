@@ -1,5 +1,9 @@
 package com.serhii.tvmarketplace.features.inbox
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -75,6 +79,30 @@ class InboxTest {
     receivedAt = Instant.now(),
     alreadyTracked = false,
   )
+
+  @Test
+  fun `back from a preview focus returns to the link that was opened`() {
+    var inbox by mutableStateOf(true)
+    val items = listOf(item, item.copy(id = 2, name = "NewPipe", ownerAndRepo = "TeamNewPipe/NewPipe"))
+    compose.setContent {
+      AppTheme {
+        // what Navigation3 does with a screen under the top of the back stack
+        val holder = rememberSaveableStateHolder()
+        if (inbox) {
+          holder.SaveableStateProvider("inbox") {
+            InboxView(viewState = InboxViewState(items), onOpen = { inbox = false }, onDismiss = {}, onAddApp = {})
+          }
+        }
+      }
+    }
+    compose.onRoot().performKeyInput { pressKey(Key.DirectionDown) }
+    compose.onNodeWithText("NewPipe", substring = true).assertIsFocused()
+    compose.onRoot().performKeyInput { pressKey(Key.DirectionCenter) }
+    compose.waitForIdle()
+    inbox = true
+    compose.waitForIdle()
+    compose.onNodeWithText("NewPipe", substring = true).assertIsFocused()
+  }
 
   @Test
   fun `the first link is focused and select opens it`() {

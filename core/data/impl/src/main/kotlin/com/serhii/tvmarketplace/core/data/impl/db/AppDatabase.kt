@@ -29,6 +29,8 @@ data class TrackedAppEntity(
   val avatarUrl: String?,
   val addedAt: Instant,
   @ColumnInfo(defaultValue = "NULL") val iconUrl: String? = null,
+  // whether the icon was looked up; apps tracked before that are checked once in the background
+  @ColumnInfo(defaultValue = "0") val iconChecked: Boolean = false,
 )
 
 @Entity(tableName = "incoming_link", indices = [Index(value = ["repoKey", "status"])])
@@ -86,6 +88,15 @@ interface TrackedAppDao {
 
   @Upsert
   suspend fun upsert(entity: TrackedAppEntity): Long
+
+  @Query("SELECT * FROM tracked_app WHERE iconChecked = 0")
+  suspend fun withUncheckedIcon(): List<TrackedAppEntity>
+
+  @Query("UPDATE tracked_app SET iconUrl = :iconUrl, iconChecked = 1 WHERE id = :id")
+  suspend fun setIcon(
+    id: Long,
+    iconUrl: String?,
+  )
 }
 
 @Dao
@@ -126,8 +137,8 @@ class Converters {
 
 @Database(
   entities = [TrackedAppEntity::class, IncomingLinkEntity::class, PairedPhoneEntity::class],
-  version = 3,
-  autoMigrations = [AutoMigration(from = 1, to = 2), AutoMigration(from = 2, to = 3)],
+  version = 4,
+  autoMigrations = [AutoMigration(from = 1, to = 2), AutoMigration(from = 2, to = 3), AutoMigration(from = 3, to = 4)],
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

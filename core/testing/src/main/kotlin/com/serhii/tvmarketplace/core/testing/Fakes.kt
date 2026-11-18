@@ -56,8 +56,20 @@ class FakeIncomingLinks : IncomingLinksRepository {
   }
 }
 
+// the apps given here count as added before icons were looked up
 class FakeTrackedApps(vararg tracked: GitHubRepoRef) : TrackedAppsRepository {
   val apps = MutableStateFlow(tracked.mapIndexed { index, ref -> TrackedApp(index + 1L, ref, ref.repo, null, null, Instant.EPOCH) })
+  private val iconChecked = mutableSetOf<Long>()
+
+  override suspend fun withUncheckedIcon(): List<TrackedApp> = apps.value.filter { it.id !in iconChecked }
+
+  override suspend fun setIcon(
+    id: Long,
+    iconUrl: String?,
+  ) {
+    iconChecked += id
+    apps.value = apps.value.map { if (it.id == id) it.copy(iconUrl = iconUrl) else it }
+  }
 
   override fun trackedApps(): Flow<List<TrackedApp>> = apps
 
@@ -76,6 +88,7 @@ class FakeTrackedApps(vararg tracked: GitHubRepoRef) : TrackedAppsRepository {
         Instant.EPOCH,
         preview.iconUrl,
       )
+    iconChecked += app.id
     apps.value += app
     return app
   }

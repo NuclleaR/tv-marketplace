@@ -13,6 +13,7 @@ import com.serhii.tvmarketplace.core.common.TimeSource
 import com.serhii.tvmarketplace.core.common.rootGraph
 import com.serhii.tvmarketplace.core.data.IncomingLinksRepository
 import com.serhii.tvmarketplace.core.data.LinkShareSettings
+import com.serhii.tvmarketplace.core.data.impl.IconBackfill
 import com.serhii.tvmarketplace.core.linkserver.AndroidServiceRegistrar
 import com.serhii.tvmarketplace.core.linkserver.LinkServer
 import com.serhii.tvmarketplace.core.linkserver.NsdAdvertiser
@@ -31,6 +32,7 @@ interface AppStartGraph {
   val incomingLinks: IncomingLinksRepository
   val timeSource: TimeSource
   val appScope: CoroutineScope
+  val iconBackfill: IconBackfill
 }
 
 private val KEEP_HANDLED_LINKS: Duration = Duration.ofDays(30)
@@ -52,6 +54,7 @@ class App : Application() {
       tvName = { Settings.Global.getString(contentResolver, Settings.Global.DEVICE_NAME) ?: Build.MODEL },
     ).start(start.appScope, start.linkServer.state)
     start.appScope.launch { start.incomingLinks.purgeHandledBefore(start.timeSource.now() - KEEP_HANDLED_LINKS) }
+    start.appScope.launch { start.iconBackfill.run() }
     start.appScope.launch(Dispatchers.Main) {
       start.linkShareSettings.receiveInBackground.collect { enabled ->
         receiveInBackground = enabled

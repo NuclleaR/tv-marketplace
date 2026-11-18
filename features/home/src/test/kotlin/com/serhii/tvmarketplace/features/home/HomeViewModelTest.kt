@@ -43,13 +43,13 @@ class HomeViewModelTest {
       var state = awaitItem()
       while (state.apps.size < 2) state = awaitItem()
       val app = state.apps.single { it.ownerAndRepo == "f-droid/fdroidclient" }
-      assertEquals("https://raw/icon.png" to "https://avatars/1", app.iconUrl to app.avatarUrl)
+      assertEquals("https://raw/icon.png", app.iconUrl)
     }
   }
 
   @Test
   fun `add app opens the add screen`() {
-    viewModel.onAddApp()
+    viewModel.onOpen(Destination.AddApp)
     verify { navigator.goTo(Destination.AddApp) }
   }
 }

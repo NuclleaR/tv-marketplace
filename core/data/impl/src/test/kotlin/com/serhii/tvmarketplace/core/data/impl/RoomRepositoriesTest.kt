@@ -57,6 +57,17 @@ class RoomRepositoriesTest {
   }
 
   @Test
+  fun `apps added now have their icon checked, older ones wait until it is set`() = runTest {
+    val added = trackedApps.add(preview)
+    assertEquals(emptyList(), trackedApps.withUncheckedIcon())
+    database.openHelper.writableDatabase.execSQL("UPDATE tracked_app SET iconChecked = 0")
+    assertEquals(listOf(added.id), trackedApps.withUncheckedIcon().map { it.id })
+    trackedApps.setIcon(added.id, "https://raw/icon.png")
+    assertEquals(emptyList(), trackedApps.withUncheckedIcon())
+    assertEquals("https://raw/icon.png", trackedApps.find(ref)?.iconUrl)
+  }
+
+  @Test
   fun `a pending link to the same repository is refreshed, not duplicated`() = runTest {
     val first = incomingLinks.receive("see https://github.com/ImranR98/Obtainium", ref, senderPhoneId = null, senderLabel = "Phone")
     now += Duration.ofMinutes(1)

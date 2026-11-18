@@ -23,4 +23,12 @@ interface TrackedAppsRepository {
 
   // adding an app that is already tracked returns the existing one
   suspend fun add(preview: AppPreview): TrackedApp
+
+  // apps added before icons were looked up; setIcon marks one as looked up, with or without an icon
+  suspend fun withUncheckedIcon(): List<TrackedApp>
+
+  suspend fun setIcon(
+    id: Long,
+    iconUrl: String?,
+  )
 }

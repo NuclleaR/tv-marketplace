@@ -46,9 +46,17 @@ class RoomTrackedAppsRepository(
       avatarUrl = preview.avatarUrl,
       addedAt = timeSource.now(),
       iconUrl = preview.iconUrl,
+      iconChecked = true,
     )
     return entity.copy(id = dao.upsert(entity)).toModel()
   }
+
+  override suspend fun withUncheckedIcon(): List<TrackedApp> = dao.withUncheckedIcon().map { it.toModel() }
+
+  override suspend fun setIcon(
+    id: Long,
+    iconUrl: String?,
+  ) = dao.setIcon(id, iconUrl)
 
   private fun TrackedAppEntity.toModel() = TrackedApp(
     id = id,

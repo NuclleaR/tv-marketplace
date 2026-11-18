@@ -29,13 +29,17 @@ android {
 
 dependencies {
   implementation(projects.core.common)
+  implementation(projects.core.linkserver)
   implementation(projects.core.data.api)
   implementation(projects.core.data.impl)
   implementation(projects.core.strings)
   implementation(projects.core.ui)
   implementation(projects.navigation)
   implementation(projects.features.home)
-  implementation(projects.features.detail)
+  implementation(projects.features.addapp)
+  implementation(projects.features.inbox)
+  implementation(projects.features.settings)
   implementation(libs.navigation3.ui)
   implementation(libs.androidx.core)
+  implementation(libs.lifecycle.process)
 }

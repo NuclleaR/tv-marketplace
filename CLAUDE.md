@@ -8,7 +8,8 @@ TV Marketplace is a multi-module Android app in Kotlin with Jetpack Compose, Met
 - Format, then lint: `./gradlew formatKotlin`, then `./gradlew lintKotlin`. Android lint: `./gradlew :app:lintDebug`.
 - Tests, narrow first: `./gradlew :features:home:testDebugUnitTest --tests "*.HomeViewModelTest"`, then
   `./gradlew appUnitTest`.
-- CI runs `./gradlew appUnitTest lintKotlin :app:lintDebug :app:assembleDebug`. Run it before saying a change is done.
+- CI runs `./gradlew appUnitTest lintKotlin :app:lintDebug :app:assembleDebug :companion:lintDebug :companion:assembleDebug`.
+  Run it before saying a change is done.
 - When a task is done, stop what you started: `./gradlew --stop`, and the emulator.
 
 ## Architecture
@@ -29,6 +30,15 @@ TV Marketplace is a multi-module Android app in Kotlin with Jetpack Compose, Met
   injected `Navigator` to move.
 - Every user-visible string goes in `core/strings`.
 - Debug builds open any back stack from the `debugBackStack` extra (`app/.../navigation/StartDestinations.kt`).
+
+## Link sharing (phone → TV)
+
+- `:core:linkserver` runs a Ktor CIO server on the TV's LAN address (port 8765, fallbacks up to 8775) and serves the
+  phone page from `src/main/assets/web/`. The API is specified in `specs/001-phone-link-sharing/contracts/`.
+- `:companion` is a separate phone app (Share menu target). Its strings live in its own `res/`, not `core/strings`,
+  because `:app` lint would report them as unused.
+- Logs go through `AppLog`, which only takes names, numbers and enums: never log links, addresses, tokens or device
+  names.
 
 ## Skills
 

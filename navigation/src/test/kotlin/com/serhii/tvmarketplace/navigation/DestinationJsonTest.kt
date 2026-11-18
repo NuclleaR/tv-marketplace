@@ -7,7 +7,7 @@ class DestinationJsonTest {
 
   @Test
   fun `decodes a back stack by short names`() {
-    val backStack = decodeBackStack("""[{"type":"Home"},{"type":"Detail","itemId":"1"}]""")
-    assertEquals(listOf(Destination.Home, Destination.Detail(itemId = "1")), backStack)
+    val backStack = decodeBackStack("""[{"type":"Home"},{"type":"Preview","owner":"a","repo":"b"}]""")
+    assertEquals(listOf(Destination.Home, Destination.Preview(owner = "a", repo = "b")), backStack)
   }
 }

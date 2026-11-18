@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="session-state" content="{{SESSION_STATE}}">
+  <meta name="color-scheme" content="light dark">
+  <title>Send to TV</title>
+  <link rel="stylesheet" href="/assets/send.css">
+</head>
+<body>
+  <main>
+    <h1 data-i18n="title">Send to TV</h1>
+
+    <section id="pin-view" hidden>
+      <p data-i18n="pinHint">Enter the code shown on your TV.</p>
+      <form id="pin-form">
+        <input id="pin" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required
+               aria-label="Code">
+        <button type="submit" data-i18n="continue">Continue</button>
+      </form>
+    </section>
+
+    <section id="send-view" hidden>
+      <form id="send-form">
+        <label for="link" data-i18n="linkLabel">GitHub link</label>
+        <textarea id="link" rows="3" required placeholder="https://github.com/owner/repo"></textarea>
+        <label id="remember-row" class="check" hidden>
+          <input type="checkbox" id="remember" checked>
+          <span data-i18n="remember">Remember this TV, so next time you can send without scanning</span>
+        </label>
+        <div class="row">
+          <button type="button" id="paste" class="secondary" data-i18n="paste">Paste</button>
+          <button type="submit" id="send" data-i18n="send">Send</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="expired-view" hidden>
+      <p data-i18n="expired">This code has expired. Scan the new one on your TV.</p>
+    </section>
+
+    <section id="revoked-view" hidden>
+      <p data-i18n="revoked">This TV forgot your phone. Open “Add app” on the TV and scan the code again.</p>
+    </section>
+
+    <p id="status" role="status" aria-live="polite"></p>
+
+    <p id="shortcut-row" class="hint" hidden>
+      <a id="shortcut" href="#" data-i18n="shortcut">Add “Send to TV” to the iPhone Share menu</a>
+    </p>
+  </main>
+  <script src="/assets/send.js"></script>
+</body>
+</html>

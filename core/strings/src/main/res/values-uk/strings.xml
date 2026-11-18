@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">TV Marketplace</string>
+
+  <string name="home_add_app">Додати застосунок</string>
+  <string name="home_tracked_apps">Ваші застосунки</string>
+  <string name="home_empty">Застосунків ще немає. Додайте перший з телефона.</string>
+
+  <string name="add_app_title">Додати застосунок</string>
+  <string name="add_app_step_scan">1. Відскануйте код камерою телефона</string>
+  <string name="add_app_step_send">2. Вставте посилання на GitHub і натисніть «Надіслати»</string>
+  <string name="add_app_manual">Або відкрийте %1$s на телефоні й введіть код %2$s</string>
+  <string name="add_app_same_wifi">Телефон і телевізор мають бути в одній Wi-Fi мережі.</string>
+  <string name="add_app_type_it">Ввести вручну</string>
+  <string name="add_app_no_network">Підключіть телевізор до Wi-Fi або Ethernet, щоб отримувати посилання з телефона.</string>
+  <string name="add_app_failed">Не вдалося почати отримувати посилання.</string>
+  <string name="add_app_qr_description">QR-код для надсилання посилання з телефона</string>
+
+  <string name="preview_already_added">Уже додано</string>
+  <string name="preview_no_releases">Релізів не знайдено</string>
+  <string name="preview_latest_version">Остання версія: %1$s</string>
+  <string name="preview_add">Додати</string>
+  <string name="preview_open">Відкрити</string>
+  <string name="common_cancel">Скасувати</string>
+  <string name="common_retry">Повторити</string>
+  <string name="preview_added">Додано %1$s</string>
+  <string name="preview_not_found">Такого репозиторію не існує, або він приватний.</string>
+  <string name="preview_rate_limited">GitHub зараз обмежує запити. Спробуйте за кілька хвилин.</string>
+  <string name="preview_network_error">Не вдалося зʼєднатися з GitHub. Перевірте інтернет на телевізорі.</string>
+  <string name="preview_link_missing">Це посилання більше недоступне.</string>
+  <string name="preview_sent_from">Надіслано з %1$s</string>
+
+  <string name="type_it_hint">власник/репозиторій або посилання на GitHub</string>
+  <string name="type_it_invalid">Введіть власник/репозиторій або посилання на GitHub.</string>
+  <string name="type_it_continue">Далі</string>
+
+  <string name="home_inbox">Вхідні (%1$d)</string>
+  <string name="home_settings">Налаштування</string>
+  <string name="home_notice">Отримано посилання з %1$s. Натисніть «Меню», щоб відкрити.</string>
+
+  <string name="inbox_title">Вхідні</string>
+  <string name="inbox_empty">Посилань ще немає. Надішліть із телефона.</string>
+  <string name="inbox_sender">З %1$s, %2$s</string>
+  <string name="inbox_dismiss_hint">Натисніть «Меню», щоб прибрати посилання.</string>
+
+  <string name="settings_title">Налаштування</string>
+  <string name="settings_background">Отримувати посилання у фоні</string>
+  <string name="settings_background_summary">Посилання, надіслані поки застосунок закритий, чекатимуть у вхідних.</string>
+  <string name="settings_on">Увімк.</string>
+  <string name="settings_off">Вимк.</string>
+  <string name="settings_phones">Запамʼятовані телефони</string>
+  <string name="settings_no_phones">Жодного телефона ще не запамʼятано.</string>
+  <string name="settings_last_used">Востаннє: %1$s</string>
+  <string name="settings_remove_title">Забути %1$s?</string>
+  <string name="settings_remove_body">Щоб надсилати посилання, цьому телефону доведеться знову відсканувати код на ТВ.</string>
+  <string name="settings_remove">Забути</string>
+  <string name="settings_ip_tip">Порада: закріпіть IP-адресу телевізора в роутері, щоб збережені на телефонах сторінки працювали й надалі.</string>
+
+  <string name="notification_channel">Отримання посилань</string>
+  <string name="notification_text">Готовий приймати посилання з телефона</string>
+</resources>

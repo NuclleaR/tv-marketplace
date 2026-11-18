@@ -33,5 +33,11 @@ object HomeProvider {
 @Composable
 fun HomeScreen() {
   val viewModel = retain { rootGraphAs<HomeGraph>().homeViewModel }
-  HomeView(viewState = viewModel.viewState(), onItemClick = viewModel::onItemClick)
+  HomeView(
+    viewState = viewModel.viewState(),
+    onAddApp = viewModel::onAddApp,
+    onInbox = viewModel::onInbox,
+    onSettings = viewModel::onSettings,
+    onOpenNotice = viewModel::onOpenNotice,
+  )
 }

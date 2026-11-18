@@ -90,6 +90,19 @@ class AddAppViewModelTest {
   }
 
   @Test
+  fun `hiding the app ends the session and ignores links until it is shown again`() = runTest {
+    backgroundScope.launchMolecule(RecompositionMode.Immediate) { viewModel.viewState() }
+    runCurrent()
+    viewModel.onHidden()
+    assertNull(sessions.current.value)
+    events.emit(linkId = 3, ref = GitHubRepoRef("a", "b"), senderLabel = "Phone")
+    runCurrent()
+    verify(exactly = 0) { navigator.goTo(any()) }
+    viewModel.onVisible()
+    assertNotEquals(null, sessions.current.value)
+  }
+
+  @Test
   fun `type it instead opens the typing screen`() {
     viewModel.onTypeIt()
     verify { navigator.goTo(Destination.TypeIt) }

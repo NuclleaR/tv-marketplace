@@ -107,4 +107,7 @@
   <string name="notification_channel">Receiving links</string>
   <!-- Notification of the background link receiver -->
   <string name="notification_text">Ready to receive links from your phone</string>
+
+  <!-- Relative time for something that happened less than a minute ago -->
+  <string name="time_just_now">just now</string>
 </resources>

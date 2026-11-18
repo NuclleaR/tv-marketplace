@@ -1,6 +1,5 @@
 package com.serhii.tvmarketplace.features.inbox
 
-import android.text.format.DateUtils
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -33,6 +32,7 @@ import com.serhii.tvmarketplace.core.data.IncomingLinksRepository
 import com.serhii.tvmarketplace.core.data.TrackedAppsRepository
 import com.serhii.tvmarketplace.core.ui.AppTheme
 import com.serhii.tvmarketplace.core.ui.TvScreen
+import com.serhii.tvmarketplace.core.ui.relativeTime
 import com.serhii.tvmarketplace.navigation.Destination
 import com.serhii.tvmarketplace.navigation.NavEntryProvider
 import com.serhii.tvmarketplace.navigation.Navigator
@@ -128,7 +128,7 @@ internal fun InboxView(
             onLongClick = { onDismiss(item.id) },
             headlineContent = { Text(item.name) },
             supportingContent = {
-              val time = DateUtils.getRelativeTimeSpanString(item.receivedAt.toEpochMilli()).toString()
+              val time = relativeTime(item.receivedAt)
               Text("${item.ownerAndRepo} · ${stringResource(StringsR.string.inbox_sender, item.sender, time)}")
             },
             trailingContent = if (item.alreadyTracked) {

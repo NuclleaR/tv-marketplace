@@ -1,6 +1,5 @@
 package com.serhii.tvmarketplace.features.settings
 
-import android.text.format.DateUtils
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,6 +36,7 @@ import com.serhii.tvmarketplace.core.data.PairedPhoneKind
 import com.serhii.tvmarketplace.core.data.PairedPhonesRepository
 import com.serhii.tvmarketplace.core.ui.AppTheme
 import com.serhii.tvmarketplace.core.ui.TvScreen
+import com.serhii.tvmarketplace.core.ui.relativeTime
 import com.serhii.tvmarketplace.navigation.Destination
 import com.serhii.tvmarketplace.navigation.NavEntryProvider
 import dev.zacsweers.metro.AppScope
@@ -148,7 +148,7 @@ internal fun SettingsView(
           onClick = { onPhoneClick(phone.id) },
           headlineContent = { Text(phone.name) },
           supportingContent = {
-            val time = DateUtils.getRelativeTimeSpanString(phone.lastUsedAt.toEpochMilli()).toString()
+            val time = relativeTime(phone.lastUsedAt)
             Text(stringResource(StringsR.string.settings_last_used, time))
           },
         )

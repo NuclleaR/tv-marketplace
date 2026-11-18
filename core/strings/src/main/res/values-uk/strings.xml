@@ -58,4 +58,6 @@
 
   <string name="notification_channel">Отримання посилань</string>
   <string name="notification_text">Готовий приймати посилання з телефона</string>
+
+  <string name="time_just_now">щойно</string>
 </resources>

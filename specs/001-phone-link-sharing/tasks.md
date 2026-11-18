@@ -229,6 +229,9 @@ the placeholder `com.tvmarketplace` (plan.md → Open items), so `<pkg>` below m
 - [X] T076 [P] Verify privacy-safe logging: add a Detekt custom rule or test that fails when `Logger` calls receive URL/IP/token-typed arguments in `build-logic/convention/` or `core/common/src/test/`
 - [X] T077 Security review of `core/linkserver` against research.md R4 (Host guard, rate limit, body limit, PIN lockout, token entropy, no CORS) and record results in `specs/001-phone-link-sharing/checklists/security.md`
 - [ ] T078 Run quickstart.md §1–§7 end to end on a real Android TV and an iPhone + Android phone; fix any failures
+- [X] T079 Show the app's own icon in Preview when the repository has fastlane metadata (`fastlane/metadata/android/en-US/images/icon.png` on the default branch), falling back to the owner avatar, in `core/data/impl/src/main/kotlin/<pkg>/core/data/impl/KtorGitHubRepository.kt` and `features/addapp/src/main/kotlin/<pkg>/features/addapp/preview/PreviewView.kt` (found during emulator review)
+- [X] T080 [P] Show "just now" instead of "0 minutes ago" for the first minute in Inbox and Settings via `core/ui/src/main/kotlin/<pkg>/core/ui/RelativeTime.kt` (found during emulator review)
+- [X] T081 [P] End the QR session when the app goes to the background on Add app, and don't jump to a preview for links received meanwhile (they wait in the Inbox), in `features/addapp/src/main/kotlin/<pkg>/features/addapp/AddAppViewModel.kt` (found during emulator review)
 
 ---
 

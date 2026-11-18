@@ -74,6 +74,7 @@ class PreviewViewModel(
           description = result.preview.description,
           latestVersion = result.preview.latestVersion,
           avatarUrl = result.preview.avatarUrl,
+          iconUrl = result.preview.iconUrl,
           sender = link?.senderLabel,
           alreadyTracked = trackedApps.find(result.preview.ref) != null,
         )

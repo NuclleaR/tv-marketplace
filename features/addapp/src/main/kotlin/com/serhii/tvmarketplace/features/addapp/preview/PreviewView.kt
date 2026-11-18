@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -48,8 +49,18 @@ internal fun PreviewView(
       }
       is PreviewViewState.Content -> {
         Row(horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.CenterVertically) {
-          if (viewState.avatarUrl != null) {
-            AsyncImage(model = viewState.avatarUrl, contentDescription = null, modifier = Modifier.size(96.dp).clip(CircleShape))
+          // the app's icon when the repository has one, the owner's avatar otherwise
+          when {
+            viewState.iconUrl != null -> AsyncImage(
+              model = viewState.iconUrl,
+              contentDescription = null,
+              modifier = Modifier.size(96.dp).clip(RoundedCornerShape(20.dp)),
+            )
+            viewState.avatarUrl != null -> AsyncImage(
+              model = viewState.avatarUrl,
+              contentDescription = null,
+              modifier = Modifier.size(96.dp).clip(CircleShape),
+            )
           }
           Column {
             Text(viewState.name, style = MaterialTheme.typography.displaySmall)

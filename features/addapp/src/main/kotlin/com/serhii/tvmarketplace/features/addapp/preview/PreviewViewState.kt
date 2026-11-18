@@ -9,6 +9,7 @@ sealed interface PreviewViewState {
     val description: String?,
     val latestVersion: String?,
     val avatarUrl: String?,
+    val iconUrl: String? = null,
     val sender: String?,
     val alreadyTracked: Boolean,
   ) : PreviewViewState

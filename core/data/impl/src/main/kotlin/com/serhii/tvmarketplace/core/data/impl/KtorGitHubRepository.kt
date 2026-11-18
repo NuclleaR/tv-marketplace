@@ -16,10 +16,14 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
+import io.ktor.client.request.head
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.SerialName
@@ -66,12 +70,14 @@ class KtorGitHubRepository(
       val releasesResponse = client.get("repos/${ref.owner}/${ref.repo}/releases") { parameter("per_page", 5) }
       failure(releasesResponse)?.let { return it }
       val latest = releasesResponse.body<List<ReleaseDto>>().firstOrNull { !it.draft }?.tagName
+      val canonical = GitHubRepoRef(owner = repo.owner.login, repo = repo.name)
       val preview = AppPreview(
-        ref = GitHubRepoRef(owner = repo.owner.login, repo = repo.name),
+        ref = canonical,
         displayName = repo.name,
         description = repo.description,
         latestVersion = latest,
         avatarUrl = repo.owner.avatarUrl,
+        iconUrl = fastlaneIcon(canonical, repo.defaultBranch),
       )
       cache[ref.key] = now to preview
       PreviewResult.Found(preview)
@@ -82,6 +88,51 @@ class KtorGitHubRepository(
     } catch (_: SerializationException) {
       PreviewResult.NetworkError
     }
+  }
+
+  // many Android apps publish store metadata for F-Droid in this place; without it the owner's avatar is shown
+  private suspend fun fastlaneIcon(
+    ref: GitHubRepoRef,
+    branch: String,
+  ): String? {
+    val root = "https://raw.githubusercontent.com/${ref.owner}/${ref.repo}/$branch/"
+    val path = "fastlane/metadata/android/en-US/images/icon.png"
+    return try {
+      val response = client.head(root + path)
+      when {
+        response.status != HttpStatusCode.OK -> null
+        response.isImage() -> root + path
+        // raw.githubusercontent.com serves a git symlink as text holding its target, so follow it once
+        response.contentType()?.match(ContentType.Text.Plain) == true -> {
+          val target = resolve(path, client.get(root + path).bodyAsText().trim()) ?: return null
+          (root + target).takeIf { client.head(it).let { r -> r.status == HttpStatusCode.OK && r.isImage() } }
+        }
+        else -> null
+      }
+    } catch (e: CancellationException) {
+      throw e
+    } catch (_: IOException) {
+      null
+    }
+  }
+
+  private fun HttpResponse.isImage() = contentType()?.match(ContentType.Image.Any) == true
+
+  // a relative symlink target against the link's directory; null if it leaves the repository or isn't a plain path
+  private fun resolve(
+    linkPath: String,
+    target: String,
+  ): String? {
+    if (target.isEmpty() || target.length > 256 || target.startsWith("/") || target.any { it.isWhitespace() }) return null
+    val segments = linkPath.split("/").dropLast(1).toMutableList()
+    for (segment in target.split("/")) {
+      when (segment) {
+        "", "." -> Unit
+        ".." -> segments.removeLastOrNull() ?: return null
+        else -> segments += segment
+      }
+    }
+    return segments.joinToString("/").ifEmpty { null }
   }
 
   private fun failure(response: HttpResponse): PreviewResult? = when {
@@ -98,6 +149,7 @@ private data class RepoDto(
   val name: String,
   val description: String? = null,
   val owner: OwnerDto,
+  @SerialName("default_branch") val defaultBranch: String = "HEAD",
 )
 
 @Serializable

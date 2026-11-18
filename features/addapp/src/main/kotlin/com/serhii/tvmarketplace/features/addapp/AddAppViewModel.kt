@@ -26,6 +26,9 @@ class AddAppViewModel(
   private val navigator: Navigator,
 ) {
 
+  // the TV app may sit in the background on this screen: no valid code and no jumps to a preview meanwhile
+  private var visible = true
+
   @Composable
   fun viewState(): AddAppViewState {
     // the code on screen is only valid while the screen is
@@ -42,7 +45,7 @@ class AddAppViewModel(
     LaunchedEffect(Unit) {
       val seen = events.lastReceived.value?.sequence ?: 0
       events.lastReceived.filterNotNull().filter { it.sequence > seen }.collect { link ->
-        navigator.goTo(Destination.Preview(linkId = link.linkId))
+        if (visible) navigator.goTo(Destination.Preview(linkId = link.linkId))
       }
     }
     val session by sessions.current.collectAsState()
@@ -59,6 +62,17 @@ class AddAppViewModel(
       ServerState.Failed -> AddAppViewState.Failed
       ServerState.Stopped -> AddAppViewState.Loading
     }
+  }
+
+  fun onHidden() {
+    visible = false
+    sessions.invalidate()
+  }
+
+  fun onVisible() {
+    if (visible) return
+    visible = true
+    val _ = sessions.start()
   }
 
   fun onTypeIt() {

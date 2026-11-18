@@ -5,4 +5,5 @@ plugins {
 
 dependencies {
   api(libs.tv.material)
+  implementation(projects.core.strings)
 }

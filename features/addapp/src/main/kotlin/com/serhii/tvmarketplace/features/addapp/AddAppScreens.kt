@@ -2,6 +2,7 @@ package com.serhii.tvmarketplace.features.addapp
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.retain.retain
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation3.runtime.NavEntry
 import com.serhii.tvmarketplace.core.common.rootGraphAs
 import com.serhii.tvmarketplace.features.addapp.preview.PreviewView
@@ -52,6 +53,10 @@ object AddAppProvider {
 @Composable
 fun AddAppScreen() {
   val viewModel = retain { rootGraphAs<AddAppGraph>().addAppViewModel }
+  LifecycleStartEffect(viewModel) {
+    viewModel.onVisible()
+    onStopOrDispose { viewModel.onHidden() }
+  }
   AddAppView(viewState = viewModel.viewState(), onTypeIt = viewModel::onTypeIt, onRetry = viewModel::onRetry)
 }
 

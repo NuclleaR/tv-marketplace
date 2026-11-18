@@ -1,7 +1,12 @@
 package com.serhii.tvmarketplace.features.addapp
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.retain.retain
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation3.runtime.NavEntry
 import com.serhii.tvmarketplace.core.common.rootGraphAs
@@ -57,7 +62,25 @@ fun AddAppScreen() {
     viewModel.onVisible()
     onStopOrDispose { viewModel.onHidden() }
   }
-  AddAppView(viewState = viewModel.viewState(), onTypeIt = viewModel::onTypeIt, onRetry = viewModel::onRetry)
+  val context = LocalContext.current
+  AddAppView(
+    viewState = viewModel.viewState(),
+    onTypeIt = viewModel::onTypeIt,
+    onRetry = viewModel::onRetry,
+    onNetworkSettings = { openNetworkSettings(context) },
+  )
+}
+
+// some TVs have no Wi-Fi settings screen of their own, only the general one
+private fun openNetworkSettings(context: Context) {
+  for (action in listOf(Settings.ACTION_WIFI_SETTINGS, Settings.ACTION_SETTINGS)) {
+    try {
+      context.startActivity(Intent(action).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+      return
+    } catch (_: ActivityNotFoundException) {
+      continue
+    }
+  }
 }
 
 @Composable

@@ -1,6 +1,7 @@
 package com.serhii.tvmarketplace.core.data.impl.db
 
 import androidx.room.AutoMigration
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -27,6 +28,7 @@ data class TrackedAppEntity(
   val latestVersion: String?,
   val avatarUrl: String?,
   val addedAt: Instant,
+  @ColumnInfo(defaultValue = "NULL") val iconUrl: String? = null,
 )
 
 @Entity(tableName = "incoming_link", indices = [Index(value = ["repoKey", "status"])])
@@ -124,8 +126,8 @@ class Converters {
 
 @Database(
   entities = [TrackedAppEntity::class, IncomingLinkEntity::class, PairedPhoneEntity::class],
-  version = 2,
-  autoMigrations = [AutoMigration(from = 1, to = 2)],
+  version = 3,
+  autoMigrations = [AutoMigration(from = 1, to = 2), AutoMigration(from = 2, to = 3)],
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

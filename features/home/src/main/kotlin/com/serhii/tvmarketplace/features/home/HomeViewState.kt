@@ -9,6 +9,8 @@ data class HomeViewState(
     val id: Long,
     val name: String,
     val ownerAndRepo: String,
+    val iconUrl: String? = null,
+    val avatarUrl: String? = null,
   )
 
   data class Notice(

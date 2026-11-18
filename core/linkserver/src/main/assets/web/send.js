@@ -2,7 +2,10 @@
   const strings = {
     en: {
       title: "Send to TV",
-      pinHint: "Enter the code shown on your TV.",
+      lead: "Paste a GitHub link to add an app on your TV.",
+      pinLabel: "Code from the TV",
+      sameWifi: "Phone and TV must be on the same Wi-Fi.",
+      pinHint: "Shown on the TV's Add app screen.",
       continue: "Continue",
       linkLabel: "GitHub link",
       paste: "Paste",
@@ -25,7 +28,10 @@
     },
     uk: {
       title: "Надіслати на ТВ",
-      pinHint: "Введіть код, який показує телевізор.",
+      lead: "Вставте посилання на GitHub, щоб додати застосунок на телевізор.",
+      pinLabel: "Код із телевізора",
+      sameWifi: "Телефон і телевізор мають бути в одній Wi-Fi мережі.",
+      pinHint: "Його показує екран «Додати застосунок» на ТВ.",
       continue: "Далі",
       linkLabel: "Посилання на GitHub",
       paste: "Вставити",

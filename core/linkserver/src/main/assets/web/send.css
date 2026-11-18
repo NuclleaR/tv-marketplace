@@ -1,77 +1,104 @@
+/* the TV app's palette, so the phone page feels like part of it */
 :root {
-  --bg: #ffffff;
-  --fg: #1b1b1f;
-  --muted: #5d5e66;
-  --accent: #3d5afe;
+  --bg: #f9f9ff;
+  --surface: #ededf4;
+  --fg: #191c20;
+  --muted: #44474e;
+  --outline: #74777f;
+  --accent: #3b5f90;
   --accent-fg: #ffffff;
-  --surface: #f1f2f6;
-  --error: #b3261e;
-  --ok: #1e7a3c;
+  --error: #ba1a1a;
+  --ok: #1e6b46;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #121316;
-    --fg: #e4e2e6;
-    --muted: #a9aab3;
-    --accent: #8c9eff;
-    --accent-fg: #0b1250;
-    --surface: #1e1f23;
-    --error: #f2b8b5;
-    --ok: #8fd6a2;
+    --bg: #111318;
+    --surface: #191c20;
+    --fg: #e2e2e9;
+    --muted: #c4c6d0;
+    --outline: #8e9099;
+    --accent: #a8c8ff;
+    --accent-fg: #05305f;
+    --error: #ffb4ab;
+    --ok: #88d6ae;
   }
 }
 
 * { box-sizing: border-box; }
 
+html, body { min-height: 100%; }
+
 body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font: 18px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font: 17px/1.5 Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-main { max-width: 32rem; margin: 0 auto; padding: 24px 16px; }
+main {
+  max-width: 30rem;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 28px 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
 
-h1 { font-size: 1.6rem; margin: 0 0 16px; }
+.eyebrow { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 15px; color: var(--muted); }
 
-label { display: block; color: var(--muted); margin-bottom: 8px; }
+h1 { margin: 10px 0 0; font-size: 32px; font-weight: 500; line-height: 1.2; }
+
+.lead { margin: 8px 0 28px; font-size: 16px; color: var(--muted); }
+
+section { display: flex; flex-direction: column; }
+
+section[hidden] { display: none; }
+
+form { display: flex; flex-direction: column; }
+
+label { display: block; margin: 0 0 8px; font-size: 15px; font-weight: 500; }
 
 textarea, input {
   width: 100%;
-  padding: 14px;
+  padding: 15px 16px;
   font: inherit;
   color: inherit;
   background: var(--surface);
-  border: 2px solid transparent;
+  border: 1px solid var(--outline);
   border-radius: 12px;
 }
 
-textarea:focus, input:focus { outline: none; border-color: var(--accent); }
+textarea { resize: vertical; }
 
-#pin { font-size: 1.8rem; letter-spacing: 0.4em; text-align: center; margin-bottom: 12px; }
+textarea:focus, input:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
 
-.row { display: flex; gap: 12px; margin-top: 12px; }
+#pin { max-width: 11rem; font-size: 22px; font-weight: 500; letter-spacing: 0.25em; }
+
+.hint { margin: 8px 0 0; font-size: 14px; color: var(--muted); }
+
+.row { display: flex; gap: 12px; margin-top: 24px; }
 
 button {
   flex: 1;
-  min-height: 52px;
+  min-height: 64px;
   padding: 0 20px;
   font: inherit;
-  font-weight: 600;
+  font-size: 18px;
+  font-weight: 500;
   border: 0;
-  border-radius: 26px;
+  border-radius: 32px;
   background: var(--accent);
   color: var(--accent-fg);
 }
 
-button.secondary { background: var(--surface); color: var(--fg); }
+button.secondary { flex: none; background: var(--surface); color: var(--fg); border: 1px solid var(--outline); }
 
 button:disabled { opacity: 0.6; }
 
-#pin-form button { width: 100%; }
+#pin-form button { width: 100%; margin-top: 24px; }
 
-#status { min-height: 1.5em; margin-top: 20px; }
+#status { min-height: 1.5em; margin: 20px 0 0; }
 
 #status.ok { color: var(--ok); }
 
@@ -79,10 +106,13 @@ button:disabled { opacity: 0.6; }
 
 #status code { word-break: break-all; }
 
-.check { display: flex; gap: 12px; align-items: flex-start; margin-top: 12px; color: var(--fg); }
+.check { display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; font-weight: 400; color: var(--fg); }
 
 .check input { width: 22px; height: 22px; margin: 2px 0 0; flex: none; accent-color: var(--accent); }
 
-.hint { margin-top: 24px; }
+#shortcut-row { margin-top: 16px; }
 
 .hint a { color: var(--accent); }
+
+/* pushed to the bottom of the screen, where the thumb is */
+.footnote { margin: auto 0 0; padding-top: 24px; text-align: center; font-size: 14px; color: var(--muted); }

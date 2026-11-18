@@ -66,7 +66,16 @@ class FakeTrackedApps(vararg tracked: GitHubRepoRef) : TrackedAppsRepository {
 
   override suspend fun add(preview: AppPreview): TrackedApp {
     find(preview.ref)?.let { return it }
-    val app = TrackedApp(apps.value.size + 1L, preview.ref, preview.displayName, preview.latestVersion, preview.avatarUrl, Instant.EPOCH)
+    val app =
+      TrackedApp(
+        apps.value.size + 1L,
+        preview.ref,
+        preview.displayName,
+        preview.latestVersion,
+        preview.avatarUrl,
+        Instant.EPOCH,
+        preview.iconUrl,
+      )
     apps.value += app
     return app
   }

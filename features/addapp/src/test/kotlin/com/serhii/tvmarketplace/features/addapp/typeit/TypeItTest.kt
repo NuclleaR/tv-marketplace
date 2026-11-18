@@ -14,9 +14,12 @@ import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Rule
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+// laid out on a 1080p TV screen, not the default phone window
+@Config(qualifiers = "w960dp-h540dp-land-television-xhdpi")
 @RunWith(AndroidJUnit4::class)
 class TypeItTest {
 

@@ -45,6 +45,7 @@ class RoomTrackedAppsRepository(
       latestVersion = preview.latestVersion,
       avatarUrl = preview.avatarUrl,
       addedAt = timeSource.now(),
+      iconUrl = preview.iconUrl,
     )
     return entity.copy(id = dao.upsert(entity)).toModel()
   }
@@ -56,6 +57,7 @@ class RoomTrackedAppsRepository(
     latestVersion = latestVersion,
     avatarUrl = avatarUrl,
     addedAt = addedAt,
+    iconUrl = iconUrl,
   )
 }
 

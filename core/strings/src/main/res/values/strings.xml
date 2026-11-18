@@ -12,17 +12,21 @@
   <!-- Add app: screen title -->
   <string name="add_app_title">Add an app</string>
   <!-- Add app: first step next to the QR code -->
-  <string name="add_app_step_scan">1. Scan the code with your phone camera</string>
+  <string name="add_app_step_scan">Scan the code with your phone camera</string>
   <!-- Add app: second step next to the QR code -->
-  <string name="add_app_step_send">2. Paste a GitHub link and tap Send</string>
+  <string name="add_app_step_send">Paste a GitHub link and tap Send</string>
   <!-- Add app: manual alternative to scanning. %1$s is an address like http://192.168.1.42:8765, %2$s a 6-digit code -->
-  <string name="add_app_manual">Or open %1$s on your phone and enter the code %2$s</string>
+  <string name="add_app_manual">Or open %1$s on your phone and enter the code</string>
   <!-- Add app: hint below the QR code -->
   <string name="add_app_same_wifi">Your phone and TV must be on the same Wi-Fi.</string>
   <!-- Add app: button to type the link with the remote instead -->
   <string name="add_app_type_it">Type it instead</string>
   <!-- Add app: shown when the TV has no Wi-Fi or Ethernet connection -->
-  <string name="add_app_no_network">Connect the TV to Wi-Fi or Ethernet to receive links from your phone.</string>
+  <string name="add_app_no_network">Connect the TV to Wi-Fi or Ethernet</string>
+  <!-- Under the no-network title on Add app -->
+  <string name="add_app_no_network_body">Your phone sends links to the TV over your home network. When the TV is connected, the code appears here.</string>
+  <!-- Opens the system network settings -->
+  <string name="add_app_network_settings">Network settings</string>
   <!-- Add app: shown when the TV couldn't start receiving links -->
   <string name="add_app_failed">Couldn\'t start receiving links.</string>
   <!-- Add app: content description of the QR code image -->
@@ -44,6 +48,8 @@
   <string name="common_retry">Retry</string>
   <!-- Preview: confirmation after adding. %1$s is the app name -->
   <string name="preview_added">Added %1$s</string>
+  <!-- Under the placeholder while the app's details load -->
+  <string name="preview_loading">Loading from GitHub…</string>
   <!-- Preview: error when the repository doesn't exist -->
   <string name="preview_not_found">This repository doesn\'t exist or is private.</string>
   <!-- Preview: error when GitHub limits requests -->
@@ -56,6 +62,11 @@
   <string name="preview_sent_from">Sent from %1$s</string>
 
   <!-- Type it: placeholder of the text field -->
+  <string name="type_it_title">Type a GitHub link</string>
+  <!-- Label above the repository field -->
+  <string name="type_it_label">Repository</string>
+  <!-- Under the field, before anything is wrong -->
+  <string name="type_it_example">For example ImranR98/Obtainium or https://github.com/ImranR98/Obtainium</string>
   <string name="type_it_hint">owner/repo or GitHub link</string>
   <!-- Type it: error under the text field -->
   <string name="type_it_invalid">Enter owner/repo or a GitHub link.</string>
@@ -63,11 +74,12 @@
   <string name="type_it_continue">Continue</string>
 
   <!-- Home: button that opens received links. %1$d is how many are waiting -->
-  <string name="home_inbox">Inbox (%1$d)</string>
+  <string name="home_inbox">Inbox</string>
   <!-- Home: button that opens settings -->
   <string name="home_settings">Settings</string>
   <!-- Home: notice when a link arrives. %1$s is a device label like "Safari on iPhone" -->
-  <string name="home_notice">Link received from %1$s. Press Menu to open it.</string>
+  <string name="home_notice">Link received from %1$s</string>
+  <string name="home_notice_hint">Press Menu to open it</string>
 
   <!-- Inbox: screen title -->
   <string name="inbox_title">Inbox</string>
@@ -101,7 +113,15 @@
   <!-- Settings: confirm button of the dialog that forgets a phone -->
   <string name="settings_remove">Forget</string>
   <!-- Settings: tip below the phones -->
-  <string name="settings_ip_tip">Tip: reserve this TV\'s IP address in your router, so pages saved on phones keep working.</string>
+  <string name="settings_ip_tip">Reserve this TV\'s IP address in your router, so pages saved on phones keep working.</string>
+  <!-- Heading of the tip card -->
+  <string name="settings_tip">Tip</string>
+  <!-- Under the tip; the address phones use, like 192.168.1.42:8765 -->
+  <string name="settings_tv_address">This TV: %1$s</string>
+  <!-- On the focused phone row -->
+  <string name="settings_select_to_forget">Select to forget</string>
+  <string name="settings_kind_browser">Browser</string>
+  <string name="settings_kind_companion">Companion app</string>
 
   <!-- Notification channel of the background link receiver -->
   <string name="notification_channel">Receiving links</string>

@@ -43,7 +43,15 @@ class HomeViewModel(
       }
     }
     return HomeViewState(
-      apps = apps.map { HomeViewState.App(id = it.id, name = it.displayName, ownerAndRepo = "${it.ref.owner}/${it.ref.repo}") },
+      apps = apps.map {
+        HomeViewState.App(
+          id = it.id,
+          name = it.displayName,
+          ownerAndRepo = "${it.ref.owner}/${it.ref.repo}",
+          iconUrl = it.iconUrl,
+          avatarUrl = it.avatarUrl,
+        )
+      },
       inboxCount = inboxCount,
       notice = notice,
     )

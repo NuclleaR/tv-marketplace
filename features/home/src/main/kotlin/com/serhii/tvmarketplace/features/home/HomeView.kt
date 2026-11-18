@@ -2,12 +2,21 @@ package com.serhii.tvmarketplace.features.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -21,17 +30,21 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Button
-import androidx.tv.material3.ListItem
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.OutlinedButton
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import com.serhii.tvmarketplace.core.ui.AppIcon
 import com.serhii.tvmarketplace.core.ui.AppTheme
+import com.serhii.tvmarketplace.core.ui.FocusCard
+import com.serhii.tvmarketplace.core.ui.PillButton
+import com.serhii.tvmarketplace.core.ui.PreviewTv
 import com.serhii.tvmarketplace.core.ui.TvScreen
+import com.serhii.tvmarketplace.core.ui.icons.AppIcons
 import com.serhii.tvmarketplace.core.strings.R as StringsR
 
 @Composable
@@ -53,64 +66,166 @@ internal fun HomeView(
   }
   Box(modifier.fillMaxSize().then(menuOpensNotice)) {
     TvScreen {
-      Text(stringResource(StringsR.string.app_name), style = MaterialTheme.typography.displaySmall)
-      Row(modifier = Modifier.padding(top = 24.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        Button(onClick = onAddApp, modifier = Modifier.focusRequester(addFocus)) {
-          Text(stringResource(StringsR.string.home_add_app))
-        }
-        OutlinedButton(onClick = onInbox) { Text(stringResource(StringsR.string.home_inbox, viewState.inboxCount)) }
-        OutlinedButton(onClick = onSettings) { Text(stringResource(StringsR.string.home_settings)) }
+      Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+        Icon(AppIcons.Tv, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(22.dp))
+        Text(stringResource(StringsR.string.app_name), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Medium)
+      }
+      Row(modifier = Modifier.padding(top = 32.dp, start = 12.dp), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
+        PillButton(
+          text = stringResource(StringsR.string.home_add_app),
+          onClick = onAddApp,
+          leadingIcon = AppIcons.Add,
+          modifier = Modifier.focusRequester(addFocus),
+        )
+        PillButton(
+          text = stringResource(StringsR.string.home_inbox),
+          onClick = onInbox,
+          leadingIcon = AppIcons.Inbox,
+          trailing = if (viewState.inboxCount > 0) {
+            { CountBadge(viewState.inboxCount) }
+          } else {
+            null
+          },
+        )
+        PillButton(text = stringResource(StringsR.string.home_settings), onClick = onSettings, leadingIcon = AppIcons.Settings)
       }
       Text(
         stringResource(StringsR.string.home_tracked_apps),
-        style = MaterialTheme.typography.titleLarge,
-        modifier = Modifier.padding(top = 32.dp),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(top = 40.dp),
       )
       if (viewState.apps.isEmpty()) {
-        Text(stringResource(StringsR.string.home_empty), modifier = Modifier.padding(top = 16.dp))
+        Text(
+          stringResource(StringsR.string.home_empty),
+          style = MaterialTheme.typography.bodyLarge,
+          modifier = Modifier.padding(top = 16.dp),
+        )
       } else {
-        LazyColumn(contentPadding = PaddingValues(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-          items(viewState.apps, key = { it.id }) { app ->
-            ListItem(
-              selected = false,
-              onClick = {},
-              headlineContent = { Text(app.name) },
-              supportingContent = { Text(app.ownerAndRepo) },
-            )
-          }
+        LazyVerticalGrid(
+          columns = GridCells.Fixed(3),
+          contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 14.dp, bottom = 27.dp),
+          horizontalArrangement = Arrangement.spacedBy(20.dp),
+          verticalArrangement = Arrangement.spacedBy(18.dp),
+        ) {
+          items(viewState.apps, key = { it.id }) { app -> AppTile(app) }
         }
       }
     }
-    viewState.notice?.let { notice ->
-      Surface(
-        modifier = Modifier.align(Alignment.BottomEnd).padding(horizontal = 48.dp, vertical = 27.dp),
-        colors = SurfaceDefaults.colors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-      ) {
-        Text(stringResource(StringsR.string.home_notice, notice.sender), modifier = Modifier.padding(16.dp))
-      }
-    }
+    viewState.notice?.let { notice -> Notice(notice, Modifier.align(Alignment.BottomEnd).padding(horizontal = 48.dp, vertical = 27.dp)) }
   }
   LaunchedEffect(Unit) { addFocus.requestFocus() }
 }
 
-@Preview(device = "id:tv_1080p")
+@Composable
+private fun CountBadge(count: Int) {
+  Surface(
+    shape = CircleShape,
+    colors = SurfaceDefaults.colors(
+      containerColor = MaterialTheme.colorScheme.primaryContainer,
+      contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+    ),
+    modifier = Modifier.defaultMinSize(minWidth = 22.dp).height(22.dp),
+  ) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 6.dp)) {
+      Text(count.toString(), style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+    }
+  }
+}
+
+@Composable
+private fun AppTile(app: HomeViewState.App) {
+  // tapping an app does nothing yet: details and installs are the next feature
+  FocusCard(onClick = {}, modifier = Modifier.fillMaxWidth().height(100.dp)) {
+    Row(
+      modifier = Modifier.fillMaxSize().padding(horizontal = 18.dp),
+      horizontalArrangement = Arrangement.spacedBy(16.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      AppIcon(name = app.name, iconUrl = app.iconUrl, avatarUrl = app.avatarUrl, size = 64.dp)
+      Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+          app.name,
+          style = MaterialTheme.typography.titleMedium,
+          fontWeight = FontWeight.Medium,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+          app.ownerAndRepo,
+          style = MaterialTheme.typography.bodyMedium,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+        )
+      }
+    }
+  }
+}
+
+@Composable
+private fun Notice(
+  notice: HomeViewState.Notice,
+  modifier: Modifier = Modifier,
+) {
+  Surface(
+    modifier = modifier.width(330.dp),
+    shape = RoundedCornerShape(14.dp),
+    colors = SurfaceDefaults.colors(containerColor = AppTheme.surfaces.high),
+  ) {
+    Row(
+      modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+      horizontalArrangement = Arrangement.spacedBy(12.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Surface(
+        shape = CircleShape,
+        colors = SurfaceDefaults.colors(
+          containerColor = MaterialTheme.colorScheme.primaryContainer,
+          contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        ),
+        modifier = Modifier.size(36.dp),
+      ) {
+        Box(contentAlignment = Alignment.Center) { Icon(AppIcons.Phone, contentDescription = null, modifier = Modifier.size(18.dp)) }
+      }
+      Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(
+          stringResource(StringsR.string.home_notice, notice.sender),
+          style = MaterialTheme.typography.titleSmall,
+          fontWeight = FontWeight.Medium,
+        )
+        Text(
+          stringResource(StringsR.string.home_notice_hint),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+      }
+    }
+  }
+}
+
+private val previewApps = listOf(
+  "Obtainium" to "ImranR98/Obtainium",
+  "F-Droid" to "f-droid/fdroidclient",
+  "SmartTube" to "yuliskov/SmartTube",
+  "Kodi" to "xbmc/xbmc",
+  "NewPipe" to "TeamNewPipe/NewPipe",
+  "Jellyfin" to "jellyfin/jellyfin-androidtv",
+).mapIndexed { index, (name, repo) -> HomeViewState.App(id = index.toLong(), name = name, ownerAndRepo = repo) }
+
+@PreviewTv
 @Composable
 private fun HomeViewPreview() {
   AppTheme {
     HomeView(
-      viewState = HomeViewState(apps = List(4) { HomeViewState.App(id = it.toLong(), name = "App $it", ownerAndRepo = "owner/app$it") }),
+      viewState = HomeViewState(apps = previewApps, inboxCount = 3, notice = HomeViewState.Notice(1, "Safari on iPhone")),
       onAddApp = {},
     )
   }
 }
 
-@Preview(device = "id:tv_1080p")
+@PreviewTv
 @Composable
-private fun HomeViewNoticePreview() {
-  AppTheme {
-    HomeView(
-      viewState = HomeViewState(apps = emptyList(), inboxCount = 1, notice = HomeViewState.Notice(1, "Safari on iPhone")),
-      onAddApp = {},
-    )
-  }
+private fun HomeViewEmptyPreview() {
+  AppTheme { HomeView(viewState = HomeViewState(apps = emptyList()), onAddApp = {}) }
 }

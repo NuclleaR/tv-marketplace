@@ -12,6 +12,8 @@ data class TrackedApp(
   val latestVersion: String?,
   val avatarUrl: String?,
   val addedAt: Instant,
+  // the app's own icon from its fastlane metadata, when the repository has one
+  val iconUrl: String? = null,
 )
 
 interface TrackedAppsRepository {

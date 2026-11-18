@@ -18,9 +18,12 @@ import com.serhii.tvmarketplace.features.addapp.preview.PreviewView
 import com.serhii.tvmarketplace.features.addapp.preview.PreviewViewState
 import org.junit.Rule
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+// laid out on a 1080p TV screen, not the default phone window
+@Config(qualifiers = "w960dp-h540dp-land-television-xhdpi")
 @RunWith(AndroidJUnit4::class)
 class AddAppViewTest {
 
@@ -37,7 +40,8 @@ class AddAppViewTest {
   fun `add app focuses type it instead and shows the address and code`() {
     compose.setContent { AppTheme { AddAppView(viewState = ready, onTypeIt = {}, onRetry = {}) } }
     compose.onNodeWithText("Type it instead").assertIsFocused()
-    compose.onNodeWithText("Or open http://192.168.1.42:8765 on your phone and enter the code 482 913").assertExists()
+    compose.onNodeWithText("Or open http://192.168.1.42:8765 on your phone and enter the code").assertExists()
+    compose.onNodeWithText("482 913").assertExists()
     compose.onNodeWithContentDescription("QR code to send a link from your phone").assertExists()
   }
 
@@ -50,9 +54,16 @@ class AddAppViewTest {
   }
 
   @Test
-  fun `without network retry is focused`() {
-    compose.setContent { AppTheme { AddAppView(viewState = AddAppViewState.NoNetwork, onTypeIt = {}, onRetry = {}) } }
+  fun `without network retry is focused and network settings is next to it`() {
+    var opened = 0
+    compose.setContent {
+      AppTheme { AddAppView(viewState = AddAppViewState.NoNetwork, onTypeIt = {}, onRetry = {}, onNetworkSettings = { opened++ }) }
+    }
     compose.onNodeWithText("Retry").assertIsFocused()
+    compose.onRoot().performKeyInput { pressKey(Key.DirectionRight) }
+    compose.onNodeWithText("Network settings").assertIsFocused()
+    compose.onRoot().performKeyInput { pressKey(Key.DirectionCenter) }
+    assertEquals(1, opened)
   }
 
   private val content = PreviewViewState.Content(

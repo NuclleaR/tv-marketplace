@@ -34,4 +34,21 @@ class MigrationTest {
       }
     }
   }
+
+  @Test
+  fun `version 2 tracked apps survive the migration to version 3 without an icon`() {
+    helper.createDatabase("migration-test-3", 2).use { db ->
+      db.execSQL(
+        "INSERT INTO tracked_app (owner, repo, repoKey, sourceUrl, displayName, latestVersion, avatarUrl, addedAt) " +
+          "VALUES ('ImranR98', 'Obtainium', 'imranr98/obtainium', 'https://github.com/ImranR98/Obtainium', 'Obtainium', 'v1', NULL, 0)",
+      )
+    }
+    helper.runMigrationsAndValidate("migration-test-3", 3, true).use { db ->
+      db.query("SELECT displayName, iconUrl FROM tracked_app").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals("Obtainium", cursor.getString(0))
+        assertEquals(true, cursor.isNull(1))
+      }
+    }
+  }
 }

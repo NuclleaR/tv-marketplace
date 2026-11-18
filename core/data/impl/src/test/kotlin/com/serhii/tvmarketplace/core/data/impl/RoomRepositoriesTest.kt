@@ -45,6 +45,18 @@ class RoomRepositoriesTest {
   }
 
   @Test
+  fun `a tracked app keeps its icon and avatar`() = runTest {
+    val added = trackedApps.add(preview.copy(avatarUrl = "https://avatars/1", iconUrl = "https://raw/icon.png"))
+    assertEquals("https://raw/icon.png", added.iconUrl)
+    assertEquals(
+      listOf("https://raw/icon.png" to "https://avatars/1"),
+      trackedApps.trackedApps().first().map {
+        it.iconUrl to it.avatarUrl
+      },
+    )
+  }
+
+  @Test
   fun `a pending link to the same repository is refreshed, not duplicated`() = runTest {
     val first = incomingLinks.receive("see https://github.com/ImranR98/Obtainium", ref, senderPhoneId = null, senderLabel = "Phone")
     now += Duration.ofMinutes(1)

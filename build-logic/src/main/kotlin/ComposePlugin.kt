@@ -11,7 +11,10 @@ class ComposePlugin : Plugin<Project> {
 
   override fun apply(target: Project) {
     target.pluginManager.withPlugin("com.android.application") { configureCompose(target) }
-    target.pluginManager.withPlugin("com.android.library") { configureCompose(target) }
+    target.pluginManager.withPlugin("com.android.library") {
+      configureCompose(target)
+      if (target.path != ":core:snapshot") target.configurePreviewSnapshots()
+    }
   }
 
   private fun configureCompose(target: Project) {

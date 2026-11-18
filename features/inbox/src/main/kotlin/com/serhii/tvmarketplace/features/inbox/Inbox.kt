@@ -1,17 +1,29 @@
 package com.serhii.tvmarketplace.features.inbox
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.retain.retain
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
@@ -20,18 +32,24 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
-import androidx.tv.material3.Button
-import androidx.tv.material3.ListItem
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.serhii.tvmarketplace.core.common.rootGraphAs
 import com.serhii.tvmarketplace.core.data.IncomingLinksRepository
 import com.serhii.tvmarketplace.core.data.TrackedAppsRepository
+import com.serhii.tvmarketplace.core.ui.AppIcon
 import com.serhii.tvmarketplace.core.ui.AppTheme
+import com.serhii.tvmarketplace.core.ui.FocusCard
+import com.serhii.tvmarketplace.core.ui.PillButton
+import com.serhii.tvmarketplace.core.ui.PreviewTv
+import com.serhii.tvmarketplace.core.ui.ScreenTitle
 import com.serhii.tvmarketplace.core.ui.TvScreen
+import com.serhii.tvmarketplace.core.ui.icons.AppIcons
 import com.serhii.tvmarketplace.core.ui.relativeTime
 import com.serhii.tvmarketplace.navigation.Destination
 import com.serhii.tvmarketplace.navigation.NavEntryProvider
@@ -111,31 +129,56 @@ internal fun InboxView(
 ) {
   val firstFocus = remember { FocusRequester() }
   TvScreen(modifier) {
-    Text(stringResource(StringsR.string.inbox_title), style = MaterialTheme.typography.displaySmall)
     if (viewState.items.isEmpty()) {
-      Text(stringResource(StringsR.string.inbox_empty), modifier = Modifier.padding(top = 24.dp))
-      Button(onClick = onAddApp, modifier = Modifier.padding(top = 16.dp).focusRequester(firstFocus)) {
-        Text(stringResource(StringsR.string.home_add_app))
+      ScreenTitle(stringResource(StringsR.string.inbox_title))
+      Column(
+        modifier = Modifier.fillMaxSize().padding(bottom = 34.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+      ) {
+        Box(Modifier.size(88.dp).clip(CircleShape).background(AppTheme.surfaces.low), contentAlignment = Alignment.Center) {
+          Icon(
+            AppIcons.Inbox,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(40.dp),
+          )
+        }
+        Text(
+          stringResource(StringsR.string.inbox_empty),
+          style = MaterialTheme.typography.headlineSmall,
+          fontWeight = FontWeight.Medium,
+          modifier = Modifier.padding(top = 24.dp),
+        )
+        PillButton(
+          text = stringResource(StringsR.string.home_add_app),
+          onClick = onAddApp,
+          leadingIcon = AppIcons.Add,
+          modifier = Modifier.padding(top = 36.dp).focusRequester(firstFocus),
+        )
       }
     } else {
-      Text(stringResource(StringsR.string.inbox_dismiss_hint), style = MaterialTheme.typography.bodyMedium)
-      LazyColumn(contentPadding = PaddingValues(vertical = 16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
+        ScreenTitle(stringResource(StringsR.string.inbox_title))
+        Text(
+          stringResource(StringsR.string.inbox_dismiss_hint),
+          style = MaterialTheme.typography.bodyLarge,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.padding(bottom = 4.dp),
+        )
+      }
+      LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(top = 32.dp, bottom = 27.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+      ) {
         items(viewState.items, key = { it.id }) { item ->
           val focus = if (item == viewState.items.first()) Modifier.focusRequester(firstFocus) else Modifier
-          ListItem(
-            selected = false,
-            onClick = { onOpen(item.id) },
-            onLongClick = { onDismiss(item.id) },
-            headlineContent = { Text(item.name) },
-            supportingContent = {
-              val time = relativeTime(item.receivedAt)
-              Text("${item.ownerAndRepo} · ${stringResource(StringsR.string.inbox_sender, item.sender, time)}")
-            },
-            trailingContent = if (item.alreadyTracked) {
-              { Text(stringResource(StringsR.string.preview_already_added)) }
-            } else {
-              null
-            },
+          InboxRow(
+            item = item,
+            onOpen = { onOpen(item.id) },
+            onDismiss = { onDismiss(item.id) },
             modifier = focus.onPreviewKeyEvent { event ->
               val menu = event.key == Key.Menu && event.type == KeyEventType.KeyUp
               if (menu) onDismiss(item.id)
@@ -147,6 +190,75 @@ internal fun InboxView(
     }
   }
   LaunchedEffect(viewState.items.isEmpty()) { firstFocus.requestFocus() }
+}
+
+@Composable
+private fun InboxRow(
+  item: InboxViewState.Item,
+  onOpen: () -> Unit,
+  onDismiss: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  // wide rows grow less than buttons, or they would cover their neighbours
+  FocusCard(
+    onClick = onOpen,
+    onLongClick = onDismiss,
+    focusedScale = 1.05F,
+    cornerRadius = 14.dp,
+    modifier = modifier.width(700.dp).height(76.dp),
+  ) {
+    Row(
+      modifier = Modifier.fillMaxSize().padding(start = 12.dp, end = 20.dp),
+      horizontalArrangement = Arrangement.spacedBy(16.dp),
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      AppIcon(name = item.name, iconUrl = null, avatarUrl = null, size = 52.dp)
+      Column(Modifier.weight(1F), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+          item.name,
+          style = MaterialTheme.typography.titleMedium,
+          fontWeight = FontWeight.Medium,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+          item.ownerAndRepo,
+          style = MaterialTheme.typography.bodyMedium,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis,
+        )
+      }
+      Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        if (item.alreadyTracked) {
+          Row(
+            modifier = Modifier.clip(
+              CircleShape,
+            ).background(MaterialTheme.colorScheme.secondaryContainer).padding(start = 7.dp, end = 9.dp, top = 3.dp, bottom = 3.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Icon(
+              AppIcons.Check,
+              contentDescription = null,
+              tint = MaterialTheme.colorScheme.onSecondaryContainer,
+              modifier = Modifier.size(12.dp),
+            )
+            Text(
+              stringResource(StringsR.string.preview_already_added),
+              style = MaterialTheme.typography.labelMedium,
+              color = MaterialTheme.colorScheme.onSecondaryContainer,
+            )
+          }
+        }
+        Text(
+          stringResource(StringsR.string.inbox_sender, item.sender, relativeTime(item.receivedAt)),
+          style = MaterialTheme.typography.bodyMedium,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+      }
+    }
+  }
 }
 
 @ContributesTo(AppScope::class)
@@ -171,7 +283,13 @@ fun InboxScreen() {
   InboxView(viewState = viewModel.viewState(), onOpen = viewModel::onOpen, onDismiss = viewModel::onDismiss, onAddApp = viewModel::onAddApp)
 }
 
-@Preview(device = "id:tv_1080p")
+@PreviewTv
+@Composable
+private fun InboxViewEmptyPreview() {
+  AppTheme { InboxView(viewState = InboxViewState(emptyList()), onOpen = {}, onDismiss = {}, onAddApp = {}) }
+}
+
+@PreviewTv
 @Composable
 private fun InboxViewPreview() {
   AppTheme {

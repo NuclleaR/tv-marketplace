@@ -6,3 +6,7 @@ build/
 .kotlin/
 captures/
 .DS_Store
+
+# Python
+__pycache__/
+*.pyc

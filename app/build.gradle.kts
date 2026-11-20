@@ -2,13 +2,12 @@ plugins {
   id("convention.app")
   id("convention.compose")
   alias(libs.plugins.metro)
+  alias(libs.plugins.baselineprofile)
 }
 
 android {
   defaultConfig {
     applicationId = "com.serhii.tvmarketplace"
-    versionCode = 1
-    versionName = "1.0.0"
   }
   buildTypes {
     debug {
@@ -17,9 +16,7 @@ android {
     release {
       isMinifyEnabled = true
       isShrinkResources = true
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-      // signs with the debug key so a local release build installs; replace with your own signing config
-      signingConfig = signingConfigs.getByName("debug")
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }
   dependenciesInfo {
@@ -42,4 +39,6 @@ dependencies {
   implementation(libs.navigation3.ui)
   implementation(libs.androidx.core)
   implementation(libs.lifecycle.process)
+  implementation(libs.profileinstaller)
+  baselineProfile(projects.baselineprofile)
 }

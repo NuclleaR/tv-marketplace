@@ -6,8 +6,6 @@ plugins {
 android {
   defaultConfig {
     applicationId = "com.serhii.tvmarketplace.companion"
-    versionCode = 1
-    versionName = "1.0.0"
   }
   buildTypes {
     debug {
@@ -16,8 +14,7 @@ android {
     release {
       isMinifyEnabled = true
       isShrinkResources = true
-      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"))
-      signingConfig = signingConfigs.getByName("debug")
+      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
   }
   dependenciesInfo {

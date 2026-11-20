@@ -9,6 +9,7 @@ class AppPlugin : Plugin<Project> {
       apply("com.android.application")
       withPlugin("com.android.application") {
         target.baseSetup()
+        target.configureRelease()
         target.tasks.register("appUnitTest") {
           dependsOn("testDebugUnitTest")
         }

@@ -1,0 +1,21 @@
+name: "Build setup"
+runs:
+  using: "composite"
+  steps:
+    - name: Disable JDK auto download
+      shell: bash
+      run: |
+        gradle_user_home="${GRADLE_USER_HOME:-$HOME/.gradle}"
+        mkdir -p "$gradle_user_home"
+        echo "org.gradle.java.installations.auto-download=false" >> "$gradle_user_home/gradle.properties"
+    - id: jvm-version
+      name: Read the Java version
+      shell: bash
+      run: echo "version=$(awk -F'"' '/^jvm-toolchain/ {print $2}' gradle/libs.versions.toml)" >> "$GITHUB_OUTPUT"
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: ${{ steps.jvm-version.outputs.version }}
+    - uses: gradle/actions/setup-gradle@v4
+      with:
+        cache-read-only: ${{ github.ref_name != github.event.repository.default_branch }}

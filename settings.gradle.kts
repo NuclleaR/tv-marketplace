@@ -22,10 +22,16 @@ dependencyResolutionManagement {
   repositories {
     google()
     mavenCentral()
+    // only our own libraries built from GitHub tags (tv-keyboard), nothing else resolves from JitPack
+    exclusiveContent {
+      forRepository { maven("https://jitpack.io") }
+      filter { includeGroup("com.github.NuclleaR") }
+    }
   }
 }
 
 include(":app")
+include(":baselineprofile")
 include(":navigation")
 include(":companion")
 include(":core:common")

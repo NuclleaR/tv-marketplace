@@ -1,0 +1,68 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      VERSION_NAME: 1.0.${{ github.run_number }}
+      VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/build_setup
+
+      - name: Setup signing
+        env:
+          SIGNING_KEYSTORE: ${{ secrets.SIGNING_KEYSTORE }}
+        run: ./scripts/ci_signing_setup.sh
+
+      - name: Build APKs and AAB
+        env:
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          ./gradlew :app:assembleRelease :app:bundleRelease :companion:assembleRelease \
+            -Papp.versionName="$VERSION_NAME" \
+            -Papp.versionCode="$VERSION_CODE" \
+            -Pandroid.injected.signing.store.file="$PWD/signing/signing.keystore" \
+            -Pandroid.injected.signing.store.password="$SIGNING_STORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$SIGNING_KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$SIGNING_KEY_PASSWORD"
+
+      - name: Prepare release assets
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk tv-marketplace.apk
+          cp companion/build/outputs/apk/release/companion-release.apk tv-marketplace-companion.apk
+          echo "{\"versionCode\": $VERSION_CODE, \"versionName\": \"$VERSION_NAME\"}" > version.json
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tv-marketplace-${{ env.VERSION_NAME }}
+          path: |
+            tv-marketplace.apk
+            tv-marketplace-companion.apk
+            app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v$VERSION_NAME" tv-marketplace.apk tv-marketplace-companion.apk version.json \
+            --repo "${{ github.repository }}" \
+            --target "${{ github.sha }}" \
+            --title "TV Marketplace $VERSION_NAME" \
+            --generate-notes \
+            --latest

@@ -62,8 +62,13 @@ step 3.
 
 ## 7. Performance
 
+Needs a device on API 33+ (or rooted): Baseline Profile collection refuses older user builds. On an emulator add
+`-Pandroid.testInstrumentationRunnerArguments.androidx.benchmark.suppressErrors=EMULATOR`; numbers from an emulator
+only show trends, measure the budgets on a real TV.
+
 ```sh
-./gradlew :benchmark:connectedBenchmarkAndroidTest
+ANDROID_SERIAL=… ./gradlew :app:generateBaselineProfile                    # writes app/src/release/generated/baselineProfiles/
+ANDROID_SERIAL=… ./gradlew :baselineprofile:connectedBenchmarkReleaseAndroidTest
 ```
 
 Expected: cold start p90 ≤ 2.0 s; opening Add app shows the QR ≤ 500 ms; jank < 5%.

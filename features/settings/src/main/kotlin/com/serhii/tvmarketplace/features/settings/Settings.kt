@@ -2,6 +2,8 @@ package com.serhii.tvmarketplace.features.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +45,7 @@ import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
+import androidx.tv.material3.Switch
 import androidx.tv.material3.Text
 import com.serhii.tvmarketplace.core.common.rootGraphAs
 import com.serhii.tvmarketplace.core.data.LinkShareSettings
@@ -51,7 +54,7 @@ import com.serhii.tvmarketplace.core.data.PairedPhonesRepository
 import com.serhii.tvmarketplace.core.linkserver.LinkServer
 import com.serhii.tvmarketplace.core.linkserver.ServerState
 import com.serhii.tvmarketplace.core.ui.AppTheme
-import com.serhii.tvmarketplace.core.ui.FocusCard
+import com.serhii.tvmarketplace.core.ui.ListRow
 import com.serhii.tvmarketplace.core.ui.PillButton
 import com.serhii.tvmarketplace.core.ui.PreviewTv
 import com.serhii.tvmarketplace.core.ui.ScreenTitle
@@ -187,48 +190,25 @@ private fun PhoneRow(
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  var focused by remember { mutableStateOf(false) }
-  FocusCard(
+  val interactionSource = remember { MutableInteractionSource() }
+  val focused by interactionSource.collectIsFocusedAsState()
+  val kind = if (phone.kind == PairedPhoneKind.BROWSER) StringsR.string.settings_kind_browser else StringsR.string.settings_kind_companion
+  ListRow(
     onClick = onClick,
-    focusedScale = 1.05F,
-    cornerRadius = 14.dp,
-    modifier = modifier.fillMaxWidth().height(64.dp).onFocusChanged { focused = it.hasFocus || it.isFocused },
-  ) {
-    Row(
-      modifier = Modifier.fillMaxSize().padding(start = 12.dp, end = 18.dp),
-      horizontalArrangement = Arrangement.spacedBy(14.dp),
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
+    modifier = modifier.fillMaxWidth(),
+    interactionSource = interactionSource,
+    leading = {
       Box(Modifier.size(40.dp).clip(CircleShape).background(AppTheme.surfaces.high), contentAlignment = Alignment.Center) {
         Icon(AppIcons.Phone, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(20.dp))
       }
-      Column(Modifier.weight(1F), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(
-          phone.name,
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.Medium,
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-          stringResource(
-            if (phone.kind ==
-              PairedPhoneKind.BROWSER
-            ) {
-              StringsR.string.settings_kind_browser
-            } else {
-              StringsR.string.settings_kind_companion
-            },
-          ),
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-      }
+    },
+    headline = { Text(phone.name, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+    supporting = { Text(stringResource(kind)) },
+    trailing = {
       Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(
           stringResource(StringsR.string.settings_last_used, relativeTime(phone.lastUsedAt)),
           style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         if (focused) {
           Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -237,8 +217,8 @@ private fun PhoneRow(
           }
         }
       }
-    }
-  }
+    },
+  )
 }
 
 @Composable
@@ -247,40 +227,15 @@ private fun BackgroundToggle(
   onToggle: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  val colors = MaterialTheme.colorScheme
   val state = stringResource(if (on) StringsR.string.settings_on else StringsR.string.settings_off)
-  FocusCard(
+  // the whole row is the control, so the remote has one thing to select: the switch only shows the state
+  ListRow(
     onClick = onToggle,
-    focusedScale = 1.03F,
-    cornerRadius = 14.dp,
     modifier = modifier.fillMaxWidth().semantics { stateDescription = state },
-  ) {
-    Row(
-      modifier = Modifier.padding(18.dp),
-      horizontalArrangement = Arrangement.spacedBy(16.dp),
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      Column(Modifier.weight(1F), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-        Text(
-          stringResource(StringsR.string.settings_background),
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.Medium,
-        )
-        Text(
-          stringResource(StringsR.string.settings_background_summary),
-          style = MaterialTheme.typography.bodySmall,
-          color = colors.onSurfaceVariant,
-        )
-      }
-      // a drawn switch: the whole card is the control, so the remote has one thing to select
-      Box(
-        Modifier.width(52.dp).height(30.dp).clip(CircleShape).background(if (on) colors.primary else AppTheme.surfaces.high).padding(4.dp),
-        contentAlignment = if (on) Alignment.CenterEnd else Alignment.CenterStart,
-      ) {
-        Box(Modifier.size(22.dp).clip(CircleShape).background(if (on) colors.onPrimary else colors.onSurfaceVariant))
-      }
-    }
-  }
+    headline = { Text(stringResource(StringsR.string.settings_background), fontWeight = FontWeight.Medium) },
+    supporting = { Text(stringResource(StringsR.string.settings_background_summary)) },
+    trailing = { Switch(checked = on, onCheckedChange = null) },
+  )
 }
 
 @Composable

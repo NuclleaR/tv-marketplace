@@ -48,7 +48,7 @@ import com.serhii.tvmarketplace.core.data.IncomingLinksRepository
 import com.serhii.tvmarketplace.core.data.TrackedAppsRepository
 import com.serhii.tvmarketplace.core.ui.AppIcon
 import com.serhii.tvmarketplace.core.ui.AppTheme
-import com.serhii.tvmarketplace.core.ui.FocusCard
+import com.serhii.tvmarketplace.core.ui.ListRow
 import com.serhii.tvmarketplace.core.ui.PillButton
 import com.serhii.tvmarketplace.core.ui.PreviewTv
 import com.serhii.tvmarketplace.core.ui.ScreenTitle
@@ -217,36 +217,14 @@ private fun InboxRow(
   onDismiss: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
-  // wide rows grow less than buttons, or they would cover their neighbours
-  FocusCard(
+  ListRow(
     onClick = onOpen,
     onLongClick = onDismiss,
-    focusedScale = 1.05F,
-    cornerRadius = 14.dp,
-    modifier = modifier.width(700.dp).height(76.dp),
-  ) {
-    Row(
-      modifier = Modifier.fillMaxSize().padding(start = 12.dp, end = 20.dp),
-      horizontalArrangement = Arrangement.spacedBy(16.dp),
-      verticalAlignment = Alignment.CenterVertically,
-    ) {
-      AppIcon(name = item.name, iconUrl = null, size = 52.dp)
-      Column(Modifier.weight(1F), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(
-          item.name,
-          style = MaterialTheme.typography.titleMedium,
-          fontWeight = FontWeight.Medium,
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-          item.ownerAndRepo,
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-        )
-      }
+    modifier = modifier.width(700.dp),
+    leading = { AppIcon(name = item.name, iconUrl = null, size = 52.dp) },
+    headline = { Text(item.name, fontWeight = FontWeight.Medium, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+    supporting = { Text(item.ownerAndRepo, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+    trailing = {
       Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (item.alreadyTracked) {
           Row(
@@ -275,8 +253,8 @@ private fun InboxRow(
           color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
       }
-    }
-  }
+    },
+  )
 }
 
 @ContributesTo(AppScope::class)

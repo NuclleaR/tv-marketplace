@@ -46,9 +46,9 @@ import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import com.serhii.tvmarketplace.core.ui.AppIcon
 import com.serhii.tvmarketplace.core.ui.AppTheme
-import com.serhii.tvmarketplace.core.ui.FocusCard
 import com.serhii.tvmarketplace.core.ui.PillButton
 import com.serhii.tvmarketplace.core.ui.PreviewTv
+import com.serhii.tvmarketplace.core.ui.TileCard
 import com.serhii.tvmarketplace.core.ui.TvScreen
 import com.serhii.tvmarketplace.core.ui.icons.AppIcons
 import com.serhii.tvmarketplace.navigation.Destination
@@ -167,9 +167,9 @@ private fun CountBadge(count: Int) {
 @Composable
 private fun AppTile(app: HomeViewState.App) {
   // tapping an app does nothing yet: details and installs are the next feature
-  FocusCard(onClick = {}, modifier = Modifier.fillMaxWidth().height(100.dp)) {
+  TileCard(onClick = {}, modifier = Modifier.fillMaxWidth()) {
     Row(
-      modifier = Modifier.fillMaxSize().padding(horizontal = 18.dp),
+      modifier = Modifier.fillMaxWidth().height(100.dp).padding(horizontal = 18.dp),
       horizontalArrangement = Arrangement.spacedBy(16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {

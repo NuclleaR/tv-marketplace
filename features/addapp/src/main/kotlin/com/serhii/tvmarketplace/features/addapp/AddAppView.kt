@@ -41,13 +41,14 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.serhii.tvmarketplace.core.ui.AppIcon
 import com.serhii.tvmarketplace.core.ui.AppTheme
+import com.serhii.tvmarketplace.core.ui.KeyCap
 import com.serhii.tvmarketplace.core.ui.ListRow
 import com.serhii.tvmarketplace.core.ui.PillButton
 import com.serhii.tvmarketplace.core.ui.PreviewTv
 import com.serhii.tvmarketplace.core.ui.ScreenTitle
 import com.serhii.tvmarketplace.core.ui.TvScreen
 import com.serhii.tvmarketplace.core.ui.icons.AppIcons
-import io.github.nucllear.tvkeyboard.KeyboardDefaults
+import io.github.nucllear.tvkeyboard.KeyType
 import io.github.nucllear.tvkeyboard.KeyboardLayout
 import io.github.nucllear.tvkeyboard.TvKeyboard
 import com.serhii.tvmarketplace.core.strings.R as StringsR
@@ -86,6 +87,7 @@ internal fun AddAppView(
     ) {
       Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
         QueryField(viewState.query, viewState.searching)
+        val erase = stringResource(StringsR.string.add_app_backspace)
         TvKeyboard(
           onCharacter = onCharacter,
           onBackspace = onBackspace,
@@ -93,15 +95,18 @@ internal fun AddAppView(
           keysPerRow = KEYS_PER_ROW,
           space = false,
           focusFirstKey = opened == null,
-          style = KeyboardDefaults.style(
-            keySize = keySize,
-            gap = keyGap,
-            outerPadding = keyboardOuterPadding,
-            containerColor = AppTheme.surfaces.mid,
-          ),
-          backspaceDescription = stringResource(StringsR.string.add_app_backspace),
+          keySize = keySize,
+          gap = keyGap,
+          outerPadding = keyboardOuterPadding,
           modifier = Modifier.focusRequester(keyboardFocus),
-        )
+        ) { key, onClick, keyModifier ->
+          KeyCap(
+            label = key.label,
+            onClick = onClick,
+            modifier = keyModifier,
+            contentDescription = if (key.type == KeyType.Backspace) erase else null,
+          )
+        }
       }
       Box(Modifier.weight(1f).fillMaxSize()) {
         when (results) {

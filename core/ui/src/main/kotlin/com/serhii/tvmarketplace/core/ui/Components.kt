@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -18,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,6 +29,7 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
+import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.ListItem
 import androidx.tv.material3.ListItemDefaults
@@ -83,6 +87,45 @@ fun PillButton(
       Text(text, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
       trailingIcon?.let { Icon(it, contentDescription = null, modifier = Modifier.size(18.dp)) }
       trailing?.invoke()
+    }
+  }
+}
+
+// a key of the on-screen keyboard: Material's TV surface, quiet at rest and primary when focused like a button
+@Composable
+fun KeyCap(
+  label: String,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  contentDescription: String? = null,
+) {
+  val colors = MaterialTheme.colorScheme
+  val shape = RoundedCornerShape(8.dp)
+  Surface(
+    onClick = onClick,
+    modifier = modifier.then(
+      if (contentDescription !=
+        null
+      ) {
+        Modifier.semantics { this.contentDescription = contentDescription }
+      } else {
+        Modifier
+      },
+    ),
+    shape = ClickableSurfaceDefaults.shape(shape),
+    scale = ClickableSurfaceDefaults.scale(focusedScale = FOCUSED_SCALE),
+    border = ClickableSurfaceDefaults.border(focusedBorder = ring(shape), pressedBorder = ring(shape)),
+    colors = ClickableSurfaceDefaults.colors(
+      containerColor = AppTheme.surfaces.mid,
+      contentColor = colors.onSurface,
+      focusedContainerColor = colors.primary,
+      focusedContentColor = colors.onPrimary,
+      pressedContainerColor = colors.primary,
+      pressedContentColor = colors.onPrimary,
+    ),
+  ) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+      Text(label, style = MaterialTheme.typography.titleMedium)
     }
   }
 }

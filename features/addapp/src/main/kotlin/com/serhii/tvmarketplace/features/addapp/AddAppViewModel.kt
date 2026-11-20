@@ -5,6 +5,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import com.serhii.tvmarketplace.core.data.GitHubRepository
 import com.serhii.tvmarketplace.core.linkserver.IncomingLinkEvents
 import com.serhii.tvmarketplace.core.linkserver.LinkServer
 import com.serhii.tvmarketplace.core.linkserver.ServerState
@@ -24,13 +27,20 @@ class AddAppViewModel(
   private val server: LinkServer,
   private val events: IncomingLinkEvents,
   private val navigator: Navigator,
+  gitHub: GitHubRepository,
 ) {
+
+  private val search = GitHubSearch(gitHub)
+
+  private var results by mutableStateOf<SearchResults>(SearchResults.None)
+  private var searching by mutableStateOf(false)
 
   // the TV app may sit in the background on this screen: no valid code and no jumps to a preview meanwhile
   private var visible = true
 
+  // the query lives with the screen (rememberSaveable), which outlives this view model when a preview is opened on top
   @Composable
-  fun viewState(): AddAppViewState {
+  fun viewState(query: String): AddAppViewState {
     // the code on screen is only valid while the screen is
     DisposableEffect(Unit) {
       val _ = sessions.start()
@@ -48,20 +58,31 @@ class AddAppViewModel(
         if (visible) navigator.goTo(Destination.Preview(linkId = link.linkId))
       }
     }
+    LaunchedEffect(query) {
+      val parsed = SearchQuery.parse(query)
+      searching = parsed != SearchQuery.Empty
+      results = search.search(parsed)
+      searching = false
+    }
     val session by sessions.current.collectAsState()
     val serverState by server.state.collectAsState()
-    return when (val state = serverState) {
+    val phone = when (val state = serverState) {
       is ServerState.Running -> session?.let {
-        AddAppViewState.Ready(
+        PhoneState.Ready(
           qrContent = "${state.baseUrl}/s/${it.token}",
           address = state.baseUrl,
           pin = it.pin.chunked(3).joinToString(" "),
         )
-      } ?: AddAppViewState.Loading
-      ServerState.NoNetwork -> AddAppViewState.NoNetwork
-      ServerState.Failed -> AddAppViewState.Failed
-      ServerState.Stopped -> AddAppViewState.Loading
+      } ?: PhoneState.Loading
+      ServerState.NoNetwork -> PhoneState.NoNetwork
+      ServerState.Failed -> PhoneState.Failed
+      ServerState.Stopped -> PhoneState.Loading
     }
+    return AddAppViewState(query = query, phone = phone, results = results, searching = searching)
+  }
+
+  fun onRepoClick(repo: SearchResults.Repo) {
+    navigator.goTo(Destination.Preview(owner = repo.owner, repo = repo.name))
   }
 
   fun onHidden() {
@@ -73,10 +94,6 @@ class AddAppViewModel(
     if (visible) return
     visible = true
     val _ = sessions.start()
-  }
-
-  fun onTypeIt() {
-    navigator.goTo(Destination.TypeIt)
   }
 
   // the server restarts by itself when the network comes back; retry re-opens the screen's session

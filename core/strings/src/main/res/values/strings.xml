@@ -19,8 +19,6 @@
   <string name="add_app_manual">Or open %1$s on your phone and enter the code</string>
   <!-- Add app: hint below the QR code -->
   <string name="add_app_same_wifi">Your phone and TV must be on the same Wi-Fi.</string>
-  <!-- Add app: button to type the link with the remote instead -->
-  <string name="add_app_type_it">Type it instead</string>
   <!-- Add app: shown when the TV has no Wi-Fi or Ethernet connection -->
   <string name="add_app_no_network">Connect the TV to Wi-Fi or Ethernet</string>
   <!-- Under the no-network title on Add app -->
@@ -31,6 +29,26 @@
   <string name="add_app_failed">Couldn\'t start receiving links.</string>
   <!-- Add app: content description of the QR code image -->
   <string name="add_app_qr_description">QR code to send a link from your phone</string>
+  <!-- Add app: placeholder of the search field, which the on-screen keyboard fills -->
+  <string name="add_app_search_hint">Search GitHub: owner or owner/repo</string>
+  <!-- Add app: in the search field while results are loading -->
+  <string name="add_app_searching">Searching…</string>
+  <!-- Add app: heading of the phone panel shown while nothing is typed -->
+  <string name="add_app_phone_title">Or send a link from your phone</string>
+  <!-- Add app: shown after one letter of an owner's name -->
+  <string name="add_app_keep_typing">Type at least two letters of the owner\'s name</string>
+  <!-- Add app: search found nothing -->
+  <string name="add_app_nothing_found">Nothing found</string>
+  <!-- Add app: the typed owner doesn't exist. %1$s is the typed name -->
+  <string name="add_app_owner_not_found">There is no %1$s on GitHub</string>
+  <!-- Add app: under an organization's name in the results -->
+  <string name="add_app_organization">Organization</string>
+  <!-- Add app: heading above an owner's repositories. %1$s is the owner's name -->
+  <string name="add_app_owner_repos">Repositories of %1$s</string>
+  <!-- Add app: under the heading when the owner has more repositories than are listed -->
+  <string name="add_app_more_repos">Recently updated first. Type a name to find the others.</string>
+  <!-- Add app: content description of the keyboard key that erases a character -->
+  <string name="add_app_backspace">Erase</string>
 
   <!-- Preview: badge when the app is already in the list -->
   <string name="preview_already_added">Already added</string>
@@ -60,18 +78,6 @@
   <string name="preview_link_missing">This link is no longer available.</string>
   <!-- Preview: who sent the link. %1$s is a device label like "Safari on iPhone" -->
   <string name="preview_sent_from">Sent from %1$s</string>
-
-  <!-- Type it: placeholder of the text field -->
-  <string name="type_it_title">Type a GitHub link</string>
-  <!-- Label above the repository field -->
-  <string name="type_it_label">Repository</string>
-  <!-- Under the field, before anything is wrong -->
-  <string name="type_it_example">For example ImranR98/Obtainium or https://github.com/ImranR98/Obtainium</string>
-  <string name="type_it_hint">owner/repo or GitHub link</string>
-  <!-- Type it: error under the text field -->
-  <string name="type_it_invalid">Enter owner/repo or a GitHub link.</string>
-  <!-- Type it: button that opens the preview -->
-  <string name="type_it_continue">Continue</string>
 
   <!-- Home: button that opens received links. %1$d is how many are waiting -->
   <string name="home_inbox">Inbox</string>

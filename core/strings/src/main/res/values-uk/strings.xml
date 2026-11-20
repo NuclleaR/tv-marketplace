@@ -11,12 +11,21 @@
   <string name="add_app_step_send">Вставте посилання на GitHub і натисніть «Надіслати»</string>
   <string name="add_app_manual">Або відкрийте %1$s на телефоні й введіть код</string>
   <string name="add_app_same_wifi">Телефон і телевізор мають бути в одній Wi-Fi мережі.</string>
-  <string name="add_app_type_it">Ввести вручну</string>
   <string name="add_app_no_network">Підключіть телевізор до Wi-Fi або Ethernet</string>
   <string name="add_app_no_network_body">Телефон надсилає посилання на телевізор через домашню мережу. Щойно телевізор підключиться, тут зʼявиться код.</string>
   <string name="add_app_network_settings">Налаштування мережі</string>
   <string name="add_app_failed">Не вдалося почати отримувати посилання.</string>
   <string name="add_app_qr_description">QR-код для надсилання посилання з телефона</string>
+  <string name="add_app_search_hint">Пошук на GitHub: автор або автор/репозиторій</string>
+  <string name="add_app_searching">Шукаю…</string>
+  <string name="add_app_phone_title">Або надішліть посилання з телефона</string>
+  <string name="add_app_keep_typing">Введіть щонайменше дві літери імені автора</string>
+  <string name="add_app_nothing_found">Нічого не знайдено</string>
+  <string name="add_app_owner_not_found">На GitHub немає %1$s</string>
+  <string name="add_app_organization">Організація</string>
+  <string name="add_app_owner_repos">Репозиторії %1$s</string>
+  <string name="add_app_more_repos">Спершу нещодавно оновлені. Введіть назву, щоб знайти інші.</string>
+  <string name="add_app_backspace">Стерти</string>
 
   <string name="preview_already_added">Уже додано</string>
   <string name="preview_no_releases">Релізів не знайдено</string>
@@ -32,13 +41,6 @@
   <string name="preview_network_error">Не вдалося зʼєднатися з GitHub. Перевірте інтернет на телевізорі.</string>
   <string name="preview_link_missing">Це посилання більше недоступне.</string>
   <string name="preview_sent_from">Надіслано з %1$s</string>
-
-  <string name="type_it_title">Введіть посилання на GitHub</string>
-  <string name="type_it_label">Репозиторій</string>
-  <string name="type_it_example">Наприклад, ImranR98/Obtainium або https://github.com/ImranR98/Obtainium</string>
-  <string name="type_it_hint">власник/репозиторій або посилання на GitHub</string>
-  <string name="type_it_invalid">Введіть власник/репозиторій або посилання на GitHub.</string>
-  <string name="type_it_continue">Далі</string>
 
   <string name="home_inbox">Вхідні</string>
   <string name="home_settings">Налаштування</string>

@@ -12,6 +12,8 @@ dependencies {
   implementation(projects.core.ui)
   implementation(projects.navigation)
   implementation(libs.zxing.core)
+  implementation(libs.tracing)
+  implementation(libs.tv.keyboard)
   implementation(libs.coil.compose)
   implementation(libs.coil.network.okhttp)
   testImplementation(projects.core.testing)

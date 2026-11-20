@@ -16,11 +16,7 @@ sealed interface Destination : NavKey {
   @SerialName("AddApp")
   data object AddApp : Destination
 
-  @Serializable
-  @SerialName("TypeIt")
-  data object TypeIt : Destination
-
-  // from a received link (linkId) or from typed input (owner + repo)
+  // from a received link (linkId) or from the search (owner + repo)
   @Serializable
   @SerialName("Preview")
   data class Preview(

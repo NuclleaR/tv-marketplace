@@ -1,7 +1,11 @@
 package com.serhii.tvmarketplace.core.data.impl
 
 import com.serhii.tvmarketplace.core.common.TimeSource
+import com.serhii.tvmarketplace.core.data.GitHubOwner
+import com.serhii.tvmarketplace.core.data.GitHubRepoSummary
 import com.serhii.tvmarketplace.core.data.GitHubRepository
+import com.serhii.tvmarketplace.core.data.LookupResult
+import com.serhii.tvmarketplace.core.data.OwnerRepos
 import com.serhii.tvmarketplace.core.data.PreviewResult
 import com.serhii.tvmarketplace.core.domain.AppPreview
 import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
@@ -48,6 +52,10 @@ fun gitHubHttpClient(engine: HttpClientEngine): HttpClient = HttpClient(engine) 
 
 private val CACHE_TTL: Duration = Duration.ofMinutes(10)
 
+// three pages of 100 cover nearly every owner; for the rest, searchOwnerRepos finds what's typed
+private const val OWNER_REPO_PAGES = 3
+private const val PAGE_SIZE = 100
+
 @SingleIn(AppScope::class)
 @ContributesBinding(AppScope::class)
 @Inject
@@ -57,6 +65,85 @@ class KtorGitHubRepository(
 ) : GitHubRepository {
 
   private val cache = ConcurrentHashMap<String, Pair<Instant, AppPreview>>()
+
+  // searches cost GitHub's tight search limit (10 a minute without a token): typing back and forth reuses answers
+  private val lookups = ConcurrentHashMap<String, Pair<Instant, LookupResult.Found<*>>>()
+
+  override suspend fun searchOwners(query: String): LookupResult<List<GitHubOwner>> = cached("owners:${query.lowercase()}") {
+    val response = client.get("search/users") {
+      parameter("q", "$query in:login")
+      parameter("per_page", 30)
+    }
+    response.lookupFailure()?.let { return@cached it }
+    LookupResult.Found(
+      response.body<SearchDto<OwnerDto>>().items.map {
+        GitHubOwner(login = it.login, avatarUrl = it.avatarUrl, organization = it.type == "Organization")
+      },
+    )
+  }
+
+  override suspend fun ownerRepos(owner: String): LookupResult<OwnerRepos> = cached("repos:${owner.lowercase()}") {
+    val repos = mutableListOf<GitHubRepoSummary>()
+    var complete = false
+    for (page in 1..OWNER_REPO_PAGES) {
+      val response = client.get("users/$owner/repos") {
+        parameter("type", "owner")
+        parameter("sort", "pushed")
+        parameter("per_page", PAGE_SIZE)
+        parameter("page", page)
+      }
+      response.lookupFailure()?.let { return@cached it }
+      val items = response.body<List<RepoSummaryDto>>()
+      repos += items.map { it.toSummary() }
+      if (items.size < PAGE_SIZE) {
+        complete = true
+        break
+      }
+    }
+    LookupResult.Found(OwnerRepos(owner = repos.firstOrNull()?.owner ?: owner, repos = repos, complete = complete))
+  }
+
+  override suspend fun searchOwnerRepos(
+    owner: String,
+    name: String,
+  ): LookupResult<List<GitHubRepoSummary>> = cached("search:${owner.lowercase()}/${name.lowercase()}") {
+    val response = client.get("search/repositories") {
+      parameter("q", "$name in:name user:$owner")
+      parameter("per_page", 30)
+    }
+    response.lookupFailure()?.let { return@cached it }
+    LookupResult.Found(response.body<SearchDto<RepoSummaryDto>>().items.map { it.toSummary() })
+  }
+
+  private suspend fun <T : Any> cached(
+    key: String,
+    load: suspend () -> LookupResult<T>,
+  ): LookupResult<T> {
+    val now = timeSource.now()
+    lookups[key]?.let { (cachedAt, found) ->
+      @Suppress("UNCHECKED_CAST")
+      if (Duration.between(cachedAt, now) < CACHE_TTL) return found as LookupResult<T>
+    }
+    val result = try {
+      load()
+    } catch (e: CancellationException) {
+      throw e
+    } catch (_: IOException) {
+      LookupResult.NetworkError
+    } catch (_: SerializationException) {
+      LookupResult.NetworkError
+    }
+    if (result is LookupResult.Found) lookups[key] = now to result
+    return result
+  }
+
+  // search answers 422 for a query it can't run, such as an owner that doesn't exist: nothing found, not an error
+  private fun HttpResponse.lookupFailure(): LookupResult<Nothing>? = when {
+    status == HttpStatusCode.NotFound || status == HttpStatusCode.UnprocessableEntity -> LookupResult.NotFound
+    headers["x-ratelimit-remaining"] == "0" || status == HttpStatusCode.TooManyRequests -> LookupResult.RateLimited
+    status.value !in 200..299 -> LookupResult.NetworkError
+    else -> null
+  }
 
   override suspend fun preview(ref: GitHubRepoRef): PreviewResult {
     val now = timeSource.now()
@@ -156,7 +243,30 @@ private data class RepoDto(
 private data class OwnerDto(
   val login: String,
   @SerialName("avatar_url") val avatarUrl: String? = null,
+  val type: String? = null,
 )
+
+@Serializable
+private data class SearchDto<T>(val items: List<T> = emptyList())
+
+@Serializable
+private data class RepoSummaryDto(
+  val name: String,
+  val owner: OwnerDto,
+  val description: String? = null,
+  val fork: Boolean = false,
+  val archived: Boolean = false,
+  @SerialName("stargazers_count") val stars: Int = 0,
+) {
+  fun toSummary() = GitHubRepoSummary(
+    owner = owner.login,
+    name = name,
+    description = description,
+    fork = fork,
+    archived = archived,
+    stars = stars,
+  )
+}
 
 @Serializable
 private data class ReleaseDto(

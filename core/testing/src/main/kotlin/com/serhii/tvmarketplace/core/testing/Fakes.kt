@@ -1,11 +1,15 @@
 package com.serhii.tvmarketplace.core.testing
 
 import com.serhii.tvmarketplace.core.common.TimeSource
+import com.serhii.tvmarketplace.core.data.GitHubOwner
+import com.serhii.tvmarketplace.core.data.GitHubRepoSummary
 import com.serhii.tvmarketplace.core.data.GitHubRepository
 import com.serhii.tvmarketplace.core.data.IncomingLink
 import com.serhii.tvmarketplace.core.data.IncomingLinkStatus
 import com.serhii.tvmarketplace.core.data.IncomingLinksRepository
 import com.serhii.tvmarketplace.core.data.LinkShareSettings
+import com.serhii.tvmarketplace.core.data.LookupResult
+import com.serhii.tvmarketplace.core.data.OwnerRepos
 import com.serhii.tvmarketplace.core.data.PairedPhone
 import com.serhii.tvmarketplace.core.data.PairedPhoneKind
 import com.serhii.tvmarketplace.core.data.PairedPhonesRepository
@@ -101,7 +105,36 @@ class FakeGitHub(var result: (GitHubRepoRef) -> PreviewResult = { ref -> Preview
     requests += ref
     return result(ref)
   }
+
+  var owners: (String) -> LookupResult<List<GitHubOwner>> = { LookupResult.Found(emptyList()) }
+  var repos: (String) -> LookupResult<OwnerRepos> = { owner -> LookupResult.Found(OwnerRepos(owner, emptyList(), complete = true)) }
+  var searchedRepos: (String, String) -> LookupResult<List<GitHubRepoSummary>> = { _, _ -> LookupResult.Found(emptyList()) }
+  val lookups = mutableListOf<String>()
+
+  override suspend fun searchOwners(query: String): LookupResult<List<GitHubOwner>> {
+    lookups += "owners:$query"
+    return owners(query)
+  }
+
+  override suspend fun ownerRepos(owner: String): LookupResult<OwnerRepos> {
+    lookups += "repos:$owner"
+    return repos(owner)
+  }
+
+  override suspend fun searchOwnerRepos(
+    owner: String,
+    name: String,
+  ): LookupResult<List<GitHubRepoSummary>> {
+    lookups += "search:$owner/$name"
+    return searchedRepos(owner, name)
+  }
 }
+
+fun repoSummary(
+  owner: String,
+  name: String,
+  description: String? = null,
+) = GitHubRepoSummary(owner = owner, name = name, description = description, fork = false, archived = false, stars = 0)
 
 fun previewOf(
   ref: GitHubRepoRef,

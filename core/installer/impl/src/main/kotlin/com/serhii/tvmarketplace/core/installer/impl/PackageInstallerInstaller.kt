@@ -46,15 +46,20 @@ internal fun installOutcome(
   status: Int,
   message: String?,
   apk: ApkInfo,
-): InstallOutcome = when (status) {
-  PackageInstaller.STATUS_SUCCESS -> InstallOutcome.Installed(apk.packageName, apk.versionCode)
-  PackageInstaller.STATUS_FAILURE_ABORTED -> InstallOutcome.Failed(FailureReason.CancelledByUser)
-  // also "the installed app has another signature"
-  PackageInstaller.STATUS_FAILURE_CONFLICT -> InstallOutcome.Failed(FailureReason.SignatureConflict)
-  PackageInstaller.STATUS_FAILURE_INCOMPATIBLE -> InstallOutcome.Failed(FailureReason.Incompatible)
-  PackageInstaller.STATUS_FAILURE_STORAGE -> InstallOutcome.Failed(FailureReason.NoSpace(0))
-  PackageInstaller.STATUS_FAILURE_INVALID -> InstallOutcome.Failed(FailureReason.Corrupt)
-  else -> InstallOutcome.Failed(FailureReason.System(message))
+): InstallOutcome = when {
+  // reported as invalid or incompatible depending on the Android version; only the message tells it apart
+  status != PackageInstaller.STATUS_SUCCESS && message?.contains("INSTALL_FAILED_VERSION_DOWNGRADE") == true ->
+    InstallOutcome.Failed(FailureReason.NewerInstalled)
+  else -> when (status) {
+    PackageInstaller.STATUS_SUCCESS -> InstallOutcome.Installed(apk.packageName, apk.versionCode)
+    PackageInstaller.STATUS_FAILURE_ABORTED -> InstallOutcome.Failed(FailureReason.CancelledByUser)
+    // also "the installed app has another signature"
+    PackageInstaller.STATUS_FAILURE_CONFLICT -> InstallOutcome.Failed(FailureReason.SignatureConflict)
+    PackageInstaller.STATUS_FAILURE_INCOMPATIBLE -> InstallOutcome.Failed(FailureReason.Incompatible)
+    PackageInstaller.STATUS_FAILURE_STORAGE -> InstallOutcome.Failed(FailureReason.NoSpace(0))
+    PackageInstaller.STATUS_FAILURE_INVALID -> InstallOutcome.Failed(FailureReason.Corrupt)
+    else -> InstallOutcome.Failed(FailureReason.System(message))
+  }
 }
 
 internal fun uninstallOutcome(

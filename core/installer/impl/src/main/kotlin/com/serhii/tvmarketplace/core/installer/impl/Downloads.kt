@@ -276,6 +276,7 @@ internal fun FailureReason.code(): Int = when (this) {
   FailureReason.Incompatible -> 7
   FailureReason.CancelledByUser -> 8
   is FailureReason.System -> 9
+  FailureReason.NewerInstalled -> 10
 }
 
 @ContributesIntoSet(AppScope::class)

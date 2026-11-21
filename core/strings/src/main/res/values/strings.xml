@@ -163,6 +163,7 @@
   <string name="failure_corrupt">The download is damaged or incomplete. Try again.</string>
   <string name="failure_different_app">This package is a different app than the one installed, so it wasn\'t installed.</string>
   <string name="failure_signature">This update is signed differently from the installed app, so it can\'t replace it. Uninstalling the app first would remove its data.</string>
+  <string name="failure_newer_installed">A newer version of this app is already installed on this TV, maybe in another user profile. Android won\'t replace it with an older one: uninstall it there first.</string>
   <string name="failure_incompatible">This package doesn\'t run on this TV.</string>
   <string name="failure_cancelled">Installation cancelled.</string>
   <string name="failure_system">The system couldn\'t install the app.</string>

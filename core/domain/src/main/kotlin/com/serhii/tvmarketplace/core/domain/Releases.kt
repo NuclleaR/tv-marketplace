@@ -67,6 +67,9 @@ sealed interface FailureReason {
   // the installed app is signed with another key, so the system won't update it in place
   data object SignatureConflict : FailureReason
 
+  // the same app is installed at a higher version code, maybe only in another user profile, and the system won't go back
+  data object NewerInstalled : FailureReason
+
   data object Incompatible : FailureReason
 
   data object CancelledByUser : FailureReason

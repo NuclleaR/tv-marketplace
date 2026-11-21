@@ -16,10 +16,12 @@
   <string name="add_app_network_settings">Налаштування мережі</string>
   <string name="add_app_failed">Не вдалося почати отримувати посилання.</string>
   <string name="add_app_qr_description">QR-код для надсилання посилання з телефона</string>
-  <string name="add_app_search_hint">Пошук на GitHub: автор або автор/репозиторій</string>
+  <string name="add_app_search_hint">Пошук на GitHub: назва апки або автор/</string>
   <string name="add_app_searching">Шукаю…</string>
   <string name="add_app_phone_title">Або надішліть посилання з телефона</string>
-  <string name="add_app_keep_typing">Введіть щонайменше дві літери імені автора</string>
+  <string name="add_app_keep_typing">Введіть щонайменше дві літери</string>
+  <string name="add_app_section_repos">Репозиторії</string>
+  <string name="add_app_section_owners">Автори</string>
   <string name="add_app_nothing_found">Нічого не знайдено</string>
   <string name="add_app_owner_not_found">На GitHub немає %1$s</string>
   <string name="add_app_organization">Організація</string>

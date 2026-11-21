@@ -272,7 +272,7 @@ private fun AppTile(
       horizontalArrangement = Arrangement.spacedBy(16.dp),
       verticalAlignment = Alignment.CenterVertically,
     ) {
-      AppIcon(name = app.name, iconUrl = app.iconUrl, size = 64.dp)
+      AppIcon(name = app.name, iconUrl = app.iconUrl, size = 64.dp, packageName = app.packageName)
       Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
           app.name,

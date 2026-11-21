@@ -82,6 +82,15 @@ class KtorGitHubRepository(
     )
   }
 
+  override suspend fun searchRepos(name: String): LookupResult<List<GitHubRepoSummary>> = cached("named:${name.lowercase()}") {
+    val response = client.get("search/repositories") {
+      parameter("q", "$name in:name")
+      parameter("per_page", 20)
+    }
+    response.lookupFailure()?.let { return@cached it }
+    LookupResult.Found(response.body<SearchDto<RepoSummaryDto>>().items.map { it.toSummary() })
+  }
+
   override suspend fun ownerRepos(owner: String): LookupResult<OwnerRepos> = cached("repos:${owner.lowercase()}") {
     val repos = mutableListOf<GitHubRepoSummary>()
     var complete = false
@@ -164,7 +173,7 @@ class KtorGitHubRepository(
         description = repo.description,
         latestVersion = latest,
         avatarUrl = repo.owner.avatarUrl,
-        iconUrl = fastlaneIcon(canonical, repo.defaultBranch),
+        iconUrl = fastlaneIcon(canonical, repo.defaultBranch) ?: launcherIcon(canonical, repo.defaultBranch),
       )
       cache[ref.key] = now to preview
       PreviewResult.Found(preview)
@@ -201,6 +210,27 @@ class KtorGitHubRepository(
     } catch (_: IOException) {
       null
     }
+  }
+
+  // otherwise the launcher icon from the sources, which nearly every Android app has as a bitmap somewhere; one
+  // request for the whole file list
+  private suspend fun launcherIcon(
+    ref: GitHubRepoRef,
+    branch: String,
+  ): String? = try {
+    val response = client.get("repos/${ref.owner}/${ref.repo}/git/trees/$branch") { parameter("recursive", 1) }
+    if (response.status != HttpStatusCode.OK) {
+      null
+    } else {
+      launcherIconPath(response.body<TreeDto>().tree.filter { it.type == "blob" }.map { it.path })
+        ?.let { "https://raw.githubusercontent.com/${ref.owner}/${ref.repo}/$branch/$it" }
+    }
+  } catch (e: CancellationException) {
+    throw e
+  } catch (_: IOException) {
+    null
+  } catch (_: SerializationException) {
+    null
   }
 
   private fun HttpResponse.isImage() = contentType()?.match(ContentType.Image.Any) == true
@@ -272,4 +302,13 @@ private data class RepoSummaryDto(
 private data class ReleaseDto(
   @SerialName("tag_name") val tagName: String,
   val draft: Boolean = false,
+)
+
+@Serializable
+private data class TreeDto(val tree: List<TreeEntryDto> = emptyList())
+
+@Serializable
+private data class TreeEntryDto(
+  val path: String,
+  val type: String,
 )

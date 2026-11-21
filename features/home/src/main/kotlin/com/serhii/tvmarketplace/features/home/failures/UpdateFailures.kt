@@ -49,6 +49,7 @@ data class UpdateFailure(
   val name: String,
   val iconUrl: String?,
   val reason: FailureReason,
+  val packageName: String? = null,
 )
 
 @Inject
@@ -63,7 +64,7 @@ class UpdateFailuresViewModel(
     val failures by remember {
       combine(queue.batch, trackedApps.trackedApps()) { batch, apps ->
         batch?.failed.orEmpty().mapNotNull { (id, reason) ->
-          apps.firstOrNull { it.id == id }?.let { UpdateFailure(id, it.displayName, it.iconUrl, reason) }
+          apps.firstOrNull { it.id == id }?.let { UpdateFailure(id, it.displayName, it.iconUrl, reason, it.packageName) }
         }
       }
     }.collectAsState(initial = emptyList())
@@ -93,7 +94,7 @@ internal fun UpdateFailuresView(
         ListRow(
           onClick = { onOpen(failure.appId) },
           modifier = (if (failure == failures.first()) Modifier.focusRequester(first) else Modifier).fillMaxWidth(),
-          leading = { AppIcon(failure.name, failure.iconUrl, size = 40.dp) },
+          leading = { AppIcon(failure.name, failure.iconUrl, size = 40.dp, packageName = failure.packageName) },
           headline = { Text(failure.name, fontWeight = FontWeight.Medium) },
           supporting = { Text(failureText(failure.reason)) },
         )

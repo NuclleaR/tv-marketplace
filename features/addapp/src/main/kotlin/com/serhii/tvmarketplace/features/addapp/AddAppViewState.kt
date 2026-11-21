@@ -25,7 +25,12 @@ sealed interface SearchResults {
   // nothing typed: the phone panel takes the place of results
   data object None : SearchResults
   data object KeepTyping : SearchResults
-  data class Owners(val owners: List<Owner>) : SearchResults
+
+  // repositories named like the text, from anyone, then owners whose login matches it
+  data class Matches(
+    val repos: List<Repo>,
+    val owners: List<Owner>,
+  ) : SearchResults
   data class Repos(
     val owner: String,
     val repos: List<Repo>,

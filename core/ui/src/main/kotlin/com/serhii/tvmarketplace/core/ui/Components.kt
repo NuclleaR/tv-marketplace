@@ -1,6 +1,8 @@
 package com.serhii.tvmarketplace.core.ui
 
+import android.content.pm.PackageManager
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,16 +16,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.drawable.toBitmap
 import androidx.tv.material3.Border
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
@@ -196,17 +203,31 @@ fun TileCard(
   )
 }
 
-// the app's own icon when it has one, otherwise its first letter on a tonal tile: never a person's avatar,
-// which reads as a portrait rather than an app
+// the app's own icon: the installed app's from the system, else the repository's, otherwise its first letter on a
+// tonal tile: never a person's avatar, which reads as a portrait rather than an app
 @Composable
 fun AppIcon(
   name: String,
   iconUrl: String?,
   size: Dp,
   modifier: Modifier = Modifier,
+  packageName: String? = null,
 ) {
   val shape = RoundedCornerShape(size / 4)
-  if (iconUrl != null) {
+  val context = LocalContext.current
+  val px = with(LocalDensity.current) { size.roundToPx() }
+  val installed = remember(packageName, px) {
+    packageName?.let {
+      try {
+        context.packageManager.getApplicationIcon(it).toBitmap(px, px).asImageBitmap()
+      } catch (_: PackageManager.NameNotFoundException) {
+        null
+      }
+    }
+  }
+  if (installed != null) {
+    Image(bitmap = installed, contentDescription = null, modifier = modifier.size(size).clip(shape))
+  } else if (iconUrl != null) {
     AsyncImage(model = iconUrl, contentDescription = null, modifier = modifier.size(size).clip(shape))
   } else {
     LetterTile(name, size, shape, modifier)

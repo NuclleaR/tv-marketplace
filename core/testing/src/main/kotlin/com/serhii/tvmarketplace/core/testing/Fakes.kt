@@ -152,6 +152,13 @@ class FakeGitHub(var result: (GitHubRepoRef) -> PreviewResult = { ref -> Preview
     return owners(query)
   }
 
+  var namedRepos: (String) -> LookupResult<List<GitHubRepoSummary>> = { LookupResult.Found(emptyList()) }
+
+  override suspend fun searchRepos(name: String): LookupResult<List<GitHubRepoSummary>> {
+    lookups += "named:$name"
+    return namedRepos(name)
+  }
+
   override suspend fun ownerRepos(owner: String): LookupResult<OwnerRepos> {
     lookups += "repos:$owner"
     return repos(owner)

@@ -1,0 +1,419 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 6,
+    "identityHash": "2ea169b0c71240e4c5f4b1d240dcb703",
+    "entities": [
+      {
+        "tableName": "tracked_app",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `owner` TEXT NOT NULL, `repo` TEXT NOT NULL, `repoKey` TEXT NOT NULL, `sourceUrl` TEXT NOT NULL, `displayName` TEXT NOT NULL, `latestVersion` TEXT, `avatarUrl` TEXT, `addedAt` INTEGER NOT NULL, `iconUrl` TEXT DEFAULT NULL, `iconChecked` INTEGER NOT NULL DEFAULT 0, `sourceKind` TEXT NOT NULL DEFAULT 'github', `packageName` TEXT DEFAULT NULL, `includePrereleases` INTEGER NOT NULL DEFAULT 0, `packagePattern` TEXT DEFAULT NULL, `sourceGone` INTEGER NOT NULL DEFAULT 0, `description` TEXT DEFAULT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "owner",
+            "columnName": "owner",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "repo",
+            "columnName": "repo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "repoKey",
+            "columnName": "repoKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceUrl",
+            "columnName": "sourceUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latestVersion",
+            "columnName": "latestVersion",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "avatarUrl",
+            "columnName": "avatarUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "addedAt",
+            "columnName": "addedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "iconUrl",
+            "columnName": "iconUrl",
+            "affinity": "TEXT",
+            "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "iconChecked",
+            "columnName": "iconChecked",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "sourceKind",
+            "columnName": "sourceKind",
+            "affinity": "TEXT",
+            "notNull": true,
+            "defaultValue": "'github'"
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "includePrereleases",
+            "columnName": "includePrereleases",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "packagePattern",
+            "columnName": "packagePattern",
+            "affinity": "TEXT",
+            "defaultValue": "NULL"
+          },
+          {
+            "fieldPath": "sourceGone",
+            "columnName": "sourceGone",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "defaultValue": "NULL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_tracked_app_repoKey",
+            "unique": true,
+            "columnNames": [
+              "repoKey"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_tracked_app_repoKey` ON `${TABLE_NAME}` (`repoKey`)"
+          }
+        ]
+      },
+      {
+        "tableName": "incoming_link",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `rawText` TEXT NOT NULL, `owner` TEXT NOT NULL, `repo` TEXT NOT NULL, `repoKey` TEXT NOT NULL, `normalizedUrl` TEXT NOT NULL, `senderPhoneId` TEXT, `senderLabel` TEXT NOT NULL, `receivedAt` INTEGER NOT NULL, `status` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rawText",
+            "columnName": "rawText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "owner",
+            "columnName": "owner",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "repo",
+            "columnName": "repo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "repoKey",
+            "columnName": "repoKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "normalizedUrl",
+            "columnName": "normalizedUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "senderPhoneId",
+            "columnName": "senderPhoneId",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "senderLabel",
+            "columnName": "senderLabel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "receivedAt",
+            "columnName": "receivedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_incoming_link_repoKey_status",
+            "unique": false,
+            "columnNames": [
+              "repoKey",
+              "status"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_incoming_link_repoKey_status` ON `${TABLE_NAME}` (`repoKey`, `status`)"
+          }
+        ]
+      },
+      {
+        "tableName": "paired_phone",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `displayName` TEXT NOT NULL, `kind` TEXT NOT NULL, `tokenHash` TEXT NOT NULL, `pairedAt` INTEGER NOT NULL, `lastUsedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tokenHash",
+            "columnName": "tokenHash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pairedAt",
+            "columnName": "pairedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUsedAt",
+            "columnName": "lastUsedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_paired_phone_tokenHash",
+            "unique": true,
+            "columnNames": [
+              "tokenHash"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_paired_phone_tokenHash` ON `${TABLE_NAME}` (`tokenHash`)"
+          }
+        ]
+      },
+      {
+        "tableName": "app_release",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`appId` INTEGER NOT NULL, `tag` TEXT NOT NULL, `name` TEXT, `publishedAt` INTEGER NOT NULL, `prerelease` INTEGER NOT NULL, `notesHtml` TEXT, `packagesJson` TEXT NOT NULL, `etag` TEXT, `checkedAt` INTEGER NOT NULL, PRIMARY KEY(`appId`), FOREIGN KEY(`appId`) REFERENCES `tracked_app`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "appId",
+            "columnName": "appId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tag",
+            "columnName": "tag",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "publishedAt",
+            "columnName": "publishedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prerelease",
+            "columnName": "prerelease",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notesHtml",
+            "columnName": "notesHtml",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "packagesJson",
+            "columnName": "packagesJson",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "etag",
+            "columnName": "etag",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "checkedAt",
+            "columnName": "checkedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "appId"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "tracked_app",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "appId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "install_record",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`appId` INTEGER NOT NULL, `packageName` TEXT NOT NULL, `tag` TEXT NOT NULL, `versionCode` INTEGER NOT NULL, `packageFileName` TEXT NOT NULL, `installedAt` INTEGER NOT NULL, PRIMARY KEY(`appId`), FOREIGN KEY(`appId`) REFERENCES `tracked_app`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "appId",
+            "columnName": "appId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageName",
+            "columnName": "packageName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tag",
+            "columnName": "tag",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "versionCode",
+            "columnName": "versionCode",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "packageFileName",
+            "columnName": "packageFileName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "installedAt",
+            "columnName": "installedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "appId"
+          ]
+        },
+        "foreignKeys": [
+          {
+            "table": "tracked_app",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "appId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '2ea169b0c71240e4c5f4b1d240dcb703')"
+    ]
+  }
+}

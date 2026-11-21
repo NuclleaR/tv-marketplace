@@ -46,11 +46,14 @@ class KtorGitHubRepositoryTest {
     request: HttpRequestData,
     releases: String = "[]",
     rawFiles: Map<String, Pair<String, ContentType>> = emptyMap(),
+    tree: List<String> = emptyList(),
   ) = when {
     request.url.host == "raw.githubusercontent.com" -> rawFiles[request.url.encodedPath.removePrefix("/ImranR98/Obtainium/main/")]
       ?.let { (body, type) -> respond(body, HttpStatusCode.OK, headersOf(HttpHeaders.ContentType, type.toString())) }
       ?: respondError(HttpStatusCode.NotFound)
     request.url.encodedPath.endsWith("/releases") -> json(releases)
+    request.url.encodedPath.contains("/git/trees/") ->
+      json(tree.joinToString(prefix = """{"tree":[""", postfix = "]}") { """{"path":"$it","type":"blob"}""" })
     else -> json(fixture("repo.json"))
   }
 
@@ -75,6 +78,7 @@ class KtorGitHubRepositoryTest {
         "/repos/ImranR98/Obtainium",
         "/repos/ImranR98/Obtainium/releases",
         "/ImranR98/Obtainium/main/fastlane/metadata/android/en-US/images/icon.png",
+        "/repos/ImranR98/Obtainium/git/trees/main",
       ),
       requests,
     )
@@ -109,6 +113,17 @@ class KtorGitHubRepositoryTest {
   }
 
   @Test
+  fun `without a fastlane icon the launcher icon from the sources is used`() = runTest {
+    val repository = repository { request ->
+      gitHub(request, tree = listOf("app/src/main/res/mipmap-hdpi/ic_launcher.png", "app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp"))
+    }
+    assertEquals(
+      "https://raw.githubusercontent.com/ImranR98/Obtainium/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp",
+      (repository.preview(ref) as PreviewResult.Found).preview.iconUrl,
+    )
+  }
+
+  @Test
   fun `a repository without releases has no latest version`() = runTest {
     val repository = repository { request -> gitHub(request) }
     assertEquals(null, (repository.preview(ref) as PreviewResult.Found).preview.latestVersion)
@@ -136,9 +151,9 @@ class KtorGitHubRepositoryTest {
     val _ = repository.preview(ref)
     now += Duration.ofMinutes(9)
     val _ = repository.preview(ref)
-    assertEquals(3, requests.size)
+    assertEquals(4, requests.size)
     now += Duration.ofMinutes(2)
     val _ = repository.preview(ref)
-    assertEquals(6, requests.size)
+    assertEquals(8, requests.size)
   }
 }

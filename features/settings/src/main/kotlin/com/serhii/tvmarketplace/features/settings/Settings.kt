@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -81,7 +83,14 @@ data class SettingsViewState(
   val confirmRemoval: Phone?,
   // "ip:port" while the link server runs, for the tip about reserving the address
   val tvAddress: String? = null,
+  // "versionName (versionCode)" of this app, for telling builds apart in bug reports
+  val appVersion: AppVersion? = null,
 ) {
+  data class AppVersion(
+    val name: String,
+    val code: Long,
+  )
+
   data class Phone(
     val id: String,
     val name: String,
@@ -176,6 +185,15 @@ internal fun SettingsView(
         BackgroundToggle(viewState.receiveInBackground, onToggleBackground, Modifier.focusRequester(toggleFocus))
         Tip(viewState.tvAddress)
       }
+    }
+    viewState.appVersion?.let {
+      Spacer(Modifier.weight(1F))
+      Text(
+        stringResource(StringsR.string.settings_version, it.name, it.code),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.align(Alignment.End),
+      )
     }
   }
   LaunchedEffect(viewState.phones.isEmpty()) {
@@ -313,8 +331,13 @@ object SettingsProvider {
 @Composable
 fun SettingsScreen() {
   val viewModel = retain { rootGraphAs<SettingsGraph>().settingsViewModel }
+  val context = LocalContext.current
+  val version = remember {
+    val info = context.packageManager.getPackageInfo(context.packageName, 0)
+    SettingsViewState.AppVersion(info.versionName.orEmpty(), info.longVersionCode)
+  }
   SettingsView(
-    viewState = viewModel.viewState(),
+    viewState = viewModel.viewState().copy(appVersion = version),
     onPhoneClick = viewModel::onPhoneClick,
     onConfirmRemoval = viewModel::onConfirmRemoval,
     onCancelRemoval = viewModel::onCancelRemoval,
@@ -335,6 +358,7 @@ private fun SettingsViewPreview() {
         receiveInBackground = true,
         confirmRemoval = null,
         tvAddress = "192.168.1.42:8765",
+        appVersion = SettingsViewState.AppVersion("0.1.3", 6),
       ),
       onPhoneClick = {},
       onConfirmRemoval = {},

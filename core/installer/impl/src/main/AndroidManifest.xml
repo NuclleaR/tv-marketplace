@@ -2,9 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <application>
-    <!-- the system reports install and uninstall results here -->
+    <!-- the system reports uninstall results here -->
     <receiver
       android:name=".InstallResultReceiver"
       android:exported="false" />
+
+    <!-- hands the system installer the APK to install, readable only through the granted link -->
+    <provider
+      android:name="androidx.core.content.FileProvider"
+      android:authorities="${applicationId}.apk-files"
+      android:exported="false"
+      android:grantUriPermissions="true">
+      <meta-data
+        android:name="android.support.FILE_PROVIDER_PATHS"
+        android:resource="@xml/apk_files" />
+    </provider>
   </application>
 </manifest>

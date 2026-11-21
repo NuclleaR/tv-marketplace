@@ -55,8 +55,9 @@ TV Marketplace is a multi-module Android app in Kotlin with Jetpack Compose, Met
   `VersionComparator`, and `ApkManifestReader`, which reads an APK's package name from three ranged requests.
 - `:core:installer:api` is the contract features use (`InstallQueue`, `Downloads`, `InstalledApps`, `Installer`,
   `appState()` that derives an app's status the same way for Home and App details); `:core:installer:impl` downloads
-  in a WorkManager worker, verifies, and installs through `PackageInstaller` sessions. The system's prompts can only be
-  shown by a visible activity, so `MainActivity` shows whatever `Installer.pendingConfirmation` holds.
+  in a WorkManager worker, verifies, and installs through the system installer's own screens (`ACTION_INSTALL_PACKAGE`
+  with a `FileProvider` link, for its result); uninstalls go through `PackageInstaller`. Those screens can only be
+  started by a visible activity, so `MainActivity` starts whatever `Installer.pendingConfirmation` holds.
 - Workers get their dependencies from the graph: contribute a `WorkerCreator` with
   `@ContributesIntoSet(AppScope::class)`, and `App` builds WorkManager's factory from all of them.
 - Installing for real needs a device or emulator: `adb install` an older release first to see an update, and allow

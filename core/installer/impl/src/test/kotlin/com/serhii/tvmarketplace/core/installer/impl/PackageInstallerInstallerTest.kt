@@ -126,6 +126,15 @@ class PackageInstallerInstallerTest {
       InstallOutcome.Failed(FailureReason.System("blocked")),
       installOutcome(PackageInstaller.STATUS_FAILURE_BLOCKED, "blocked", apk),
     )
+    val downgrade = "INSTALL_FAILED_VERSION_DOWNGRADE: Downgrade detected: Update version code 2 is older than current 20"
+    assertEquals(
+      InstallOutcome.Failed(FailureReason.NewerInstalled),
+      installOutcome(PackageInstaller.STATUS_FAILURE_INVALID, downgrade, apk),
+    )
+    assertEquals(
+      InstallOutcome.Failed(FailureReason.NewerInstalled),
+      installOutcome(PackageInstaller.STATUS_FAILURE_INCOMPATIBLE, downgrade, apk),
+    )
     assertEquals(UninstallOutcome.Uninstalled, uninstallOutcome(PackageInstaller.STATUS_SUCCESS, null))
     assertEquals(UninstallOutcome.CancelledByUser, uninstallOutcome(PackageInstaller.STATUS_FAILURE_ABORTED, null))
     assertEquals(UninstallOutcome.Failed("nope"), uninstallOutcome(PackageInstaller.STATUS_FAILURE, "nope"))

@@ -93,6 +93,7 @@
   <string name="failure_corrupt">Завантаження пошкоджене або неповне. Спробуйте ще раз.</string>
   <string name="failure_different_app">Цей пакет — інша апка, ніж встановлена, тому його не встановлено.</string>
   <string name="failure_signature">Це оновлення підписане інакше, ніж встановлена апка, тому не може її замінити. Якщо спершу видалити апку, її дані буде втрачено.</string>
+  <string name="failure_newer_installed">На цьому ТВ уже встановлена новіша версія цієї апки, можливо, в іншому профілі. Android не замінить її старішою: спершу видаліть її там.</string>
   <string name="failure_incompatible">Цей пакет не працює на цьому ТВ.</string>
   <string name="failure_cancelled">Встановлення скасовано.</string>
   <string name="failure_system">Система не змогла встановити апку.</string>

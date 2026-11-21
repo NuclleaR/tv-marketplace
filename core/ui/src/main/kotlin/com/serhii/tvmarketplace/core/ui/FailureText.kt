@@ -24,6 +24,7 @@ fun failureText(reason: FailureReason): String {
     FailureReason.Corrupt -> stringResource(StringsR.string.failure_corrupt)
     FailureReason.DifferentApp -> stringResource(StringsR.string.failure_different_app)
     FailureReason.SignatureConflict -> stringResource(StringsR.string.failure_signature)
+    FailureReason.NewerInstalled -> stringResource(StringsR.string.failure_newer_installed)
     FailureReason.Incompatible -> stringResource(StringsR.string.failure_incompatible)
     FailureReason.CancelledByUser -> stringResource(StringsR.string.failure_cancelled)
     is FailureReason.System -> stringResource(StringsR.string.failure_system)

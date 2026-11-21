@@ -58,7 +58,7 @@ class PackageInstallerInstallerTest {
   // installs run on real threads here, as the APK is copied on one: wait for the install to reach the system installer.
   private fun awaitPrompt(request: Int) {
     repeat(1000) {
-      if (installer.isPrompting(request)) return
+      if (installer.isPrompting(request) && installer.pendingConfirmation.value?.id == request) return
       Thread.sleep(5)
     }
     error("request $request never reached the system installer")

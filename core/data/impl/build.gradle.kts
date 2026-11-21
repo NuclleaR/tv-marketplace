@@ -29,4 +29,5 @@ dependencies {
   testImplementation(libs.ktor.client.mock)
   testImplementation(projects.core.testing)
   testImplementation(libs.room.testing)
+  testImplementation(libs.work.testing)
 }

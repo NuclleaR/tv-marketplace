@@ -1,0 +1,1048 @@
+[
+ {
+  "repo": "yuliskov/SmartTube",
+  "tag": "32.80s",
+  "assets": [
+   {
+    "name": "SmartTube_stable_32.80_arm64-v8a.apk",
+    "size": 26782777,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "SmartTube_stable_32.80_armeabi-v7a.apk",
+    "size": 25569109,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "SmartTube_stable_32.80_universal.apk",
+    "size": 35445185,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "SmartTube_stable_32.80_x86.apk",
+    "size": 28447492,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "SmartTube_stable_32.80_arm64-v8a.apk"
+   ],
+   "armv7": [
+    "SmartTube_stable_32.80_armeabi-v7a.apk"
+   ],
+   "x86": [
+    "SmartTube_stable_32.80_x86.apk",
+    "SmartTube_stable_32.80_universal.apk"
+   ]
+  }
+ },
+ {
+  "repo": "TeamNewPipe/NewPipe",
+  "tag": "v0.29.3",
+  "assets": [
+   {
+    "name": "NewPipe_v0.29.3.apk",
+    "size": 16980865,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "NewPipe_v0.29.3_apksigner31.apk",
+    "size": 16980865,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "NewPipe_v0.29.3.apk",
+    "NewPipe_v0.29.3_apksigner31.apk"
+   ],
+   "armv7": [
+    "NewPipe_v0.29.3.apk",
+    "NewPipe_v0.29.3_apksigner31.apk"
+   ],
+   "x86": [
+    "NewPipe_v0.29.3.apk",
+    "NewPipe_v0.29.3_apksigner31.apk"
+   ]
+  }
+ },
+ {
+  "repo": "jellyfin/jellyfin-androidtv",
+  "tag": "v0.20.0",
+  "assets": [
+   {
+    "name": "jellyfin-androidtv-v0.20.0-debug.apk",
+    "size": 51445670,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "jellyfin-androidtv-v0.20.0-release.aab",
+    "size": 22712810,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "jellyfin-androidtv-v0.20.0-release.apk",
+    "size": 29945596,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "version.txt",
+    "size": 15,
+    "content_type": "text/plain; charset=utf-8"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "jellyfin-androidtv-v0.20.0-release.apk"
+   ],
+   "armv7": [
+    "jellyfin-androidtv-v0.20.0-release.apk"
+   ],
+   "x86": [
+    "jellyfin-androidtv-v0.20.0-release.apk"
+   ]
+  }
+ },
+ {
+  "repo": "ImranR98/Obtainium",
+  "tag": "v1.7.4",
+  "assets": [
+   {
+    "name": "app-arm64-v8a-fdroid-release.apk",
+    "size": 34609838,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-arm64-v8a-fdroid-release.apk.idsig",
+    "size": 280090,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-arm64-v8a-fdroid-release.apk.sha256",
+    "size": 65,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-arm64-v8a-fdroid-release.apk.sha256.sig",
+    "size": 119,
+    "content_type": "application/pgp-signature"
+   },
+   {
+    "name": "app-arm64-v8a-release.apk",
+    "size": 34609838,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-arm64-v8a-release.apk.idsig",
+    "size": 280090,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-arm64-v8a-release.apk.sha256",
+    "size": 65,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-arm64-v8a-release.apk.sha256.sig",
+    "size": 119,
+    "content_type": "application/pgp-signature"
+   },
+   {
+    "name": "app-armeabi-v7a-fdroid-release.apk",
+    "size": 30554808,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-armeabi-v7a-fdroid-release.apk.idsig",
+    "size": 247322,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-armeabi-v7a-fdroid-release.apk.sha256",
+    "size": 65,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-armeabi-v7a-fdroid-release.apk.sha256.sig",
+    "size": 119,
+    "content_type": "application/pgp-signature"
+   },
+   {
+    "name": "app-armeabi-v7a-release.apk",
+    "size": 30571192,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-armeabi-v7a-release.apk.idsig",
+    "size": 247322,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-armeabi-v7a-release.apk.sha256",
+    "size": 65,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-armeabi-v7a-release.apk.sha256.sig",
+    "size": 119,
+    "content_type": "application/pgp-signature"
+   },
+   {
+    "name": "app-fdroid-release.apk",
+    "size": 94166453,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-fdroid-release.apk.idsig",
+    "size": 751130,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-fdroid-release.apk.sha256",
+    "size": 65,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-fdroid-release.apk.sha256.sig",
+    "size": 119,
+    "content_type": "application/pgp-signature"
+   },
+   {
+    "name": "app-release.apk",
+    "size": 94182837,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-release.apk.idsig",
+    "size": 751130,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-release.apk.sha256",
+    "size": 65,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-release.apk.sha256.sig",
+    "size": 119,
+    "content_type": "application/pgp-signature"
+   },
+   {
+    "name": "app-x86_64-fdroid-release.apk",
+    "size": 36936351,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-x86_64-fdroid-release.apk.idsig",
+    "size": 296474,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-x86_64-fdroid-release.apk.sha256",
+    "size": 65,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-x86_64-fdroid-release.apk.sha256.sig",
+    "size": 119,
+    "content_type": "application/pgp-signature"
+   },
+   {
+    "name": "app-x86_64-release.apk",
+    "size": 36936351,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-x86_64-release.apk.idsig",
+    "size": 296474,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-x86_64-release.apk.sha256",
+    "size": 65,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "app-x86_64-release.apk.sha256.sig",
+    "size": 119,
+    "content_type": "application/pgp-signature"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "app-arm64-v8a-release.apk",
+    "app-arm64-v8a-fdroid-release.apk"
+   ],
+   "armv7": [
+    "app-armeabi-v7a-release.apk",
+    "app-armeabi-v7a-fdroid-release.apk"
+   ],
+   "x86": [
+    "app-x86_64-release.apk",
+    "app-x86_64-fdroid-release.apk"
+   ]
+  }
+ },
+ {
+  "repo": "moonlight-stream/moonlight-android",
+  "tag": "v12.2",
+  "assets": [
+   {
+    "name": "app-nonRoot-release.apk",
+    "size": 11137885,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-root-release.apk",
+    "size": 11157359,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "app-nonRoot-release.apk"
+   ],
+   "armv7": [
+    "app-nonRoot-release.apk"
+   ],
+   "x86": [
+    "app-nonRoot-release.apk"
+   ]
+  }
+ },
+ {
+  "repo": "termux/termux-app",
+  "tag": "v0.118.3",
+  "assets": [
+   {
+    "name": "termux-app_v0.118.3+github-debug_arm64-v8a.apk",
+    "size": 35106607,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "termux-app_v0.118.3+github-debug_armeabi-v7a.apk",
+    "size": 32250911,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "termux-app_v0.118.3+github-debug_sha256sums",
+    "size": 558,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "termux-app_v0.118.3+github-debug_universal.apk",
+    "size": 117775723,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "termux-app_v0.118.3+github-debug_x86.apk",
+    "size": 34345191,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "termux-app_v0.118.3+github-debug_x86_64.apk",
+    "size": 35189933,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "termux-app_v0.118.3+github-debug_arm64-v8a.apk"
+   ],
+   "armv7": [
+    "termux-app_v0.118.3+github-debug_armeabi-v7a.apk"
+   ],
+   "x86": [
+    "termux-app_v0.118.3+github-debug_x86_64.apk"
+   ]
+  }
+ },
+ {
+  "repo": "mihonapp/mihon",
+  "tag": "v0.21.3",
+  "assets": [
+   {
+    "name": "mihon-arm64-v8a-v0.21.3.apk",
+    "size": 27755052,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "mihon-armeabi-v7a-v0.21.3.apk",
+    "size": 24591920,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "mihon-v0.21.3-foss.apk",
+    "size": 67296902,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "mihon-v0.21.3.apk",
+    "size": 68195386,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "mihon-x86-v0.21.3.apk",
+    "size": 29224400,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "mihon-x86_64-v0.21.3.apk",
+    "size": 30264556,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "mihon-arm64-v8a-v0.21.3.apk"
+   ],
+   "armv7": [
+    "mihon-armeabi-v7a-v0.21.3.apk"
+   ],
+   "x86": [
+    "mihon-x86_64-v0.21.3.apk"
+   ]
+  }
+ },
+ {
+  "repo": "libre-tube/LibreTube",
+  "tag": "v32.1",
+  "assets": [
+   {
+    "name": "app-release.apk",
+    "size": 9253519,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "app-release.apk"
+   ],
+   "armv7": [
+    "app-release.apk"
+   ],
+   "x86": [
+    "app-release.apk"
+   ]
+  }
+ },
+ {
+  "repo": "JunkFood02/Seal",
+  "tag": "v1.13.1",
+  "assets": [
+   {
+    "name": "Seal-1.13.1-arm64-v8a-release.apk",
+    "size": 43069442,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "Seal-1.13.1-armeabi-v7a-release.apk",
+    "size": 40611853,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "Seal-1.13.1-universal-release.apk",
+    "size": 144991600,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "Seal-1.13.1-x86-release.apk",
+    "size": 44364789,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "Seal-1.13.1-x86_64-release.apk",
+    "size": 45218592,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "Seal-1.13.1-arm64-v8a-release.apk"
+   ],
+   "armv7": [
+    "Seal-1.13.1-armeabi-v7a-release.apk"
+   ],
+   "x86": [
+    "Seal-1.13.1-x86_64-release.apk"
+   ]
+  }
+ },
+ {
+  "repo": "deniscerri/ytdlnis",
+  "tag": "v1.9.1.1",
+  "assets": [
+   {
+    "name": "output-metadata.json",
+    "size": 2607,
+    "content_type": "application/json"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-arm64-v8a-release-github.apk",
+    "size": 69952324,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-armeabi-v7a-release-github.apk",
+    "size": 58998606,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-foss-arm64-v8a-release.apk",
+    "size": 69952104,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-foss-armeabi-v7a-release.apk",
+    "size": 58998390,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-foss-x86-release.apk",
+    "size": 64007234,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-foss-x86_64-release.apk",
+    "size": 64793215,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-izzy-arm64-v8a-release.apk",
+    "size": 50184658,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-universal-release-github.apk",
+    "size": 218230559,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-x86-release-github.apk",
+    "size": 64007454,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "YTDLnis-1.9.1.1-x86_64-release-github.apk",
+    "size": 64793431,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "YTDLnis-1.9.1.1-arm64-v8a-release-github.apk",
+    "YTDLnis-1.9.1.1-foss-arm64-v8a-release.apk",
+    "YTDLnis-1.9.1.1-izzy-arm64-v8a-release.apk"
+   ],
+   "armv7": [
+    "YTDLnis-1.9.1.1-armeabi-v7a-release-github.apk",
+    "YTDLnis-1.9.1.1-foss-armeabi-v7a-release.apk"
+   ],
+   "x86": [
+    "YTDLnis-1.9.1.1-x86_64-release-github.apk",
+    "YTDLnis-1.9.1.1-foss-x86_64-release.apk"
+   ]
+  }
+ },
+ {
+  "repo": "AdAway/AdAway",
+  "tag": "v6.1.4",
+  "assets": [
+   {
+    "name": "AdAway-6.1.4-20241027.apk",
+    "size": 13955875,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "AdAway-6.1.4-20241027.apk"
+   ],
+   "armv7": [
+    "AdAway-6.1.4-20241027.apk"
+   ],
+   "x86": [
+    "AdAway-6.1.4-20241027.apk"
+   ]
+  }
+ },
+ {
+  "repo": "nextcloud/android",
+  "tag": "35.1.0",
+  "assets": [
+   {
+    "name": "nextcloud-files-generic-350010090.apk",
+    "size": 108451756,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "nextcloud-files-gplay-350010090.apk",
+    "size": 154374529,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "nextcloud-files-huawei-350010090.apk",
+    "size": 151768872,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "nextcloud-files-generic-350010090.apk"
+   ],
+   "armv7": [
+    "nextcloud-files-generic-350010090.apk"
+   ],
+   "x86": [
+    "nextcloud-files-generic-350010090.apk"
+   ]
+  }
+ },
+ {
+  "repo": "mpv-android/mpv-android",
+  "tag": "2026-09-17",
+  "assets": [
+   {
+    "name": "app-allstorage-universal-debug.apk",
+    "size": 149051649,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-allstorage-universal-release.apk",
+    "size": 135938493,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-default-arm64-v8a-release.apk",
+    "size": 34290346,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-default-armeabi-v7a-release.apk",
+    "size": 30935742,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-default-universal-debug.apk",
+    "size": 142298670,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-default-universal-release.apk",
+    "size": 135357179,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-default-x86-release.apk",
+    "size": 36735598,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-default-x86_64-release.apk",
+    "size": 40376972,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "debug-objs.zip",
+    "size": 147957981,
+    "content_type": "application/zip"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "app-default-arm64-v8a-release.apk"
+   ],
+   "armv7": [
+    "app-default-armeabi-v7a-release.apk"
+   ],
+   "x86": [
+    "app-default-x86_64-release.apk"
+   ]
+  }
+ },
+ {
+  "repo": "moneytoo/Player",
+  "tag": "v0.217",
+  "assets": [
+   {
+    "name": "Just.Player.v0.217-legacy.apk",
+    "size": 51778858,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "Just.Player.v0.217.apk",
+    "size": 51778873,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "Just.Player.v0.217.apk",
+    "Just.Player.v0.217-legacy.apk"
+   ],
+   "armv7": [
+    "Just.Player.v0.217.apk",
+    "Just.Player.v0.217-legacy.apk"
+   ],
+   "x86": [
+    "Just.Player.v0.217.apk",
+    "Just.Player.v0.217-legacy.apk"
+   ]
+  }
+ },
+ {
+  "repo": "jarnedemeulemeester/findroid",
+  "tag": "v1.2.0",
+  "assets": [
+   {
+    "name": "findroid-v1.2.0-libre-arm64-v8a.apk",
+    "size": 38492766,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "findroid-v1.2.0-libre-armeabi-v7a.apk",
+    "size": 36075230,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "findroid-v1.2.0-libre-x86.apk",
+    "size": 41376710,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "findroid-v1.2.0-libre-x86_64.apk",
+    "size": 43516178,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "findroid-v1.2.0-libre-arm64-v8a.apk"
+   ],
+   "armv7": [
+    "findroid-v1.2.0-libre-armeabi-v7a.apk"
+   ],
+   "x86": [
+    "findroid-v1.2.0-libre-x86_64.apk"
+   ]
+  }
+ },
+ {
+  "repo": "polymorphicshade/Tubular",
+  "tag": "v0.28.4",
+  "assets": [
+   {
+    "name": "tubular_v0.28.4.apk",
+    "size": 10989082,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "tubular_v0.28.4.apk"
+   ],
+   "armv7": [
+    "tubular_v0.28.4.apk"
+   ],
+   "x86": [
+    "tubular_v0.28.4.apk"
+   ]
+  }
+ },
+ {
+  "repo": "RikkaApps/Shizuku",
+  "tag": "v13.6.0",
+  "assets": [
+   {
+    "name": "shizuku-v13.6.0.r1086.2650830c-release.apk",
+    "size": 2571773,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "shizuku-v13.6.0.r1086.2650830c-release.apk"
+   ],
+   "armv7": [
+    "shizuku-v13.6.0.r1086.2650830c-release.apk"
+   ],
+   "x86": [
+    "shizuku-v13.6.0.r1086.2650830c-release.apk"
+   ]
+  }
+ },
+ {
+  "repo": "localsend/localsend",
+  "tag": "v1.18.2",
+  "assets": [
+   {
+    "name": "LocalSend-1.18.2-android-arm32v7.apk",
+    "size": 39333444,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "LocalSend-1.18.2-android-arm64v8.apk",
+    "size": 46558706,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "LocalSend-1.18.2-android-google-play.apk",
+    "size": 128293112,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "LocalSend-1.18.2-android-x64.apk",
+    "size": 48939435,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "LocalSend-1.18.2-linux-arm-64.deb",
+    "size": 24662482,
+    "content_type": "application/vnd.debian.binary-package"
+   },
+   {
+    "name": "LocalSend-1.18.2-linux-arm-64.tar.gz",
+    "size": 32354331,
+    "content_type": "application/gzip"
+   },
+   {
+    "name": "LocalSend-1.18.2-linux-x86-64.AppImage",
+    "size": 66471104,
+    "content_type": "application/x-appimage"
+   },
+   {
+    "name": "LocalSend-1.18.2-linux-x86-64.deb",
+    "size": 24665458,
+    "content_type": "application/vnd.debian.binary-package"
+   },
+   {
+    "name": "LocalSend-1.18.2-linux-x86-64.tar.gz",
+    "size": 32011656,
+    "content_type": "application/gzip"
+   },
+   {
+    "name": "LocalSend-1.18.2-windows-arm-64.zip",
+    "size": 24414965,
+    "content_type": "application/x-zip-compressed"
+   },
+   {
+    "name": "LocalSend-1.18.2-windows-x86-64-unsigned.exe",
+    "size": 18960550,
+    "content_type": "application/octet-stream"
+   },
+   {
+    "name": "LocalSend-1.18.2-windows-x86-64.exe",
+    "size": 19901144,
+    "content_type": "application/x-msdownload"
+   },
+   {
+    "name": "LocalSend-1.18.2-windows-x86-64.zip",
+    "size": 26113764,
+    "content_type": "application/x-zip-compressed"
+   },
+   {
+    "name": "LocalSend-1.18.2.dmg",
+    "size": 52700247,
+    "content_type": "application/x-diskcopy"
+   },
+   {
+    "name": "LocalSend-CLI-1.18.2-linux-arm-64.tar.gz",
+    "size": 4639269,
+    "content_type": "application/gzip"
+   },
+   {
+    "name": "LocalSend-CLI-1.18.2-linux-x86-64.tar.gz",
+    "size": 4762297,
+    "content_type": "application/gzip"
+   },
+   {
+    "name": "LocalSend-CLI-1.18.2-macos-arm-64.tar.gz",
+    "size": 4105018,
+    "content_type": "application/x-gzip"
+   },
+   {
+    "name": "LocalSend-CLI-1.18.2-macos-x86-64.tar.gz",
+    "size": 4397211,
+    "content_type": "application/x-gzip"
+   },
+   {
+    "name": "LocalSend-CLI-1.18.2-windows-arm-64.exe",
+    "size": 8355328,
+    "content_type": "application/x-msdownload"
+   },
+   {
+    "name": "LocalSend-CLI-1.18.2-windows-x86-64.exe",
+    "size": 9725952,
+    "content_type": "application/x-msdownload"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "LocalSend-1.18.2-android-arm64v8.apk"
+   ],
+   "armv7": [
+    "LocalSend-1.18.2-android-arm32v7.apk"
+   ],
+   "x86": [
+    "LocalSend-1.18.2-android-x64.apk"
+   ]
+  }
+ },
+ {
+  "repo": "kiwix/kiwix-android",
+  "tag": "4.0.1",
+  "assets": [
+   {
+    "name": "app-arm64-v8a-standalone.apk",
+    "size": 33112485,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-armeabi-v7a-standalone.apk",
+    "size": 29729735,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-universal-standalone.apk",
+    "size": 98735146,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-x86-standalone.apk",
+    "size": 34322843,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "app-x86_64-standalone.apk",
+    "size": 34164180,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "app-arm64-v8a-standalone.apk"
+   ],
+   "armv7": [
+    "app-armeabi-v7a-standalone.apk"
+   ],
+   "x86": [
+    "app-x86_64-standalone.apk"
+   ]
+  }
+ },
+ {
+  "repo": "aniyomiorg/aniyomi",
+  "tag": "v0.18.2.1",
+  "assets": [
+   {
+    "name": "aniyomi-arm64-v8a-v0.18.2.1.apk",
+    "size": 83370215,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "aniyomi-armeabi-v7a-v0.18.2.1.apk",
+    "size": 76108053,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "aniyomi-v0.18.2.1.apk",
+    "size": 282875017,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "aniyomi-x86-v0.18.2.1.apk",
+    "size": 86851677,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "aniyomi-x86_64-v0.18.2.1.apk",
+    "size": 93659298,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "aniyomi-arm64-v8a-v0.18.2.1.apk"
+   ],
+   "armv7": [
+    "aniyomi-armeabi-v7a-v0.18.2.1.apk"
+   ],
+   "x86": [
+    "aniyomi-x86_64-v0.18.2.1.apk"
+   ]
+  }
+ },
+ {
+  "repo": "anilbeesetti/nextplayer",
+  "tag": "v0.21.0",
+  "assets": [
+   {
+    "name": "nextplayer-v0.21.0-arm64-v8a.apk",
+    "size": 20639817,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "nextplayer-v0.21.0-armeabi-v7a.apk",
+    "size": 19393157,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "nextplayer-v0.21.0-universal.apk",
+    "size": 64869074,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "nextplayer-v0.21.0-x86.apk",
+    "size": 22144629,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "nextplayer-v0.21.0-x86_64.apk",
+    "size": 24791555,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "nextplayer-v0.21.0-arm64-v8a.apk"
+   ],
+   "armv7": [
+    "nextplayer-v0.21.0-armeabi-v7a.apk"
+   ],
+   "x86": [
+    "nextplayer-v0.21.0-x86_64.apk"
+   ]
+  }
+ },
+ {
+  "repo": "Docile-Alligator/Infinity-For-Reddit",
+  "tag": "v8.4.0",
+  "assets": [
+   {
+    "name": "Infinity+-v8.4.0.apk",
+    "size": 20511166,
+    "content_type": "application/vnd.android.package-archive"
+   },
+   {
+    "name": "Infinity-Patreon-v8.4.0.apk",
+    "size": 20082276,
+    "content_type": "application/vnd.android.package-archive"
+   }
+  ],
+  "expected": {
+   "arm64": [
+    "Infinity+-v8.4.0.apk",
+    "Infinity-Patreon-v8.4.0.apk"
+   ],
+   "armv7": [
+    "Infinity+-v8.4.0.apk",
+    "Infinity-Patreon-v8.4.0.apk"
+   ],
+   "x86": [
+    "Infinity+-v8.4.0.apk",
+    "Infinity-Patreon-v8.4.0.apk"
+   ]
+  }
+ }
+]

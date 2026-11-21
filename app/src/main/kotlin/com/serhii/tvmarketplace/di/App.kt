@@ -7,13 +7,17 @@ import android.provider.Settings
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.work.Configuration
 import com.serhii.tvmarketplace.LinkServerService
 import com.serhii.tvmarketplace.core.common.AppLog
 import com.serhii.tvmarketplace.core.common.TimeSource
+import com.serhii.tvmarketplace.core.common.WorkerCreator
 import com.serhii.tvmarketplace.core.common.rootGraph
 import com.serhii.tvmarketplace.core.data.IncomingLinksRepository
 import com.serhii.tvmarketplace.core.data.LinkShareSettings
 import com.serhii.tvmarketplace.core.data.impl.IconBackfill
+import com.serhii.tvmarketplace.core.data.impl.UpdateCheckScheduler
+import com.serhii.tvmarketplace.core.installer.impl.InstallerStartup
 import com.serhii.tvmarketplace.core.linkserver.AndroidServiceRegistrar
 import com.serhii.tvmarketplace.core.linkserver.LinkServer
 import com.serhii.tvmarketplace.core.linkserver.NsdAdvertiser
@@ -33,11 +37,16 @@ interface AppStartGraph {
   val timeSource: TimeSource
   val appScope: CoroutineScope
   val iconBackfill: IconBackfill
+  val workerCreators: Set<WorkerCreator>
+  val updateCheckScheduler: UpdateCheckScheduler
+  val installerStartup: InstallerStartup
 }
 
 private val KEEP_HANDLED_LINKS: Duration = Duration.ofDays(30)
 
-class App : Application() {
+class App :
+  Application(),
+  Configuration.Provider {
 
   private var receiveInBackground = false
 
@@ -55,6 +64,8 @@ class App : Application() {
     ).start(start.appScope, start.linkServer.state)
     start.appScope.launch { start.incomingLinks.purgeHandledBefore(start.timeSource.now() - KEEP_HANDLED_LINKS) }
     start.appScope.launch { start.iconBackfill.run() }
+    start.updateCheckScheduler.schedule()
+    start.appScope.launch { start.installerStartup.run() }
     start.appScope.launch(Dispatchers.Main) {
       start.linkShareSettings.receiveInBackground.collect { enabled ->
         receiveInBackground = enabled
@@ -65,6 +76,12 @@ class App : Application() {
       LifecycleEventObserver { _, event -> if (event == Lifecycle.Event.ON_START) syncService() },
     )
   }
+
+  // WorkManager starts on first use, after onCreate has built the graph
+  override val workManagerConfiguration: Configuration
+    get() = Configuration.Builder()
+      .setWorkerFactory(AppWorkerFactory((rootGraph as AppStartGraph).workerCreators))
+      .build()
 
   // a foreground service may only be started while the app is visible
   private fun syncService() {

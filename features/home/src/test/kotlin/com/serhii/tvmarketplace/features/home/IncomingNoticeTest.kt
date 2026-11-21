@@ -23,7 +23,7 @@ class IncomingNoticeTest {
   private val incomingLinks = FakeIncomingLinks()
   private val events = IncomingLinkEvents()
   private val navigator = mockk<Navigator>(relaxUnitFun = true)
-  private val viewModel = HomeViewModel(FakeTrackedApps(), incomingLinks, events, navigator)
+  private val viewModel = homeViewModel(FakeTrackedApps(), incomingLinks, events, navigator)
 
   @Test
   fun `a link received on home shows a notice for 8 seconds and counts in the inbox`() = runTest {

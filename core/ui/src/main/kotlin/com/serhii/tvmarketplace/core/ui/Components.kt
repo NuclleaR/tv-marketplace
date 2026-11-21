@@ -84,7 +84,8 @@ fun PillButton(
   ) {
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
       leadingIcon?.let { Icon(it, contentDescription = null, modifier = Modifier.size(18.dp)) }
-      Text(text, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
+      // a label never wraps: the button grows instead
+      Text(text, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium, maxLines = 1, softWrap = false)
       trailingIcon?.let { Icon(it, contentDescription = null, modifier = Modifier.size(18.dp)) }
       trailing?.invoke()
     }

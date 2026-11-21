@@ -32,4 +32,16 @@ sealed interface Destination : NavKey {
   @Serializable
   @SerialName("Settings")
   data object Settings : Destination
+
+  @Serializable
+  @SerialName("AppDetails")
+  data class AppDetails(val appId: Long) : Destination
+
+  @Serializable
+  @SerialName("ReleaseNotes")
+  data class ReleaseNotes(val appId: Long) : Destination
+
+  @Serializable
+  @SerialName("UpdateFailures")
+  data object UpdateFailures : Destination
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <application>
+    <!-- the system reports install and uninstall results here -->
+    <receiver
+      android:name=".InstallResultReceiver"
+      android:exported="false" />
+  </application>
+</manifest>

@@ -47,6 +47,7 @@ class RoomTrackedAppsRepository(
       addedAt = timeSource.now(),
       iconUrl = preview.iconUrl,
       iconChecked = true,
+      description = preview.description,
     )
     return entity.copy(id = dao.upsert(entity)).toModel()
   }
@@ -58,6 +59,32 @@ class RoomTrackedAppsRepository(
     iconUrl: String?,
   ) = dao.setIcon(id, iconUrl)
 
+  override suspend fun get(id: Long): TrackedApp? = dao.byId(id)?.toModel()
+
+  override fun observe(id: Long): Flow<TrackedApp?> = dao.observe(id).map { it?.toModel() }
+
+  override suspend fun setPackageName(
+    id: Long,
+    packageName: String,
+  ) = dao.setPackageNameIfUnknown(id, packageName)
+
+  override suspend fun setIncludePrereleases(
+    id: Long,
+    include: Boolean,
+  ) = dao.setIncludePrereleases(id, include)
+
+  override suspend fun setPackagePattern(
+    id: Long,
+    pattern: String?,
+  ) = dao.setPackagePattern(id, pattern)
+
+  override suspend fun setSourceGone(
+    id: Long,
+    gone: Boolean,
+  ) = dao.setSourceGone(id, gone)
+
+  override suspend fun remove(id: Long) = dao.delete(id)
+
   private fun TrackedAppEntity.toModel() = TrackedApp(
     id = id,
     ref = GitHubRepoRef(owner = owner, repo = repo),
@@ -66,6 +93,11 @@ class RoomTrackedAppsRepository(
     avatarUrl = avatarUrl,
     addedAt = addedAt,
     iconUrl = iconUrl,
+    packageName = packageName,
+    includePrereleases = includePrereleases,
+    packagePattern = packagePattern,
+    sourceGone = sourceGone,
+    description = description,
   )
 }
 

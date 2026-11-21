@@ -19,4 +19,13 @@ class BaselineProfileGenerator {
     startActivityAndWait()
     openAddApp()
   }
+
+  // needs a tracked app on the device
+  @Test
+  fun appDetails() = rule.collect(packageName = targetPackage) {
+    pressHome()
+    startActivityAndWait()
+    openFirstApp()
+    browsePackages()
+  }
 }

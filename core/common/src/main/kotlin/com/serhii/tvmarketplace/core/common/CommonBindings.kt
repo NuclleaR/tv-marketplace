@@ -1,5 +1,6 @@
 package com.serhii.tvmarketplace.core.common
 
+import android.os.Build
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.BindingContainer
 import dev.zacsweers.metro.ContributesTo
@@ -18,6 +19,9 @@ object CommonBindings {
 
   @Provides
   fun dispatcherProvider(): DispatcherProvider = DispatcherProvider()
+
+  @Provides
+  fun deviceAbis(): DeviceAbis = DeviceAbis { Build.SUPPORTED_ABIS.toList() }
 
   // for work that must finish even when the screen that started it is gone, like saving a choice
   @Provides

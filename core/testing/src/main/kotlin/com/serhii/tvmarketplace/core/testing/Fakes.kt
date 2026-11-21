@@ -77,6 +77,41 @@ class FakeTrackedApps(vararg tracked: GitHubRepoRef) : TrackedAppsRepository {
 
   override fun trackedApps(): Flow<List<TrackedApp>> = apps
 
+  override suspend fun get(id: Long): TrackedApp? = apps.value.firstOrNull { it.id == id }
+
+  override fun observe(id: Long): Flow<TrackedApp?> = apps.map { all -> all.firstOrNull { it.id == id } }
+
+  override suspend fun setPackageName(
+    id: Long,
+    packageName: String,
+  ) = update(id) { if (it.packageName == null) it.copy(packageName = packageName) else it }
+
+  override suspend fun setIncludePrereleases(
+    id: Long,
+    include: Boolean,
+  ) = update(id) { it.copy(includePrereleases = include) }
+
+  override suspend fun setPackagePattern(
+    id: Long,
+    pattern: String?,
+  ) = update(id) { it.copy(packagePattern = pattern) }
+
+  override suspend fun setSourceGone(
+    id: Long,
+    gone: Boolean,
+  ) = update(id) { it.copy(sourceGone = gone) }
+
+  override suspend fun remove(id: Long) {
+    apps.value = apps.value.filterNot { it.id == id }
+  }
+
+  fun update(
+    id: Long,
+    change: (TrackedApp) -> TrackedApp,
+  ) {
+    apps.value = apps.value.map { if (it.id == id) change(it) else it }
+  }
+
   override suspend fun find(ref: GitHubRepoRef): TrackedApp? =
     apps.value.firstOrNull { it.ref.owner.equals(ref.owner, true) && it.ref.repo.equals(ref.repo, true) }
 
@@ -91,6 +126,7 @@ class FakeTrackedApps(vararg tracked: GitHubRepoRef) : TrackedAppsRepository {
         preview.avatarUrl,
         Instant.EPOCH,
         preview.iconUrl,
+        description = preview.description,
       )
     iconChecked += app.id
     apps.value += app

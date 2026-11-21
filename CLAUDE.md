@@ -10,8 +10,8 @@ TV Marketplace is a multi-module Android app in Kotlin with Jetpack Compose, Met
   `./gradlew appUnitTest`.
 - CI runs `./gradlew appUnitTest lintKotlin :app:lintDebug :app:assembleDebug :companion:lintDebug :companion:assembleDebug`.
   Run it before saying a change is done.
-- Releases: every push to `main` runs `.github/workflows/build.yml`, which builds signed release APKs of `:app` and
-  `:companion` as `1.0.<run number>` and publishes the GitHub release `v1.0.<run number>`. It needs the secrets
+- Releases: only pushing a tag `vX.Y.Z` runs `.github/workflows/build.yml`, which builds signed release APKs of `:app`
+  and `:companion` as `X.Y.Z` and publishes the GitHub release for that tag. Pushes to `main` never release. It needs the secrets
   `SIGNING_KEYSTORE` (base64 keystore), `SIGNING_STORE_PASSWORD`, `SIGNING_KEY_ALIAS`, `SIGNING_KEY_PASSWORD`. Local
   release builds sign with the machine-wide key from `~/.gradle/gradle.properties` (`release.storeFile`,
   `release.storePassword`, `release.keyAlias`, `release.keyPassword`), or with the debug key when it isn't set.

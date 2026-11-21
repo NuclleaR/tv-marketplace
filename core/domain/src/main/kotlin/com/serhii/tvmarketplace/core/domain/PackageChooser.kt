@@ -13,7 +13,7 @@ enum class Abi(val systemName: String) {
   }
 }
 
-enum class Variant { TV, NONE, MOBILE }
+enum class Variant { TV, NONE, MOBILE, COMPANION }
 
 data class Candidate(
   val pkg: AppPackage,
@@ -52,6 +52,9 @@ object PackageChooser {
 
   private val tvWords = Regex("(?<![a-z0-9])(?:tv|androidtv|atv|leanback|firetv)(?![a-z0-9])")
   private val mobileWords = Regex("(?<![a-z0-9])(?:mobile|phone)(?![a-z0-9])")
+
+  // an add-on shipped next to the app (a phone companion, a Wear OS app), never the app itself, even when "tv" is in its name
+  private val companionWords = Regex("(?<![a-z0-9])(?:companion|wear|wearos)(?![a-z0-9])")
   private val debugWords = Regex("(?<![a-z0-9])(?:debug|unsigned|test)(?![a-z0-9])")
 
   // .aab, .apks and .xapk are bundles the system installer can't take as one file; .idsig and checksums sit next to APKs
@@ -81,6 +84,7 @@ object PackageChooser {
       compatible = abis.isEmpty() || abis.any { it in deviceAbis },
       abis = abis,
       variant = when {
+        companionWords.containsMatchIn(name) -> Variant.COMPANION
         tvWords.containsMatchIn(name) -> Variant.TV
         mobileWords.containsMatchIn(name) -> Variant.MOBILE
         else -> Variant.NONE

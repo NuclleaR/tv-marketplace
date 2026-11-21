@@ -64,11 +64,10 @@ data class PendingConfirmation(
 )
 
 interface Installer {
-  // one install runs at a time; the others wait. allowSilentUpdate lets the system skip its prompt where it may
+  // one install runs at a time; the others wait. The system's install prompt is always shown
   suspend fun install(
     file: File,
     expectedPackage: String?,
-    allowSilentUpdate: Boolean,
   ): InstallOutcome
 
   suspend fun uninstall(packageName: String): UninstallOutcome

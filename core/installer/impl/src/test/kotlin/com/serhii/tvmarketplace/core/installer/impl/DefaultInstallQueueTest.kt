@@ -11,11 +11,9 @@ import com.serhii.tvmarketplace.core.installer.InstallRequest
 import com.serhii.tvmarketplace.core.installer.Installer
 import com.serhii.tvmarketplace.core.installer.UpdateBatch
 import com.serhii.tvmarketplace.core.testing.FakeDownloads
-import com.serhii.tvmarketplace.core.testing.FakeInstalledApps
 import com.serhii.tvmarketplace.core.testing.FakeReleasesRepository
 import com.serhii.tvmarketplace.core.testing.FakeTrackedApps
 import com.serhii.tvmarketplace.core.testing.MutableTimeSource
-import com.serhii.tvmarketplace.core.testing.installedApp
 import com.serhii.tvmarketplace.core.testing.pkg
 import com.serhii.tvmarketplace.core.testing.release
 import io.mockk.coEvery
@@ -37,7 +35,6 @@ class DefaultInstallQueueTest {
 
   private val trackedApps = FakeTrackedApps(GitHubRepoRef("o", "one"), GitHubRepoRef("o", "two"), GitHubRepoRef("o", "three"))
   private val downloads = FakeDownloads()
-  private val installedApps = FakeInstalledApps()
   private val releases = FakeReleasesRepository()
   private val time = MutableTimeSource()
   private val installer = mockk<Installer>()
@@ -45,7 +42,7 @@ class DefaultInstallQueueTest {
 
   private fun request(appId: Long) = InstallRequest(appId, release("v2.0", apk), apk, recommended = true)
 
-  private fun TestScope.queue() = DefaultInstallQueue(downloads, installer, installedApps, trackedApps, releases, time, backgroundScope)
+  private fun TestScope.queue() = DefaultInstallQueue(downloads, installer, trackedApps, releases, time, backgroundScope)
 
   private fun TestScope.finishDownload(appId: Long) {
     runCurrent()
@@ -57,7 +54,7 @@ class DefaultInstallQueueTest {
 
   @Test
   fun `downloads, installs and records what was installed`() = runTest {
-    coEvery { installer.install(any(), any(), any()) } returns InstallOutcome.Installed("com.example.1", 20)
+    coEvery { installer.install(any(), any()) } returns InstallOutcome.Installed("com.example.1", 20)
     val queue = queue()
     queue.install(request(1))
     runCurrent()
@@ -74,24 +71,8 @@ class DefaultInstallQueueTest {
   }
 
   @Test
-  fun `the system may skip its prompt only for an app this app installed`() = runTest {
-    coEvery { installer.install(any(), any(), any()) } returns InstallOutcome.Installed("com.example.1", 20)
-    trackedApps.update(1) { it.copy(packageName = "com.example.1") }
-    installedApps.install(installedApp("com.example.1", installedByThisApp = true))
-    trackedApps.update(2) { it.copy(packageName = "com.example.2") }
-    installedApps.install(installedApp("com.example.2", installedByThisApp = false))
-    val queue = queue()
-    queue.install(request(1))
-    finishDownload(1)
-    queue.install(request(2))
-    finishDownload(2)
-    coVerify { val _ = installer.install(any(), "com.example.1", allowSilentUpdate = true) }
-    coVerify { val _ = installer.install(any(), "com.example.2", allowSilentUpdate = false) }
-  }
-
-  @Test
   fun `a failed download or install stays as a failure until dismissed`() = runTest {
-    coEvery { installer.install(any(), any(), any()) } returns InstallOutcome.Failed(FailureReason.SignatureConflict)
+    coEvery { installer.install(any(), any()) } returns InstallOutcome.Failed(FailureReason.SignatureConflict)
     val queue = queue()
     queue.install(request(1))
     runCurrent()
@@ -107,12 +88,12 @@ class DefaultInstallQueueTest {
 
   @Test
   fun `without the permission the download is kept and reused once allowed`() = runTest {
-    coEvery { installer.install(any(), any(), any()) } returns InstallOutcome.NeedsPermission
+    coEvery { installer.install(any(), any()) } returns InstallOutcome.NeedsPermission
     val queue = queue()
     queue.install(request(1))
     finishDownload(1)
     assertEquals(InstallJob.NeedsPermission, queue.jobs.value[1])
-    coEvery { installer.install(any(), any(), any()) } returns InstallOutcome.Installed("com.example.1", 20)
+    coEvery { installer.install(any(), any()) } returns InstallOutcome.Installed("com.example.1", 20)
     queue.install(request(1))
     runCurrent()
     assertEquals(1, downloads.started.size)
@@ -156,7 +137,7 @@ class DefaultInstallQueueTest {
 
   @Test
   fun `stop after this one finishes the current app and drops the rest`() = runTest {
-    coEvery { installer.install(any(), any(), any()) } returns InstallOutcome.Installed("com.example.1", 20)
+    coEvery { installer.install(any(), any()) } returns InstallOutcome.Installed("com.example.1", 20)
     val queue = queue()
     queue.updateAll(listOf(request(1), request(2)))
     runCurrent()
@@ -170,7 +151,7 @@ class DefaultInstallQueueTest {
 
   @Test
   fun `installing another package than the recommended one remembers it, the recommended one forgets it`() = runTest {
-    coEvery { installer.install(any(), any(), any()) } returns InstallOutcome.Installed("com.example.1", 20)
+    coEvery { installer.install(any(), any()) } returns InstallOutcome.Installed("com.example.1", 20)
     val arm = pkg("App_2.0_armeabi-v7a.apk", id = 3)
     val queue = queue()
     queue.install(InstallRequest(1, release("v2.0", arm), arm, recommended = false))

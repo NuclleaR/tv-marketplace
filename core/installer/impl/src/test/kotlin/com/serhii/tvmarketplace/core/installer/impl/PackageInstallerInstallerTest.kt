@@ -1,8 +1,10 @@
 package com.serhii.tvmarketplace.core.installer.impl
 
+import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageInstaller
+import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.serhii.tvmarketplace.core.common.DispatcherProvider
@@ -27,6 +29,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @RunWith(AndroidJUnit4::class)
 class PackageInstallerInstallerTest {
@@ -44,6 +47,7 @@ class PackageInstallerInstallerTest {
   // Robolectric delivers the system's own result broadcasts too; the receiver finds the installer through the graph
   @Before
   fun graph() {
+    installer.shareFile = { Uri.parse("content://com.example.apk-files/install/${it.name}") }
     rootGraph = object : InstallerGraph {
       override val installer: Installer = this@PackageInstallerInstallerTest.installer
     }
@@ -51,23 +55,13 @@ class PackageInstallerInstallerTest {
 
   private fun apkFile() = folder.newFile("app.apk").apply { writeBytes(ByteArray(1000)) }
 
-  private fun status(
-    request: Int,
-    status: Int,
-    prompt: Intent? = null,
-  ) = Intent(ACTION_RESULT)
-    .putExtra(EXTRA_REQUEST, request)
-    .putExtra(PackageInstaller.EXTRA_STATUS, status)
-    .apply { if (prompt != null) putExtra(Intent.EXTRA_INTENT, prompt) }
-
-  // installs run on real threads here, as the session is written on one: wait for the request to reach the system.
-  // The main looper stays paused, so Robolectric's own result broadcasts never arrive: the test sends the results
-  private fun awaitRequest(request: Int) {
+  // installs run on real threads here, as the APK is copied on one: wait for the install to reach the system installer.
+  private fun awaitPrompt(request: Int) {
     repeat(1000) {
-      if (installer.isWaiting(request)) return
+      if (installer.isPrompting(request)) return
       Thread.sleep(5)
     }
-    error("request $request never reached the system")
+    error("request $request never reached the system installer")
   }
 
   @Test
@@ -82,59 +76,52 @@ class PackageInstallerInstallerTest {
   }
 
   @Test
-  fun `a session is committed, its prompt waits for an activity, and its result comes back`() = runTest {
+  fun `the system installer's screens are opened for their result, and the result comes back`() = runTest {
     val result = backgroundScope.async(Dispatchers.IO) { installer.install(apkFile(), "com.example.app") }
-    awaitRequest(1)
-    val prompt = Intent("com.android.packageinstaller.CONFIRM")
-    installer.onResult(status(request = 1, status = PackageInstaller.STATUS_PENDING_USER_ACTION, prompt = prompt))
-    assertEquals(1, installer.pendingConfirmation.value?.id)
-    assertEquals(prompt.action, installer.pendingConfirmation.value?.intent?.action)
+    awaitPrompt(1)
+    val prompt = assertNotNull(installer.pendingConfirmation.value)
+    assertEquals(1, prompt.id)
+    assertTrue(prompt.returnsResult)
+    @Suppress("DEPRECATION")
+    assertEquals(Intent.ACTION_INSTALL_PACKAGE, prompt.intent.action)
+    assertTrue(prompt.intent.getBooleanExtra(Intent.EXTRA_RETURN_RESULT, false))
+    assertTrue(prompt.intent.flags and Intent.FLAG_GRANT_READ_URI_PERMISSION != 0)
+    assertEquals("content", prompt.intent.data?.scheme)
     installer.confirmationShown(1)
     assertNull(installer.pendingConfirmation.value)
-    installer.onResult(status(request = 1, status = PackageInstaller.STATUS_SUCCESS))
+    installer.promptResult(1, Activity.RESULT_OK, null)
     assertEquals(InstallOutcome.Installed("com.example.app", 130), result.await())
   }
 
   @Test
   fun `one install at a time`() = runTest {
     val first = backgroundScope.async(Dispatchers.IO) { installer.install(apkFile(), null) }
-    awaitRequest(1)
+    awaitPrompt(1)
     val second = backgroundScope.async(Dispatchers.IO) {
       installer.install(folder.newFile("b.apk").apply { writeBytes(ByteArray(10)) }, null)
     }
     Thread.sleep(200)
     // the second one waits for the first before it reaches the system
-    assertEquals(false, installer.isWaiting(2))
-    installer.onResult(status(1, PackageInstaller.STATUS_FAILURE_ABORTED))
+    assertEquals(false, installer.isPrompting(2))
+    installer.promptResult(1, Activity.RESULT_CANCELED, null)
     assertEquals(InstallOutcome.Failed(FailureReason.CancelledByUser), first.await())
-    awaitRequest(2)
-    installer.onResult(status(2, PackageInstaller.STATUS_SUCCESS))
+    awaitPrompt(2)
+    installer.promptResult(2, Activity.RESULT_OK, null)
     assertNotNull(second.await())
   }
 
+  private fun failed(installResult: Int) = installOutcome(Activity.RESULT_FIRST_USER, installResult, apk)
+
   @Test
-  fun `the system's statuses mean what the user is told`() {
-    assertEquals(InstallOutcome.Installed("com.example.app", 130), installOutcome(PackageInstaller.STATUS_SUCCESS, null, apk))
-    assertEquals(InstallOutcome.Failed(FailureReason.CancelledByUser), installOutcome(PackageInstaller.STATUS_FAILURE_ABORTED, null, apk))
-    assertEquals(
-      InstallOutcome.Failed(FailureReason.SignatureConflict),
-      installOutcome(PackageInstaller.STATUS_FAILURE_CONFLICT, null, apk),
-    )
-    assertEquals(InstallOutcome.Failed(FailureReason.Incompatible), installOutcome(PackageInstaller.STATUS_FAILURE_INCOMPATIBLE, null, apk))
-    assertEquals(InstallOutcome.Failed(FailureReason.NoSpace(0)), installOutcome(PackageInstaller.STATUS_FAILURE_STORAGE, null, apk))
-    assertEquals(
-      InstallOutcome.Failed(FailureReason.System("blocked")),
-      installOutcome(PackageInstaller.STATUS_FAILURE_BLOCKED, "blocked", apk),
-    )
-    val downgrade = "INSTALL_FAILED_VERSION_DOWNGRADE: Downgrade detected: Update version code 2 is older than current 20"
-    assertEquals(
-      InstallOutcome.Failed(FailureReason.NewerInstalled),
-      installOutcome(PackageInstaller.STATUS_FAILURE_INVALID, downgrade, apk),
-    )
-    assertEquals(
-      InstallOutcome.Failed(FailureReason.NewerInstalled),
-      installOutcome(PackageInstaller.STATUS_FAILURE_INCOMPATIBLE, downgrade, apk),
-    )
+  fun `the system installer's results mean what the user is told`() {
+    assertEquals(InstallOutcome.Installed("com.example.app", 130), installOutcome(Activity.RESULT_OK, 0, apk))
+    assertEquals(InstallOutcome.Failed(FailureReason.CancelledByUser), installOutcome(Activity.RESULT_CANCELED, 0, apk))
+    assertEquals(InstallOutcome.Failed(FailureReason.NewerInstalled), failed(-25))
+    assertEquals(InstallOutcome.Failed(FailureReason.SignatureConflict), failed(-7))
+    assertEquals(InstallOutcome.Failed(FailureReason.NoSpace(0)), failed(-4))
+    assertEquals(InstallOutcome.Failed(FailureReason.Incompatible), failed(-16))
+    assertEquals(InstallOutcome.Failed(FailureReason.Corrupt), failed(-103))
+    assertEquals(InstallOutcome.Failed(FailureReason.System("-200")), failed(-200))
     assertEquals(UninstallOutcome.Uninstalled, uninstallOutcome(PackageInstaller.STATUS_SUCCESS, null))
     assertEquals(UninstallOutcome.CancelledByUser, uninstallOutcome(PackageInstaller.STATUS_FAILURE_ABORTED, null))
     assertEquals(UninstallOutcome.Failed("nope"), uninstallOutcome(PackageInstaller.STATUS_FAILURE, "nope"))

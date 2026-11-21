@@ -3,6 +3,13 @@ plugins {
   alias(libs.plugins.metro)
 }
 
+// the FileProvider's paths
+android {
+  androidResources {
+    enable = true
+  }
+}
+
 dependencies {
   api(projects.core.installer.api)
   implementation(projects.core.common)

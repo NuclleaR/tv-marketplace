@@ -57,14 +57,16 @@ sealed interface UninstallOutcome {
   data class Failed(val message: String?) : UninstallOutcome
 }
 
-// a system confirmation prompt waiting to be shown; only a visible activity may show it
+// a system screen waiting to be shown; only a visible activity may show it. One that returns a result is started for
+// it, and the result goes to Installer.promptResult
 data class PendingConfirmation(
   val id: Int,
   val intent: Intent,
+  val returnsResult: Boolean = false,
 )
 
 interface Installer {
-  // one install runs at a time; the others wait. The system's install prompt is always shown
+  // one install runs at a time; the others wait. It always goes through the system installer's own screens
   suspend fun install(
     file: File,
     expectedPackage: String?,
@@ -75,4 +77,11 @@ interface Installer {
   val pendingConfirmation: StateFlow<PendingConfirmation?>
 
   fun confirmationShown(id: Int)
+
+  // what the system installer started for a PendingConfirmation returned
+  fun promptResult(
+    id: Int,
+    resultCode: Int,
+    data: Intent?,
+  )
 }

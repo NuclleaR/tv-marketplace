@@ -12,7 +12,6 @@ import com.serhii.tvmarketplace.core.installer.InstallJob
 import com.serhii.tvmarketplace.core.installer.InstallOutcome
 import com.serhii.tvmarketplace.core.installer.InstallQueue
 import com.serhii.tvmarketplace.core.installer.InstallRequest
-import com.serhii.tvmarketplace.core.installer.InstalledApps
 import com.serhii.tvmarketplace.core.installer.Installer
 import com.serhii.tvmarketplace.core.installer.UpdateBatch
 import dev.zacsweers.metro.AppScope
@@ -37,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap
 class DefaultInstallQueue(
   private val downloads: Downloads,
   private val installer: Installer,
-  private val installedApps: InstalledApps,
   private val trackedApps: TrackedAppsRepository,
   private val releases: ReleasesRepository,
   private val timeSource: TimeSource,
@@ -119,9 +117,7 @@ class DefaultInstallQueue(
       else -> return fail(appId, FailureReason.System(null))
     }
     set(appId, InstallJob.Installing)
-    // the system may skip its prompt only for an app this app installed itself, and only for an update the user started
-    val installedByUs = app.packageName?.let(installedApps::get)?.installedByThisApp == true
-    return when (val outcome = installer.install(file, app.packageName, allowSilentUpdate = installedByUs)) {
+    return when (val outcome = installer.install(file, app.packageName)) {
       is InstallOutcome.Installed -> {
         trackedApps.setPackageName(appId, outcome.packageName)
         // picking another package than the recommended one is remembered for the app's updates; the recommended one

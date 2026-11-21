@@ -96,7 +96,6 @@ class PackageInstallerInstaller(
   override suspend fun install(
     file: File,
     expectedPackage: String?,
-    allowSilentUpdate: Boolean,
   ): InstallOutcome {
     if (!permission.granted()) return InstallOutcome.NeedsPermission
     val apk = withContext(dispatchers.io) { inspector.inspect(file) } ?: return InstallOutcome.Failed(FailureReason.Corrupt)
@@ -106,8 +105,8 @@ class PackageInstallerInstaller(
       val params = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL).apply {
         setAppPackageName(apk.packageName)
         setSize(file.length())
-        if (allowSilentUpdate && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-          setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+          setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_REQUIRED)
         }
       }
       val sessionId = installer.createSession(params)

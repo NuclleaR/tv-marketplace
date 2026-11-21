@@ -47,6 +47,13 @@ class PackageChooserTest {
   }
 
   @Test
+  fun `a companion shipped next to the app is never the app, even listed first and named for TV`() {
+    assertEquals("tv-marketplace.apk", recommended(arm64, "tv-marketplace-companion.apk", "tv-marketplace.apk"))
+    assertEquals("app.apk", recommended(arm64, "app-wear.apk", "app.apk"))
+    assertEquals("tv-marketplace-companion.apk", recommended(arm64, "tv-marketplace-companion.apk"))
+  }
+
+  @Test
   fun `ties keep the release's order`() {
     assertEquals("NewPipe.apk", recommended(arm64, "NewPipe.apk", "NewPipe_apksigner31.apk"))
   }

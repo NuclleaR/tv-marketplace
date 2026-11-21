@@ -73,17 +73,17 @@ class PackageInstallerInstallerTest {
   @Test
   fun `without the permission nothing is started`() = runTest {
     permission.granted = false
-    assertEquals(InstallOutcome.NeedsPermission, installer.install(apkFile(), null, allowSilentUpdate = false))
+    assertEquals(InstallOutcome.NeedsPermission, installer.install(apkFile(), null))
   }
 
   @Test
   fun `another app than the one installed is refused before the system sees it`() = runTest {
-    assertEquals(InstallOutcome.Failed(FailureReason.DifferentApp), installer.install(apkFile(), "com.other", allowSilentUpdate = false))
+    assertEquals(InstallOutcome.Failed(FailureReason.DifferentApp), installer.install(apkFile(), "com.other"))
   }
 
   @Test
   fun `a session is committed, its prompt waits for an activity, and its result comes back`() = runTest {
-    val result = backgroundScope.async(Dispatchers.IO) { installer.install(apkFile(), "com.example.app", allowSilentUpdate = false) }
+    val result = backgroundScope.async(Dispatchers.IO) { installer.install(apkFile(), "com.example.app") }
     awaitRequest(1)
     val prompt = Intent("com.android.packageinstaller.CONFIRM")
     installer.onResult(status(request = 1, status = PackageInstaller.STATUS_PENDING_USER_ACTION, prompt = prompt))
@@ -97,10 +97,10 @@ class PackageInstallerInstallerTest {
 
   @Test
   fun `one install at a time`() = runTest {
-    val first = backgroundScope.async(Dispatchers.IO) { installer.install(apkFile(), null, allowSilentUpdate = false) }
+    val first = backgroundScope.async(Dispatchers.IO) { installer.install(apkFile(), null) }
     awaitRequest(1)
     val second = backgroundScope.async(Dispatchers.IO) {
-      installer.install(folder.newFile("b.apk").apply { writeBytes(ByteArray(10)) }, null, false)
+      installer.install(folder.newFile("b.apk").apply { writeBytes(ByteArray(10)) }, null)
     }
     Thread.sleep(200)
     // the second one waits for the first before it reaches the system

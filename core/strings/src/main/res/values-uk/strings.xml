@@ -64,6 +64,7 @@
   <string name="settings_remove_body">Щоб надсилати посилання, цьому телефону доведеться знову відсканувати код на ТВ.</string>
   <string name="settings_remove">Забути</string>
   <string name="settings_tip">Порада</string>
+  <string name="settings_version">Версія %1$s, збірка %2$d</string>
   <string name="settings_tv_address">Цей телевізор: %1$s</string>
   <string name="settings_select_to_forget">Натисніть, щоб забути</string>
   <string name="settings_kind_browser">Браузер</string>

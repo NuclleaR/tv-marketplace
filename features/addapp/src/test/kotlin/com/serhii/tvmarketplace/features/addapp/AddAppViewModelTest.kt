@@ -115,8 +115,9 @@ class AddAppViewModelTest {
   }
 
   @Test
-  fun `one letter asks for more, two search owners after a pause`() = runTest {
+  fun `one letter asks for more, two search repositories by name and owners after a pause`() = runTest {
     gitHub.owners = { LookupResult.Found(listOf(GitHubOwner("NuclleaR", "https://a/1", organization = false))) }
+    gitHub.namedRepos = { LookupResult.Found(listOf(repoSummary("someone", "nuke"), repoSummary("nu-org", "nu"))) }
     backgroundScope.launchMolecule(RecompositionMode.Immediate) { viewModel.viewState(query) }.test {
       query += "n"
       assertEquals(SearchResults.KeepTyping, awaitMatching { it.results != SearchResults.None }.results)
@@ -124,9 +125,24 @@ class AddAppViewModelTest {
       runCurrent()
       assertEquals(emptyList(), gitHub.lookups)
       advanceTimeBy(SEARCH_DEBOUNCE_MS + 1)
-      val owners = assertIs<SearchResults.Owners>(expectMostRecentItem().results)
-      assertEquals(listOf("NuclleaR"), owners.owners.map { it.login })
-      assertEquals(listOf("owners:nu"), gitHub.lookups)
+      val matches = assertIs<SearchResults.Matches>(expectMostRecentItem().results)
+      // the repository named exactly like the text first, the rest in GitHub's order
+      assertEquals(listOf("nu-org/nu", "someone/nuke"), matches.repos.map { it.key })
+      assertEquals(listOf("NuclleaR"), matches.owners.map { it.login })
+      assertEquals(setOf("named:nu", "owners:nu"), gitHub.lookups.toSet())
+    }
+  }
+
+  @Test
+  fun `repositories found by name still show when the owner search fails`() = runTest {
+    gitHub.owners = { LookupResult.RateLimited }
+    gitHub.namedRepos = { LookupResult.Found(listOf(repoSummary("jellyfin", "jellyfin-androidtv"))) }
+    backgroundScope.launchMolecule(RecompositionMode.Immediate) { viewModel.viewState(query) }.test {
+      query += "jellyfin"
+      advanceTimeBy(SEARCH_DEBOUNCE_MS + 1)
+      val matches = assertIs<SearchResults.Matches>(expectMostRecentItem().results)
+      assertEquals(listOf("jellyfin/jellyfin-androidtv"), matches.repos.map { it.key })
+      assertEquals(emptyList(), matches.owners)
     }
   }
 
@@ -138,7 +154,7 @@ class AddAppViewModelTest {
       advanceTimeBy(SEARCH_DEBOUNCE_MS / 2)
     }
     advanceTimeBy(SEARCH_DEBOUNCE_MS + 1)
-    assertEquals(listOf("owners:nucl"), gitHub.lookups)
+    assertEquals(setOf("named:nucl", "owners:nucl"), gitHub.lookups.toSet())
   }
 
   @Test
@@ -188,7 +204,7 @@ class AddAppViewModelTest {
   @Test
   fun `a missing owner and GitHub's limits are told apart`() = runTest {
     gitHub.repos = { LookupResult.NotFound }
-    gitHub.owners = { LookupResult.RateLimited }
+    gitHub.namedRepos = { LookupResult.RateLimited }
     backgroundScope.launchMolecule(RecompositionMode.Immediate) { viewModel.viewState(query) }.test {
       "nobody/".forEach { query += it.toString() }
       assertEquals(SearchResults.OwnerNotFound("nobody"), awaitMatching { it.results is SearchResults.OwnerNotFound }.results)

@@ -13,6 +13,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 import androidx.room.Upsert
+import androidx.room.migration.AutoMigrationSpec
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
 
@@ -269,12 +271,13 @@ class Converters {
     AppReleaseEntity::class,
     InstallRecordEntity::class,
   ],
-  version = 5,
+  version = 6,
   autoMigrations = [
     AutoMigration(from = 1, to = 2),
     AutoMigration(from = 2, to = 3),
     AutoMigration(from = 3, to = 4),
     AutoMigration(from = 4, to = 5),
+    AutoMigration(from = 5, to = 6, spec = RecheckMissingIcons::class),
   ],
 )
 @TypeConverters(Converters::class)
@@ -288,4 +291,11 @@ abstract class AppDatabase : RoomDatabase() {
   abstract fun appReleaseDao(): AppReleaseDao
 
   abstract fun installRecordDao(): InstallRecordDao
+}
+
+// icons are now also looked for among the launcher icons in the sources, so apps that got none look again
+internal class RecheckMissingIcons : AutoMigrationSpec {
+  override fun onPostMigrate(db: SupportSQLiteDatabase) {
+    db.execSQL("UPDATE tracked_app SET iconChecked = 0 WHERE iconUrl IS NULL")
+  }
 }

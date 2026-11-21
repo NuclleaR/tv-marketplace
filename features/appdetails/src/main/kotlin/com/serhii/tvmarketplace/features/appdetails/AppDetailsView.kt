@@ -221,7 +221,7 @@ internal fun plainNotes(html: String): AnnotatedString {
 @Composable
 private fun Header(content: Content) {
   Row(horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.CenterVertically) {
-    AppIcon(name = content.name, iconUrl = content.iconUrl, size = 88.dp)
+    AppIcon(name = content.name, iconUrl = content.iconUrl, size = 88.dp, packageName = content.packageName)
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
       ScreenTitle(content.name)
       Text(content.ownerAndRepo, style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)

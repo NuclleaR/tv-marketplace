@@ -31,6 +31,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -78,7 +80,11 @@ internal fun AddAppView(
   // the repository a preview was opened from: coming back focuses it instead of the keyboard
   var opened by rememberSaveable { mutableStateOf<String?>(null) }
   val results = viewState.results
-  val openedShown = results is SearchResults.Repos && results.repos.any { it.key == opened }
+  val openedShown = when (results) {
+    is SearchResults.Repos -> results.repos.any { it.key == opened }
+    is SearchResults.Matches -> results.repos.any { it.key == opened }
+    else -> false
+  }
   TvScreen(modifier) {
     ScreenTitle(stringResource(StringsR.string.add_app_title))
     Row(
@@ -112,12 +118,31 @@ internal fun AddAppView(
         when (results) {
           // with text typed, None is the moment before the first answer, e.g. back from a preview
           SearchResults.None -> if (viewState.query.isEmpty()) PhonePanel(viewState.phone, onRetry, onNetworkSettings)
-          is SearchResults.Owners -> LazyColumn(
+          is SearchResults.Matches -> LazyColumn(
             modifier = Modifier.fillMaxSize().focusRestorer(),
             contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
           ) {
-            items(results.owners, key = { it.login }) { owner ->
+            if (results.repos.isNotEmpty()) {
+              item(key = "repos", contentType = "heading") { SectionHeading(stringResource(StringsR.string.add_app_section_repos)) }
+            }
+            items(results.repos, key = { "repo:${it.key}" }, contentType = { "repo" }) { repo ->
+              RepoRow(
+                repo = repo,
+                onClick = {
+                  opened = repo.key
+                  onRepoClick(repo)
+                },
+                modifier = if (repo.key == opened) Modifier.focusRequester(openedFocus) else Modifier,
+                showOwner = true,
+              )
+            }
+            if (results.owners.isNotEmpty()) {
+              item(key = "owners", contentType = "heading") {
+                SectionHeading(stringResource(StringsR.string.add_app_section_owners), Modifier.padding(top = 12.dp))
+              }
+            }
+            items(results.owners, key = { "owner:${it.login}" }, contentType = { "owner" }) { owner ->
               OwnerRow(
                 owner = owner,
                 onClick = {
@@ -241,17 +266,33 @@ private fun OwnerRow(
   )
 }
 
+// found by name among everyone's repositories, the owner tells apart forks and namesakes
 @Composable
 private fun RepoRow(
   repo: SearchResults.Repo,
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
+  showOwner: Boolean = false,
 ) {
+  val supporting = listOfNotNull(repo.owner.takeIf { showOwner }, repo.description).joinToString(" · ").ifEmpty { null }
   ListRow(
     onClick = onClick,
     modifier = modifier.fillMaxWidth(),
     headline = { Text(repo.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-    supporting = repo.description?.let { { Text(it, maxLines = 2, overflow = TextOverflow.Ellipsis) } },
+    supporting = supporting?.let { { Text(it, maxLines = 2, overflow = TextOverflow.Ellipsis) } },
+  )
+}
+
+@Composable
+private fun SectionHeading(
+  text: String,
+  modifier: Modifier = Modifier,
+) {
+  Text(
+    text,
+    style = MaterialTheme.typography.titleMedium,
+    color = MaterialTheme.colorScheme.onSurfaceVariant,
+    modifier = modifier.semantics { heading() },
   )
 }
 
@@ -384,16 +425,18 @@ private fun AddAppViewPreview() {
 
 @PreviewTv
 @Composable
-private fun AddAppViewOwnersPreview() {
+private fun AddAppViewMatchesPreview() {
   PreviewAddApp(
     AddAppViewState(
-      query = "nucl",
+      query = "jellyfin",
       phone = readyPhone,
-      results = SearchResults.Owners(
-        listOf(
-          SearchResults.Owner("NuclleaR", null, organization = false),
-          SearchResults.Owner("nuclear-org", null, organization = true),
-          SearchResults.Owner("nucliweb", null, organization = false),
+      results = SearchResults.Matches(
+        repos = listOf(
+          SearchResults.Repo("jellyfin", "jellyfin-androidtv", "Android TV client for Jellyfin"),
+          SearchResults.Repo("jellyfin", "jellyfin-android", null),
+        ),
+        owners = listOf(
+          SearchResults.Owner("jellyfin", null, organization = true),
         ),
       ),
     ),

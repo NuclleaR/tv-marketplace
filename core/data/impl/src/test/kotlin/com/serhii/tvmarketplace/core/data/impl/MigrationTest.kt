@@ -104,4 +104,25 @@ class MigrationTest {
       }
     }
   }
+
+  @Test
+  fun `apps without an icon look for one again after version 6`() {
+    helper.createDatabase("migration-test-6", 5).use { db ->
+      for ((repo, icon) in listOf("a" to "NULL", "b" to "'https://x/icon.png'")) {
+        db.execSQL(
+          "INSERT INTO tracked_app " +
+            "(owner, repo, repoKey, sourceUrl, displayName, latestVersion, avatarUrl, addedAt, iconUrl, iconChecked) " +
+            "VALUES ('o', '$repo', 'o/$repo', 'https://github.com/o/$repo', '$repo', NULL, NULL, 0, $icon, 1)",
+        )
+      }
+    }
+    helper.runMigrationsAndValidate("migration-test-6", 6, true).use { db ->
+      db.query("SELECT repo, iconChecked FROM tracked_app ORDER BY repo").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals(0, cursor.getInt(1))
+        cursor.moveToNext()
+        assertEquals(1, cursor.getInt(1))
+      }
+    }
+  }
 }

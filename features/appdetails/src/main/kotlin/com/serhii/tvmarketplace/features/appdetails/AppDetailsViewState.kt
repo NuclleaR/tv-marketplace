@@ -14,6 +14,7 @@ sealed interface AppDetailsViewState {
     val name: String,
     val ownerAndRepo: String,
     val iconUrl: String?,
+    val packageName: String? = null,
     val description: String?,
     val status: AppStatus,
     val primary: PrimaryAction,

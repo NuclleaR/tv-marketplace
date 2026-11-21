@@ -30,13 +30,15 @@
   <!-- Add app: content description of the QR code image -->
   <string name="add_app_qr_description">QR code to send a link from your phone</string>
   <!-- Add app: placeholder of the search field, which the on-screen keyboard fills -->
-  <string name="add_app_search_hint">Search GitHub: owner or owner/repo</string>
+  <string name="add_app_search_hint">Search GitHub: app name, or owner/</string>
   <!-- Add app: in the search field while results are loading -->
   <string name="add_app_searching">Searching…</string>
   <!-- Add app: heading of the phone panel shown while nothing is typed -->
   <string name="add_app_phone_title">Or send a link from your phone</string>
   <!-- Add app: shown after one letter of an owner's name -->
-  <string name="add_app_keep_typing">Type at least two letters of the owner\'s name</string>
+  <string name="add_app_keep_typing">Type at least two letters</string>
+  <string name="add_app_section_repos">Repositories</string>
+  <string name="add_app_section_owners">Owners</string>
   <!-- Add app: search found nothing -->
   <string name="add_app_nothing_found">Nothing found</string>
   <!-- Add app: the typed owner doesn't exist. %1$s is the typed name -->

@@ -7,14 +7,14 @@ import kotlin.test.assertEquals
 class GitHubSearchTest {
 
   @Test
-  fun `text without a slash looks for owners, with one for an owner's repositories`() {
+  fun `text without a slash looks for a name, with one for an owner's repositories`() {
     assertEquals(SearchQuery.Empty, SearchQuery.parse("  "))
-    assertEquals(SearchQuery.Owners("nucl"), SearchQuery.parse("nucl"))
+    assertEquals(SearchQuery.Name("nucl"), SearchQuery.parse("nucl"))
     assertEquals(SearchQuery.Repos("nucllear", ""), SearchQuery.parse("nucllear/"))
     assertEquals(SearchQuery.Repos("nucllear", "tv"), SearchQuery.parse("nucllear/tv"))
     // a path after the repository is ignored, a leading slash too
     assertEquals(SearchQuery.Repos("nucllear", "tv"), SearchQuery.parse("nucllear/tv/releases"))
-    assertEquals(SearchQuery.Owners("nucl"), SearchQuery.parse("/nucl"))
+    assertEquals(SearchQuery.Name("nucl"), SearchQuery.parse("/nucl"))
   }
 
   @Test

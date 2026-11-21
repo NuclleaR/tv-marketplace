@@ -91,6 +91,7 @@ class HomeViewModel(
           name = it.app.displayName,
           ownerAndRepo = "${it.app.ref.owner}/${it.app.ref.repo}",
           iconUrl = it.app.iconUrl,
+          packageName = it.app.packageName,
           status = it.status,
         )
       },

@@ -45,6 +45,9 @@ interface GitHubRepository {
   // users and organizations whose login matches, best match first
   suspend fun searchOwners(query: String): LookupResult<List<GitHubOwner>>
 
+  // repositories of anyone whose name matches, best match first
+  suspend fun searchRepos(name: String): LookupResult<List<GitHubRepoSummary>>
+
   // NotFound when there is no such user or organization
   suspend fun ownerRepos(owner: String): LookupResult<OwnerRepos>
 

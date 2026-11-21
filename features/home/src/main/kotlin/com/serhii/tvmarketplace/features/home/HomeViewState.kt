@@ -15,6 +15,7 @@ data class HomeViewState(
     val name: String,
     val ownerAndRepo: String,
     val iconUrl: String? = null,
+    val packageName: String? = null,
     val status: AppStatus = AppStatus.NotInstalled,
   )
 

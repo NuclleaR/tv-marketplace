@@ -108,6 +108,7 @@ class AppDetailsViewModel(
       name = state.app.displayName,
       ownerAndRepo = "${state.app.ref.owner}/${state.app.ref.repo}",
       iconUrl = state.app.iconUrl,
+      packageName = state.app.packageName,
       description = state.app.description,
       status = state.status,
       primary = primaryAction(state),

@@ -77,7 +77,7 @@ class AddAppViewTest {
     compose.setContent { addApp(AddAppViewState(phone = ready)) }
     awaitKeyboard()
     compose.onNodeWithText("a").assertIsFocused()
-    compose.onNodeWithText("Search GitHub: owner or owner/repo").assertExists()
+    compose.onNodeWithText("Search GitHub: app name, or owner/").assertExists()
     compose.onNodeWithText("Or open http://192.168.1.42:8765 on your phone and enter the code").assertExists()
     compose.onNodeWithText("482 913").assertExists()
     compose.onNodeWithContentDescription("QR code to send a link from your phone").assertExists()
@@ -103,7 +103,7 @@ class AddAppViewTest {
   @Test
   fun `picking an owner hands focus back to the keyboard`() {
     var picked: String? = null
-    val owners = SearchResults.Owners(listOf(SearchResults.Owner("NuclleaR", null, organization = false)))
+    val owners = SearchResults.Matches(repos = emptyList(), owners = listOf(SearchResults.Owner("NuclleaR", null, organization = false)))
     compose.setContent { addApp(AddAppViewState(query = "nucl", phone = ready, results = owners), onOwnerClick = { picked = it }) }
     awaitKeyboard()
     compose.onNodeWithText("NuclleaR").requestFocus().performKeyInput { pressKey(Key.DirectionCenter) }
@@ -152,7 +152,7 @@ class AddAppViewTest {
     compose.setContent { addApp(state) }
     compose.onNodeWithText("There is no nobody on GitHub").assertExists()
     state = state.copy(query = "n", results = SearchResults.KeepTyping)
-    compose.onNodeWithText("Type at least two letters of the owner's name").assertExists()
+    compose.onNodeWithText("Type at least two letters").assertExists()
     state = state.copy(query = "nucllear/zzz", results = SearchResults.NothingFound)
     compose.onNodeWithText("Nothing found").assertExists()
   }

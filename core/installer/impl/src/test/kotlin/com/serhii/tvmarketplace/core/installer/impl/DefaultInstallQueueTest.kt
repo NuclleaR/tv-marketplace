@@ -114,9 +114,9 @@ class DefaultInstallQueueTest {
   @Test
   fun `update all installs one app after another and lists the failures`() = runTest {
     val second = CompletableDeferred<InstallOutcome>()
-    coEvery { installer.install(any(), "com.example.1", any()) } returns InstallOutcome.Installed("com.example.1", 20)
-    coEvery { installer.install(any(), "com.example.2", any()) } coAnswers { second.await() }
-    coEvery { installer.install(any(), "com.example.3", any()) } returns InstallOutcome.Installed("com.example.3", 20)
+    coEvery { installer.install(any(), "com.example.1") } returns InstallOutcome.Installed("com.example.1", 20)
+    coEvery { installer.install(any(), "com.example.2") } coAnswers { second.await() }
+    coEvery { installer.install(any(), "com.example.3") } returns InstallOutcome.Installed("com.example.3", 20)
     for (id in 1L..3L) trackedApps.update(id) { it.copy(packageName = "com.example.$id") }
     val queue = queue()
     queue.updateAll(listOf(request(1), request(2), request(3)))

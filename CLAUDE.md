@@ -45,6 +45,23 @@ TV Marketplace is a multi-module Android app in Kotlin with Jetpack Compose, Met
 - Logs go through `AppLog`, which only takes names, numbers and enums: never log links, addresses, tokens or device
   names.
 
+## Installs and updates
+
+- Releases come from an `AppSource` (`:core:domain`), GitHub only for now, through `ReleaseSource`
+  (`GitHubReleaseSource`). `UpdateChecker` (`:core:data`) asks for each app's latest release with its stored ETag,
+  stops on GitHub's request limit, and only stores what it finds: nothing installs without the user.
+- Picking the package is pure Kotlin in `:core:domain`: `PackageChooser` (ABI, TV, debug from file names, tested
+  on `src/test/resources/packages/corpus.json`), `PackagePattern` for the user's remembered choice,
+  `VersionComparator`, and `ApkManifestReader`, which reads an APK's package name from three ranged requests.
+- `:core:installer:api` is the contract features use (`InstallQueue`, `Downloads`, `InstalledApps`, `Installer`,
+  `appState()` that derives an app's status the same way for Home and App details); `:core:installer:impl` downloads
+  in a WorkManager worker, verifies, and installs through `PackageInstaller` sessions. The system's prompts can only be
+  shown by a visible activity, so `MainActivity` shows whatever `Installer.pendingConfirmation` holds.
+- Workers get their dependencies from the graph: contribute a `WorkerCreator` with
+  `@ContributesIntoSet(AppScope::class)`, and `App` builds WorkManager's factory from all of them.
+- Installing for real needs a device or emulator: `adb install` an older release first to see an update, and allow
+  "install unknown apps" for the debug build. Robolectric covers the session flow and status mapping.
+
 ## Skills
 
 With the `android` plugin (`/plugin install android@nucllear`), load the matching skill before working:

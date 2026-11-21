@@ -24,3 +24,29 @@ fun MacrobenchmarkScope.openAddApp() {
     "Add app didn't show the QR code"
   }
 }
+
+// Home → the first tracked app's details, by remote. Needs at least one tracked app on the device: add one
+// through Add app before running
+fun MacrobenchmarkScope.openFirstApp() {
+  waitForHome()
+  // past the updates row, when there is one, to the first tile
+  repeat(2) {
+    if (device.hasObject(By.text("Release notes"))) return@repeat
+    device.pressDPadDown()
+    device.waitForIdle()
+  }
+  device.pressDPadCenter()
+  check(device.wait(Until.hasObject(By.text("Release notes")), TIMEOUT_MS)) { "No app details: track an app on the device first" }
+}
+
+// down through the package list and back up
+fun MacrobenchmarkScope.browsePackages() {
+  repeat(4) {
+    device.pressDPadDown()
+    device.waitForIdle()
+  }
+  repeat(4) {
+    device.pressDPadUp()
+    device.waitForIdle()
+  }
+}

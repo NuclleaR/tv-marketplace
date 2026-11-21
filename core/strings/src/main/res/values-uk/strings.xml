@@ -74,4 +74,80 @@
   <string name="notification_text">Готовий приймати посилання з телефона</string>
 
   <string name="time_just_now">щойно</string>
+  <string name="status_not_installed">Не встановлено</string>
+  <string name="status_installed">Встановлено %1$s</string>
+  <string name="status_installed_unknown">Встановлено</string>
+  <string name="status_update">%1$s → %2$s</string>
+  <string name="status_update_unknown">Оновлення до %1$s</string>
+  <string name="status_downloading">Завантаження %1$d%%</string>
+  <string name="status_downloading_unknown">Завантаження…</string>
+  <string name="status_ready">Готово до встановлення</string>
+  <string name="status_no_package">Немає пакета для цього пристрою</string>
+  <string name="status_unavailable">Джерело недоступне</string>
+  <string name="status_installing">Встановлення…</string>
+  <string name="status_needs_permission">Потрібен дозвіл на встановлення</string>
+
+  <string name="failure_network">Немає з\'єднання. Перевірте мережу й спробуйте ще раз.</string>
+  <string name="failure_rate_limited">GitHub обмежує запити. Спробуйте після %1$s.</string>
+  <string name="failure_no_space">Недостатньо вільного місця. Для завантаження потрібно %1$s.</string>
+  <string name="failure_corrupt">Завантаження пошкоджене або неповне. Спробуйте ще раз.</string>
+  <string name="failure_different_app">Цей пакет — інша апка, ніж встановлена, тому його не встановлено.</string>
+  <string name="failure_signature">Це оновлення підписане інакше, ніж встановлена апка, тому не може її замінити. Якщо спершу видалити апку, її дані буде втрачено.</string>
+  <string name="failure_incompatible">Цей пакет не працює на цьому ТВ.</string>
+  <string name="failure_cancelled">Встановлення скасовано.</string>
+  <string name="failure_system">Система не змогла встановити апку.</string>
+
+  <string name="details_install">Встановити</string>
+  <string name="details_update">Оновити</string>
+  <string name="details_open">Відкрити</string>
+  <string name="details_cancel">Скасувати</string>
+  <string name="details_install_now">Встановити зараз</string>
+  <string name="details_retry">Повторити</string>
+  <string name="details_release_notes">Нотатки до релізу</string>
+  <string name="details_settings">Налаштування</string>
+  <string name="details_remove">Видалити</string>
+  <string name="details_latest">Остання %1$s · %2$s</string>
+  <string name="details_no_release">Релізів ще немає</string>
+  <string name="details_packages">Пакети в %1$s</string>
+  <string name="details_recommended">Рекомендовано</string>
+  <string name="details_your_choice">Ваш вибір</string>
+  <string name="details_not_for_device">Не для цього пристрою</string>
+  <string name="details_use_automatic">Використовувати рекомендований пакет</string>
+  <string name="details_choice_lost">Пакета, який ви вибрали раніше, немає в цьому релізі, тому використано рекомендований.</string>
+  <string name="details_no_package">В останньому релізі немає пакета для цього пристрою.</string>
+  <string name="details_unavailable">Репозиторій цієї апки видалено або закрито. Її можна прибрати зі списку, встановлена апка залишиться.</string>
+  <string name="details_permission">Щоб встановлювати апки, дозвольте TV Marketplace встановлювати невідомі апки.</string>
+  <string name="details_permission_open">Відкрити налаштування</string>
+  <string name="details_permission_later">Не зараз</string>
+  <string name="details_whats_new">Що нового</string>
+  <string name="details_missing">Цієї апки вже немає в списку.</string>
+
+  <string name="app_settings_title">Налаштування %1$s</string>
+  <string name="app_settings_prereleases">Враховувати пре-релізи</string>
+  <string name="app_settings_prereleases_hint">Бета й тестові версії вважаються оновленнями</string>
+
+  <string name="remove_title">Прибрати %1$s зі списку?</string>
+  <string name="remove_keep">Залишити на ТВ</string>
+  <string name="remove_uninstall">Також видалити з ТВ</string>
+  <string name="remove_confirm">Прибрати</string>
+  <string name="remove_cancel">Скасувати</string>
+
+  <plurals name="home_updates">
+    <item quantity="one">%d оновлення</item>
+    <item quantity="few">%d оновлення</item>
+    <item quantity="many">%d оновлень</item>
+    <item quantity="other">%d оновлення</item>
+  </plurals>
+  <string name="home_update_all">Оновити все</string>
+  <string name="home_stop_after">Зупинитися після цього</string>
+  <string name="home_check">Перевірити оновлення</string>
+  <string name="home_checking">Перевірка…</string>
+  <string name="home_checked">Перевірено %1$s</string>
+  <string name="home_updating">Оновлення %1$d з %2$d</string>
+  <string name="home_update_result">Оновлено %1$d, не вдалося %2$d</string>
+  <string name="home_show">Показати</string>
+  <string name="home_failures_title">Оновлення, що не вдалися</string>
+
+  <string name="notification_downloads">Завантаження</string>
+  <string name="notification_download">Завантаження %1$s</string>
 </resources>

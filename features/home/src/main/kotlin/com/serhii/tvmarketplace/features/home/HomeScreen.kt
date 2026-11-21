@@ -37,5 +37,9 @@ fun HomeScreen() {
     viewState = viewModel.viewState(),
     onOpen = viewModel::onOpen,
     onOpenNotice = viewModel::onOpenNotice,
+    onCheckForUpdates = viewModel::onCheckForUpdates,
+    onUpdateAll = viewModel::onUpdateAll,
+    onStopAfterCurrent = viewModel::onStopAfterCurrent,
+    onShowFailures = viewModel::onShowFailures,
   )
 }

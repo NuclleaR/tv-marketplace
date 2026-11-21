@@ -35,6 +35,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -44,13 +45,19 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import com.serhii.tvmarketplace.core.domain.AppStatus
+import com.serhii.tvmarketplace.core.domain.FailureReason
 import com.serhii.tvmarketplace.core.ui.AppIcon
 import com.serhii.tvmarketplace.core.ui.AppTheme
 import com.serhii.tvmarketplace.core.ui.PillButton
 import com.serhii.tvmarketplace.core.ui.PreviewTv
+import com.serhii.tvmarketplace.core.ui.ProgressLine
+import com.serhii.tvmarketplace.core.ui.StatusLine
 import com.serhii.tvmarketplace.core.ui.TileCard
 import com.serhii.tvmarketplace.core.ui.TvScreen
+import com.serhii.tvmarketplace.core.ui.failureText
 import com.serhii.tvmarketplace.core.ui.icons.AppIcons
+import com.serhii.tvmarketplace.core.ui.relativeTime
 import com.serhii.tvmarketplace.navigation.Destination
 import com.serhii.tvmarketplace.navigation.DestinationSaver
 import com.serhii.tvmarketplace.core.strings.R as StringsR
@@ -61,6 +68,10 @@ internal fun HomeView(
   onOpen: (Destination) -> Unit,
   modifier: Modifier = Modifier,
   onOpenNotice: (Long) -> Unit = {},
+  onCheckForUpdates: () -> Unit = {},
+  onUpdateAll: () -> Unit = {},
+  onStopAfterCurrent: () -> Unit = {},
+  onShowFailures: () -> Unit = {},
 ) {
   val screenFocus = remember { FocusRequester() }
   val openedFocus = remember { FocusRequester() }
@@ -68,6 +79,10 @@ internal fun HomeView(
   // memory doesn't survive the screen leaving the composition, so the destination is saved and its button is
   // the restorer's fallback; the first time that is Add app
   var opened by rememberSaveable(stateSaver = DestinationSaver) { mutableStateOf<Destination>(Destination.AddApp) }
+  // the app that was opened may have been removed there: then focus starts at Add app again
+  val gone = opened.let { it is Destination.AppDetails && viewState.apps.none { app -> app.id == it.appId } }
+  val failuresGone = opened == Destination.UpdateFailures && viewState.updates.batch?.failed.isNullOrEmpty()
+  if (gone || failuresGone) opened = Destination.AddApp
   val open: (Destination) -> Unit = { destination ->
     opened = destination
     onOpen(destination)
@@ -117,6 +132,33 @@ internal fun HomeView(
           leadingIcon = AppIcons.Settings,
           modifier = Modifier.opener(Destination.Settings),
         )
+        PillButton(
+          text = stringResource(if (viewState.updates.checking) StringsR.string.home_checking else StringsR.string.home_check),
+          onClick = { if (!viewState.updates.checking) onCheckForUpdates() },
+          leadingIcon = AppIcons.Refresh,
+        )
+      }
+      if (viewState.updates.visible) {
+        UpdatesRow(
+          updates = viewState.updates,
+          onUpdateAll = onUpdateAll,
+          onStopAfterCurrent = onStopAfterCurrent,
+          onShowFailures = {
+            opened = Destination.UpdateFailures
+            onShowFailures()
+          },
+          showFailuresFocus = if (opened == Destination.UpdateFailures) openedFocus else null,
+          modifier = Modifier.padding(top = 24.dp, start = 12.dp),
+        )
+      } else {
+        viewState.updates.lastCheckedAt?.let {
+          Text(
+            stringResource(StringsR.string.home_checked, relativeTime(it)),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 20.dp, start = 12.dp),
+          )
+        }
       }
       Text(
         stringResource(StringsR.string.home_tracked_apps),
@@ -138,7 +180,10 @@ internal fun HomeView(
           horizontalArrangement = Arrangement.spacedBy(20.dp),
           verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
-          items(viewState.apps, key = { it.id }) { app -> AppTile(app) }
+          items(viewState.apps, key = { it.id }) { app ->
+            val destination = Destination.AppDetails(app.id)
+            AppTile(app, onClick = { open(destination) }, modifier = Modifier.opener(destination))
+          }
         }
       }
     }
@@ -165,9 +210,63 @@ private fun CountBadge(count: Int) {
 }
 
 @Composable
-private fun AppTile(app: HomeViewState.App) {
-  // tapping an app does nothing yet: details and installs are the next feature
-  TileCard(onClick = {}, modifier = Modifier.fillMaxWidth()) {
+private fun UpdatesRow(
+  updates: HomeViewState.Updates,
+  onUpdateAll: () -> Unit,
+  onStopAfterCurrent: () -> Unit,
+  onShowFailures: () -> Unit,
+  // set when Show opened the screen the user came back from
+  showFailuresFocus: FocusRequester?,
+  modifier: Modifier = Modifier,
+) {
+  val batch = updates.batch
+  Row(
+    modifier = modifier.focusRestorer().focusGroup(),
+    horizontalArrangement = Arrangement.spacedBy(20.dp),
+    verticalAlignment = Alignment.CenterVertically,
+  ) {
+    val summary = when {
+      batch != null && batch.running -> stringResource(
+        StringsR.string.home_updating,
+        (batch.done + 1).coerceAtMost(batch.total),
+        batch.total,
+      )
+      batch != null && batch.failed.isNotEmpty() -> stringResource(
+        StringsR.string.home_update_result,
+        batch.done - batch.failed.size,
+        batch.failed.size,
+      )
+      updates.resumeAt != null -> failureText(FailureReason.RateLimited(updates.resumeAt))
+      else -> pluralStringResource(StringsR.plurals.home_updates, updates.count, updates.count)
+    }
+    Text(summary, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
+    when {
+      batch != null && batch.running && !batch.stopping ->
+        PillButton(stringResource(StringsR.string.home_stop_after), onClick = onStopAfterCurrent)
+      batch != null && batch.running -> Unit
+      updates.count > 0 -> PillButton(
+        stringResource(StringsR.string.home_update_all),
+        onClick = onUpdateAll,
+        leadingIcon = AppIcons.Refresh,
+      )
+    }
+    if (batch != null && !batch.running && batch.failed.isNotEmpty()) {
+      PillButton(
+        stringResource(StringsR.string.home_show),
+        onClick = onShowFailures,
+        modifier = showFailuresFocus?.let { Modifier.focusRequester(it) } ?: Modifier,
+      )
+    }
+  }
+}
+
+@Composable
+private fun AppTile(
+  app: HomeViewState.App,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  TileCard(onClick = onClick, modifier = modifier.fillMaxWidth()) {
     Row(
       modifier = Modifier.fillMaxWidth().height(100.dp).padding(horizontal = 18.dp),
       horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -182,13 +281,8 @@ private fun AppTile(app: HomeViewState.App) {
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
         )
-        Text(
-          app.ownerAndRepo,
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onSurfaceVariant,
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-        )
+        StatusLine(app.status)
+        (app.status as? AppStatus.Downloading)?.let { ProgressLine(it.fraction, Modifier.padding(top = 2.dp)) }
       }
     }
   }
@@ -235,6 +329,15 @@ private fun Notice(
   }
 }
 
+private val previewStatuses = listOf(
+  AppStatus.UpdateAvailable("1.7.3", "1.7.4"),
+  AppStatus.UpToDate("1.21"),
+  AppStatus.UpdateAvailable("32.79", "32.80s"),
+  AppStatus.NoPackage(null),
+  AppStatus.Downloading(0.6F),
+  AppStatus.NotInstalled,
+)
+
 private val previewApps = listOf(
   "Obtainium" to "ImranR98/Obtainium",
   "F-Droid" to "f-droid/fdroidclient",
@@ -242,14 +345,21 @@ private val previewApps = listOf(
   "Kodi" to "xbmc/xbmc",
   "NewPipe" to "TeamNewPipe/NewPipe",
   "Jellyfin" to "jellyfin/jellyfin-androidtv",
-).mapIndexed { index, (name, repo) -> HomeViewState.App(id = index.toLong(), name = name, ownerAndRepo = repo) }
+).mapIndexed { index, (name, repo) ->
+  HomeViewState.App(id = index.toLong(), name = name, ownerAndRepo = repo, status = previewStatuses[index])
+}
 
 @PreviewTv
 @Composable
 private fun HomeViewPreview() {
   AppTheme {
     HomeView(
-      viewState = HomeViewState(apps = previewApps, inboxCount = 3, notice = HomeViewState.Notice(1, "Safari on iPhone")),
+      viewState = HomeViewState(
+        apps = previewApps,
+        inboxCount = 3,
+        notice = HomeViewState.Notice(1, "Safari on iPhone"),
+        updates = HomeViewState.Updates(count = 2),
+      ),
       onOpen = {},
     )
   }

@@ -3,8 +3,10 @@ package com.serhii.tvmarketplace.features.addapp
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import app.cash.turbine.test
+import com.serhii.tvmarketplace.core.data.CheckResult
 import com.serhii.tvmarketplace.core.data.IncomingLinkStatus
 import com.serhii.tvmarketplace.core.data.PreviewResult
+import com.serhii.tvmarketplace.core.data.UpdateChecker
 import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import com.serhii.tvmarketplace.core.testing.FakeGitHub
 import com.serhii.tvmarketplace.core.testing.FakeIncomingLinks
@@ -13,8 +15,12 @@ import com.serhii.tvmarketplace.features.addapp.preview.PreviewViewModel
 import com.serhii.tvmarketplace.features.addapp.preview.PreviewViewState
 import com.serhii.tvmarketplace.navigation.Destination
 import com.serhii.tvmarketplace.navigation.Navigator
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
@@ -30,7 +36,10 @@ class PreviewViewModelTest {
   private val incomingLinks = FakeIncomingLinks()
   private val navigator = mockk<Navigator>(relaxUnitFun = true)
 
-  private fun viewModel(destination: Destination.Preview) = PreviewViewModel(gitHub, trackedApps, incomingLinks, navigator, destination)
+  private val checker = mockk<UpdateChecker> { coEvery { check(any()) } returns CheckResult.Done }
+
+  private fun viewModel(destination: Destination.Preview) =
+    PreviewViewModel(gitHub, trackedApps, incomingLinks, navigator, checker, TestScope(UnconfinedTestDispatcher()), destination)
 
   @Test
   fun `loads the preview of a received link`() = runTest {
@@ -57,6 +66,8 @@ class PreviewViewModelTest {
     }
     assertEquals(listOf(ref), trackedApps.apps.value.map { it.ref })
     assertEquals(IncomingLinkStatus.ADDED, incomingLinks.get(link.id)?.status)
+    // a new app is checked at once, so Home knows whether there is something to install
+    coVerify { val _ = checker.check(trackedApps.apps.value.single().id) }
   }
 
   @Test
@@ -74,6 +85,18 @@ class PreviewViewModelTest {
       viewModel(Destination.Preview(owner = ref.owner, repo = ref.repo)).viewState()
     }.test {
       assertTrue(assertIs<PreviewViewState.Content>(awaitMatching { it != PreviewViewState.Loading }).alreadyTracked)
+    }
+  }
+
+  @Test
+  fun `open on an app that is already tracked shows its details`() = runTest {
+    val app = trackedApps.add(com.serhii.tvmarketplace.core.testing.previewOf(ref))
+    val viewModel = viewModel(Destination.Preview(owner = ref.owner, repo = ref.repo))
+    backgroundScope.launchMolecule(RecompositionMode.Immediate) { viewModel.viewState() }.test {
+      val _ = awaitMatching { it != PreviewViewState.Loading }
+      viewModel.onOpen()
+      verify { navigator.goTo(Destination.AppDetails(app.id)) }
+      cancelAndIgnoreRemainingEvents()
     }
   }
 

@@ -5,11 +5,13 @@ import com.serhii.tvmarketplace.core.data.CheckResult
 import com.serhii.tvmarketplace.core.data.PackageIdentity
 import com.serhii.tvmarketplace.core.data.ReleaseResult
 import com.serhii.tvmarketplace.core.domain.AppSource
+import com.serhii.tvmarketplace.core.domain.FDroidApp
 import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import com.serhii.tvmarketplace.core.testing.FakeReleaseSource
 import com.serhii.tvmarketplace.core.testing.FakeReleasesRepository
 import com.serhii.tvmarketplace.core.testing.FakeTrackedApps
 import com.serhii.tvmarketplace.core.testing.MutableTimeSource
+import com.serhii.tvmarketplace.core.testing.previewOf
 import com.serhii.tvmarketplace.core.testing.release
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
@@ -48,7 +50,7 @@ class DefaultUpdateCheckerTest {
     { listOf("arm64-v8a") },
   )
 
-  private val repos get() = source.requests.map { (it.first as AppSource.GitHub).repo }
+  private val repos get() = source.requests.map { (it.first as GitHubRepoRef).repo }
 
   @Test
   fun `stores each app's latest release, oldest checked first`() = runTest {
@@ -69,7 +71,7 @@ class DefaultUpdateCheckerTest {
     val resumeAt = time.now.plusSeconds(600)
     source.answer =
       { appSource, _ ->
-        if ((appSource as AppSource.GitHub).repo ==
+        if ((appSource as GitHubRepoRef).repo ==
           "three"
         ) {
           ReleaseResult.RateLimited(resumeAt)
@@ -88,6 +90,22 @@ class DefaultUpdateCheckerTest {
     assertEquals(2, source.requests.size)
     time.now = resumeAt.plusSeconds(1)
     assertEquals(null, checker.state().first().resumeAt)
+  }
+
+  @Test
+  fun `GitHub's request limit holds back only GitHub apps`() = runTest {
+    val fDroid = trackedApps.add(previewOf(FDroidApp("org.schabi.newpipe")))
+    val resumeAt = time.now.plusSeconds(600)
+    source.answer = { appSource, _ ->
+      if (appSource is GitHubRepoRef) ReleaseResult.RateLimited(resumeAt) else ReleaseResult.Found(release("0.29.3"), null)
+    }
+    val checker = checker()
+    assertEquals(CheckResult.RateLimited(resumeAt), checker.checkAll())
+    assertEquals("0.29.3", releases.latest(fDroid.id)?.release?.tag)
+    // while GitHub is paused, only the F-Droid app is asked again
+    source.requests.clear()
+    assertEquals(CheckResult.RateLimited(resumeAt), checker.checkAll())
+    assertEquals(listOf("fdroid:org.schabi.newpipe"), source.requests.map { it.first.key })
   }
 
   @Test

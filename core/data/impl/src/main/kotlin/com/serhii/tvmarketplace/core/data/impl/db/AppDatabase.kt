@@ -24,7 +24,7 @@ data class TrackedAppEntity(
   @PrimaryKey(autoGenerate = true) val id: Long = 0,
   val owner: String,
   val repo: String,
-  // lowercase "owner/repo": GitHub names are case-insensitive
+  // AppSource.key: lowercase "owner/repo" for GitHub, "fdroid:<package>" for F-Droid
   val repoKey: String,
   val sourceUrl: String,
   val displayName: String,
@@ -103,6 +103,8 @@ data class IncomingLinkEntity(
   val senderLabel: String,
   val receivedAt: Instant,
   val status: String,
+  // the kind of AppSource, as in tracked_app
+  @ColumnInfo(defaultValue = "'github'") val sourceKind: String = "github",
 )
 
 @Entity(tableName = "paired_phone", indices = [Index(value = ["tokenHash"], unique = true)])
@@ -271,13 +273,14 @@ class Converters {
     AppReleaseEntity::class,
     InstallRecordEntity::class,
   ],
-  version = 6,
+  version = 7,
   autoMigrations = [
     AutoMigration(from = 1, to = 2),
     AutoMigration(from = 2, to = 3),
     AutoMigration(from = 3, to = 4),
     AutoMigration(from = 4, to = 5),
     AutoMigration(from = 5, to = 6, spec = RecheckMissingIcons::class),
+    AutoMigration(from = 6, to = 7),
   ],
 )
 @TypeConverters(Converters::class)

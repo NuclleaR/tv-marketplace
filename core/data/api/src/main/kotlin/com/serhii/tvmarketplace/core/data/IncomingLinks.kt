@@ -1,6 +1,6 @@
 package com.serhii.tvmarketplace.core.data
 
-import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
+import com.serhii.tvmarketplace.core.domain.AppSource
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
 
@@ -9,7 +9,7 @@ enum class IncomingLinkStatus { PENDING, ADDED, DISMISSED }
 data class IncomingLink(
   val id: Long,
   val rawText: String,
-  val ref: GitHubRepoRef,
+  val ref: AppSource,
   val senderPhoneId: String?,
   val senderLabel: String,
   val receivedAt: Instant,
@@ -17,10 +17,10 @@ data class IncomingLink(
 )
 
 interface IncomingLinksRepository {
-  // a pending link to the same repository is refreshed instead of duplicated
+  // a pending link to the same app is refreshed instead of duplicated
   suspend fun receive(
     rawText: String,
-    ref: GitHubRepoRef,
+    ref: AppSource,
     senderPhoneId: String?,
     senderLabel: String,
   ): IncomingLink

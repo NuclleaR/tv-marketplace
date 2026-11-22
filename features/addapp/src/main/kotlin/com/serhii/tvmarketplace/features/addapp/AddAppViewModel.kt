@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.serhii.tvmarketplace.core.data.FDroidCatalog
 import com.serhii.tvmarketplace.core.data.GitHubRepository
 import com.serhii.tvmarketplace.core.linkserver.IncomingLinkEvents
 import com.serhii.tvmarketplace.core.linkserver.LinkServer
@@ -28,9 +29,10 @@ class AddAppViewModel(
   private val events: IncomingLinkEvents,
   private val navigator: Navigator,
   gitHub: GitHubRepository,
+  fDroid: FDroidCatalog,
 ) {
 
-  private val search = GitHubSearch(gitHub)
+  private val search = GitHubSearch(gitHub, fDroid)
 
   private var results by mutableStateOf<SearchResults>(SearchResults.None)
   private var searching by mutableStateOf(false)
@@ -83,6 +85,10 @@ class AddAppViewModel(
 
   fun onRepoClick(repo: SearchResults.Repo) {
     navigator.goTo(Destination.Preview(owner = repo.owner, repo = repo.name))
+  }
+
+  fun onFDroidClick(app: SearchResults.FDroidApp) {
+    navigator.goTo(Destination.Preview(fdroidPackage = app.packageName))
   }
 
   fun onHidden() {

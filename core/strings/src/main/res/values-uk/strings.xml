@@ -8,7 +8,7 @@
 
   <string name="add_app_title">Додати застосунок</string>
   <string name="add_app_step_scan">Відскануйте код камерою телефона</string>
-  <string name="add_app_step_send">Вставте посилання на GitHub і натисніть «Надіслати»</string>
+  <string name="add_app_step_send">Вставте посилання на GitHub або F-Droid і натисніть «Надіслати»</string>
   <string name="add_app_manual">Або відкрийте %1$s на телефоні й введіть код</string>
   <string name="add_app_same_wifi">Телефон і телевізор мають бути в одній Wi-Fi мережі.</string>
   <string name="add_app_no_network">Підключіть телевізор до Wi-Fi або Ethernet</string>
@@ -16,11 +16,12 @@
   <string name="add_app_network_settings">Налаштування мережі</string>
   <string name="add_app_failed">Не вдалося почати отримувати посилання.</string>
   <string name="add_app_qr_description">QR-код для надсилання посилання з телефона</string>
-  <string name="add_app_search_hint">Пошук на GitHub: назва апки або автор/</string>
+  <string name="add_app_search_hint">Пошук у F-Droid і на GitHub: назва апки або автор/</string>
   <string name="add_app_searching">Шукаю…</string>
   <string name="add_app_phone_title">Або надішліть посилання з телефона</string>
   <string name="add_app_keep_typing">Введіть щонайменше дві літери</string>
-  <string name="add_app_section_repos">Репозиторії</string>
+  <string name="add_app_section_fdroid">F-Droid</string>
+  <string name="add_app_section_repos">GitHub</string>
   <string name="add_app_section_owners">Автори</string>
   <string name="add_app_nothing_found">Нічого не знайдено</string>
   <string name="add_app_owner_not_found">На GitHub немає %1$s</string>
@@ -36,11 +37,11 @@
   <string name="preview_open">Відкрити</string>
   <string name="common_cancel">Скасувати</string>
   <string name="common_retry">Повторити</string>
-  <string name="preview_loading">Завантаження з GitHub…</string>
+  <string name="preview_loading">Завантаження…</string>
   <string name="preview_added">Додано %1$s</string>
   <string name="preview_not_found">Такого репозиторію не існує, або він приватний.</string>
   <string name="preview_rate_limited">GitHub зараз обмежує запити. Спробуйте за кілька хвилин.</string>
-  <string name="preview_network_error">Не вдалося зʼєднатися з GitHub. Перевірте інтернет на телевізорі.</string>
+  <string name="preview_network_error">Не вдалося завантажити застосунок. Перевірте інтернет на телевізорі.</string>
   <string name="preview_link_missing">Це посилання більше недоступне.</string>
   <string name="preview_sent_from">Надіслано з %1$s</string>
 

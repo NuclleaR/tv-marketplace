@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
 import app.cash.turbine.test
+import com.serhii.tvmarketplace.core.data.FDroidAppSummary
 import com.serhii.tvmarketplace.core.data.GitHubOwner
 import com.serhii.tvmarketplace.core.data.LookupResult
 import com.serhii.tvmarketplace.core.data.OwnerRepos
@@ -14,6 +15,7 @@ import com.serhii.tvmarketplace.core.linkserver.IncomingLinkEvents
 import com.serhii.tvmarketplace.core.linkserver.LinkServer
 import com.serhii.tvmarketplace.core.linkserver.ServerState
 import com.serhii.tvmarketplace.core.linkserver.SessionManager
+import com.serhii.tvmarketplace.core.testing.FakeFDroid
 import com.serhii.tvmarketplace.core.testing.FakeGitHub
 import com.serhii.tvmarketplace.core.testing.MutableTimeSource
 import com.serhii.tvmarketplace.core.testing.repoSummary
@@ -43,7 +45,8 @@ class AddAppViewModelTest {
   private val events = IncomingLinkEvents()
   private val navigator = mockk<Navigator>(relaxUnitFun = true)
   private val gitHub = FakeGitHub()
-  private val viewModel = AddAppViewModel(sessions, server, events, navigator, gitHub)
+  private val fDroid = FakeFDroid()
+  private val viewModel = AddAppViewModel(sessions, server, events, navigator, gitHub, fDroid)
 
   // the screen keeps the query and hands it over
   private var query by mutableStateOf("")
@@ -212,6 +215,26 @@ class AddAppViewModelTest {
       advanceTimeBy(SEARCH_DEBOUNCE_MS + 1)
       assertEquals(SearchResults.RateLimited, expectMostRecentItem().results)
     }
+  }
+
+  @Test
+  fun `F-Droid apps come first and still show while GitHub limits requests`() = runTest {
+    fDroid.apps = { LookupResult.Found(listOf(FDroidAppSummary("org.schabi.newpipe", "NewPipe", "YouTube frontend", null))) }
+    gitHub.namedRepos = { LookupResult.RateLimited }
+    gitHub.owners = { LookupResult.RateLimited }
+    backgroundScope.launchMolecule(RecompositionMode.Immediate) { viewModel.viewState(query) }.test {
+      query += "newpipe"
+      advanceTimeBy(SEARCH_DEBOUNCE_MS + 1)
+      val matches = assertIs<SearchResults.Matches>(expectMostRecentItem().results)
+      assertEquals(listOf("org.schabi.newpipe"), matches.fdroid.map { it.packageName })
+      assertEquals(emptyList(), matches.repos)
+    }
+  }
+
+  @Test
+  fun `picking an F-Droid app opens its preview`() {
+    viewModel.onFDroidClick(SearchResults.FDroidApp("org.schabi.newpipe", "NewPipe", null, null))
+    verify { navigator.goTo(Destination.Preview(fdroidPackage = "org.schabi.newpipe")) }
   }
 
   @Test

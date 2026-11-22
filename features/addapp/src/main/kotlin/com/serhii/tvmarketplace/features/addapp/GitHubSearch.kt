@@ -1,5 +1,6 @@
 package com.serhii.tvmarketplace.features.addapp
 
+import com.serhii.tvmarketplace.core.data.FDroidCatalog
 import com.serhii.tvmarketplace.core.data.GitHubRepoSummary
 import com.serhii.tvmarketplace.core.data.GitHubRepository
 import com.serhii.tvmarketplace.core.data.LookupResult
@@ -42,7 +43,10 @@ internal fun List<GitHubRepoSummary>.matching(filter: String): List<GitHubRepoSu
   return starts + contains
 }
 
-internal class GitHubSearch(private val gitHub: GitHubRepository) {
+internal class GitHubSearch(
+  private val gitHub: GitHubRepository,
+  private val fDroid: FDroidCatalog,
+) {
 
   // called on every change of the text; cancelled by the next one, which is what makes the pause a debounce
   suspend fun search(query: SearchQuery): SearchResults = when (query) {
@@ -51,22 +55,28 @@ internal class GitHubSearch(private val gitHub: GitHubRepository) {
     is SearchQuery.Repos -> repos(query.owner, query.filter)
   }
 
-  // most people know an app by its name, not by who publishes it: repositories first, owners after them
+  // most people know an app by its name, not by who publishes it: F-Droid's apps and GitHub's repositories first,
+  // owners after them
   private suspend fun name(text: String): SearchResults = coroutineScope {
     if (text.length < MIN_NAME_LENGTH) return@coroutineScope SearchResults.KeepTyping
     delay(SEARCH_DEBOUNCE_MS)
+    val fDroidAsync = async { fDroid.search(text) }
     val reposAsync = async { gitHub.searchRepos(text) }
     val ownersAsync = async { gitHub.searchOwners(text) }
+    // F-Droid has no request limit: its apps show even while GitHub refuses
+    val fDroidApps = (fDroidAsync.await() as? LookupResult.Found)?.value.orEmpty()
+      .map { SearchResults.FDroidApp(it.packageName, it.name, it.summary, it.iconUrl) }
     val repos = when (val result = reposAsync.await()) {
       // GitHub ranks by relevance and popularity; only a repository named exactly like the text goes before that
       is LookupResult.Found -> result.value.sortedByDescending { it.name.equals(text, ignoreCase = true) }
       LookupResult.NotFound -> emptyList()
-      else -> return@coroutineScope result.failure(owner = text)
+      else -> if (fDroidApps.isEmpty()) return@coroutineScope result.failure(owner = text) else emptyList()
     }
     // owners only add to the repositories: without them the search still answers
     val owners = (ownersAsync.await() as? LookupResult.Found)?.value.orEmpty()
-    if (repos.isEmpty() && owners.isEmpty()) return@coroutineScope SearchResults.NothingFound
+    if (fDroidApps.isEmpty() && repos.isEmpty() && owners.isEmpty()) return@coroutineScope SearchResults.NothingFound
     SearchResults.Matches(
+      fdroid = fDroidApps,
       repos = repos.map { SearchResults.Repo(owner = it.owner, name = it.name, description = it.description) },
       owners = owners.map { SearchResults.Owner(it.login, it.avatarUrl, it.organization) },
     )

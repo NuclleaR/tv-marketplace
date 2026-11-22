@@ -23,7 +23,7 @@ import java.io.IOException
 import java.security.MessageDigest
 
 // release files are served by GitHub itself after a redirect or two; anything else is not what the release lists
-private val ALLOWED_HOSTS = setOf("github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com")
+private val ALLOWED_HOSTS = setOf("github.com", "objects.githubusercontent.com", "release-assets.githubusercontent.com", "f-droid.org")
 private const val MAX_REDIRECTS = 5
 private const val BUFFER_SIZE = 64 * 1024
 

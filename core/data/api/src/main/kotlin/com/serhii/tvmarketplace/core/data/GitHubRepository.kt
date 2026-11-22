@@ -1,6 +1,8 @@
 package com.serhii.tvmarketplace.core.data
 
 import com.serhii.tvmarketplace.core.domain.AppPreview
+import com.serhii.tvmarketplace.core.domain.AppSource
+import com.serhii.tvmarketplace.core.domain.FDroidApp
 import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 
 sealed interface PreviewResult {
@@ -38,6 +40,26 @@ data class OwnerRepos(
   val repos: List<GitHubRepoSummary>,
   val complete: Boolean,
 )
+
+// an app's name, description, icon and latest version, from whichever source it comes from
+interface AppPreviews {
+  suspend fun preview(source: AppSource): PreviewResult
+}
+
+data class FDroidAppSummary(
+  val packageName: String,
+  val name: String,
+  val summary: String?,
+  val iconUrl: String?,
+)
+
+// f-droid.org's main repository
+interface FDroidCatalog {
+  // apps whose name or summary match, best match first
+  suspend fun search(query: String): LookupResult<List<FDroidAppSummary>>
+
+  suspend fun preview(app: FDroidApp): PreviewResult
+}
 
 interface GitHubRepository {
   suspend fun preview(ref: GitHubRepoRef): PreviewResult

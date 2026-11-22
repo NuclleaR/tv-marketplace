@@ -76,6 +76,7 @@ fun AddAppScreen() {
     onBackspace = { query = query.dropLast(1) },
     onOwnerClick = { query = "$it/" },
     onRepoClick = viewModel::onRepoClick,
+    onFDroidClick = viewModel::onFDroidClick,
     onRetry = viewModel::onRetry,
     onNetworkSettings = { openNetworkSettings(context) },
   )

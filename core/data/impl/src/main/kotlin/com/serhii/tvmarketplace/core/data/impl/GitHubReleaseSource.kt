@@ -5,10 +5,9 @@ import com.serhii.tvmarketplace.core.data.ReleaseResult
 import com.serhii.tvmarketplace.core.data.ReleaseSource
 import com.serhii.tvmarketplace.core.domain.AppPackage
 import com.serhii.tvmarketplace.core.domain.AppSource
+import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import com.serhii.tvmarketplace.core.domain.PackageChooser
 import com.serhii.tvmarketplace.core.domain.Release
-import dev.zacsweers.metro.AppScope
-import dev.zacsweers.metro.ContributesBinding
 import dev.zacsweers.metro.Inject
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -32,7 +31,7 @@ private const val RELEASES_PER_CHECK = 10
 // GitHub asks clients to wait at least a minute after a secondary limit that doesn't say how long
 private const val DEFAULT_RETRY_SECONDS = 60L
 
-@ContributesBinding(AppScope::class)
+// one of the sources SourceReleases picks from
 @Inject
 class GitHubReleaseSource(
   private val client: HttpClient,
@@ -44,7 +43,7 @@ class GitHubReleaseSource(
     includePrereleases: Boolean,
     etag: String?,
   ): ReleaseResult {
-    val gitHub = source as AppSource.GitHub
+    val gitHub = source as GitHubRepoRef
     return try {
       val response = client.get("repos/${gitHub.owner}/${gitHub.repo}/releases") {
         parameter("per_page", RELEASES_PER_CHECK)

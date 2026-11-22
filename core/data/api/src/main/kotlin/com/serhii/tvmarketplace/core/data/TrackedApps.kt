@@ -2,18 +2,17 @@ package com.serhii.tvmarketplace.core.data
 
 import com.serhii.tvmarketplace.core.domain.AppPreview
 import com.serhii.tvmarketplace.core.domain.AppSource
-import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import kotlinx.coroutines.flow.Flow
 import java.time.Instant
 
 data class TrackedApp(
   val id: Long,
-  val ref: GitHubRepoRef,
+  val ref: AppSource,
   val displayName: String,
   val latestVersion: String?,
   val avatarUrl: String?,
   val addedAt: Instant,
-  // the app's own icon from its fastlane metadata, when the repository has one
+  // the app's own icon, when its source has one
   val iconUrl: String? = null,
   // learned from the first APK or manifest read; null until then
   val packageName: String? = null,
@@ -24,13 +23,13 @@ data class TrackedApp(
   val sourceGone: Boolean = false,
   val description: String? = null,
 ) {
-  val source: AppSource get() = AppSource.GitHub(owner = ref.owner, repo = ref.repo)
+  val source: AppSource get() = ref
 }
 
 interface TrackedAppsRepository {
   fun trackedApps(): Flow<List<TrackedApp>>
 
-  suspend fun find(ref: GitHubRepoRef): TrackedApp?
+  suspend fun find(ref: AppSource): TrackedApp?
 
   // adding an app that is already tracked returns the existing one
   suspend fun add(preview: AppPreview): TrackedApp

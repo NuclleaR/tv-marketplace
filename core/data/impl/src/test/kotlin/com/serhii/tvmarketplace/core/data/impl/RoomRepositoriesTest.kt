@@ -7,6 +7,7 @@ import com.serhii.tvmarketplace.core.common.TimeSource
 import com.serhii.tvmarketplace.core.data.IncomingLinkStatus
 import com.serhii.tvmarketplace.core.data.impl.db.AppDatabase
 import com.serhii.tvmarketplace.core.domain.AppPreview
+import com.serhii.tvmarketplace.core.domain.FDroidApp
 import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -65,6 +66,21 @@ class RoomRepositoriesTest {
     trackedApps.setIcon(added.id, "https://raw/icon.png")
     assertEquals(emptyList(), trackedApps.withUncheckedIcon())
     assertEquals("https://raw/icon.png", trackedApps.find(ref)?.iconUrl)
+  }
+
+  @Test
+  fun `an F-Droid app is stored as its package, next to a GitHub app`() = runTest {
+    val newPipe = FDroidApp("org.schabi.newpipe")
+    val _ = trackedApps.add(preview)
+    val added = trackedApps.add(
+      AppPreview(newPipe, displayName = "NewPipe", description = null, latestVersion = "0.29.3", avatarUrl = null),
+    )
+    assertEquals(newPipe, added.ref)
+    assertEquals("org.schabi.newpipe", added.packageName)
+    assertEquals(added, trackedApps.find(newPipe))
+    assertEquals(listOf(ref, newPipe), trackedApps.trackedApps().first().map { it.ref }.sortedBy { it.key.startsWith("fdroid") })
+    val link = incomingLinks.receive("https://f-droid.org/packages/org.schabi.newpipe/", newPipe, null, "Phone")
+    assertEquals(newPipe, incomingLinks.get(link.id)?.ref)
   }
 
   @Test

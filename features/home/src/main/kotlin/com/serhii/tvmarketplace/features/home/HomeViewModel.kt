@@ -89,7 +89,7 @@ class HomeViewModel(
         HomeViewState.App(
           id = it.app.id,
           name = it.app.displayName,
-          ownerAndRepo = "${it.app.ref.owner}/${it.app.ref.repo}",
+          ownerAndRepo = it.app.ref.label,
           iconUrl = it.app.iconUrl,
           packageName = it.app.packageName,
           status = it.status,

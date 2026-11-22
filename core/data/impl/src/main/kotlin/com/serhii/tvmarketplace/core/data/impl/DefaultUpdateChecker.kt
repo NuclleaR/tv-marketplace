@@ -16,6 +16,7 @@ import com.serhii.tvmarketplace.core.data.TrackedApp
 import com.serhii.tvmarketplace.core.data.TrackedAppsRepository
 import com.serhii.tvmarketplace.core.data.UpdateCheckState
 import com.serhii.tvmarketplace.core.data.UpdateChecker
+import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import com.serhii.tvmarketplace.core.domain.PackageChooser
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
@@ -98,10 +99,10 @@ class DefaultUpdateChecker(
 
   private suspend fun run(apps: List<TrackedApp>): CheckResult {
     val now = timeSource.now()
-    store.data.first()[RESUME_AT]?.let(Instant::ofEpochMilli)?.let { resumeAt ->
-      if (resumeAt.isAfter(now)) return CheckResult.RateLimited(resumeAt)
-    }
+    // GitHub's request limit holds back only GitHub apps: the others are still checked
+    var limitedUntil = store.data.first()[RESUME_AT]?.let(Instant::ofEpochMilli)?.takeIf { it.isAfter(now) }
     for (app in apps) {
+      if (limitedUntil != null && app.source is GitHubRepoRef) continue
       val stored = releases.latest(app.id)
       when (val answer = source.latest(app.source, app.includePrereleases, stored?.etag)) {
         is ReleaseResult.Found -> {
@@ -119,14 +120,15 @@ class DefaultUpdateChecker(
         is ReleaseResult.RateLimited -> {
           val _ = store.edit { it[RESUME_AT] = answer.resumeAt.toEpochMilli() }
           AppLog.event("rate_limited")
-          return CheckResult.RateLimited(answer.resumeAt)
+          limitedUntil = answer.resumeAt
+          continue
         }
         // offline: asking about the rest would fail the same way
         ReleaseResult.NetworkError -> return CheckResult.NetworkError
       }
       if (app.packageName == null) learnPackageName(app)
     }
-    return CheckResult.Done
+    return limitedUntil?.let { CheckResult.RateLimited(it) } ?: CheckResult.Done
   }
 }
 

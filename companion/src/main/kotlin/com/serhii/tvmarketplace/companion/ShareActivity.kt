@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
-import com.serhii.tvmarketplace.core.domain.GitHubLinkParser
+import com.serhii.tvmarketplace.core.domain.AppLinks
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -15,7 +15,7 @@ class ShareActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     val text = intent.getStringExtra(Intent.EXTRA_TEXT).orEmpty()
-    if (GitHubLinkParser.extractFirst(text) == null) {
+    if (AppLinks.extractFirst(text) == null) {
       finishWith(R.string.companion_unsupported)
       return
     }

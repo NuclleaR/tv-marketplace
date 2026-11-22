@@ -3,8 +3,17 @@ package com.serhii.tvmarketplace.core.domain
 data class GitHubRepoRef(
   val owner: String,
   val repo: String,
-) {
-  val url: String get() = "https://github.com/$owner/$repo"
+) : AppSource {
+  override val kind: String get() = KIND
+
+  // GitHub names are case-insensitive
+  override val key: String get() = "${owner.lowercase()}/${repo.lowercase()}"
+  override val url: String get() = "https://github.com/$owner/$repo"
+  override val label: String get() = "$owner/$repo"
+
+  companion object {
+    const val KIND = "github"
+  }
 }
 
 object GitHubLinkParser {

@@ -106,7 +106,7 @@ class AppDetailsViewModel(
     val userChoice = state.app.packagePattern != null && choice != null && !choice.choiceLost
     return AppDetailsViewState.Content(
       name = state.app.displayName,
-      ownerAndRepo = "${state.app.ref.owner}/${state.app.ref.repo}",
+      ownerAndRepo = state.app.ref.label,
       iconUrl = state.app.iconUrl,
       packageName = state.app.packageName,
       description = state.app.description,

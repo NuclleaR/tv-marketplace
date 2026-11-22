@@ -7,12 +7,13 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.setValue
-import com.serhii.tvmarketplace.core.data.GitHubRepository
+import com.serhii.tvmarketplace.core.data.AppPreviews
 import com.serhii.tvmarketplace.core.data.IncomingLinksRepository
 import com.serhii.tvmarketplace.core.data.PreviewResult
 import com.serhii.tvmarketplace.core.data.TrackedAppsRepository
 import com.serhii.tvmarketplace.core.data.UpdateChecker
 import com.serhii.tvmarketplace.core.domain.AppPreview
+import com.serhii.tvmarketplace.core.domain.FDroidApp
 import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import com.serhii.tvmarketplace.navigation.Destination
 import com.serhii.tvmarketplace.navigation.Navigator
@@ -27,7 +28,7 @@ private const val ADDED_CONFIRMATION_MS = 1_500L
 
 @AssistedInject
 class PreviewViewModel(
-  private val gitHub: GitHubRepository,
+  private val previews: AppPreviews,
   private val trackedApps: TrackedAppsRepository,
   private val incomingLinks: IncomingLinksRepository,
   private val navigator: Navigator,
@@ -74,13 +75,15 @@ class PreviewViewModel(
       incomingLinks.get(id)
         ?: return PreviewViewState.Error(PreviewViewState.ErrorKind.LinkMissing)
     }
-    val ref = link?.ref ?: GitHubRepoRef(owner = destination.owner.orEmpty(), repo = destination.repo.orEmpty())
-    return when (val result = gitHub.preview(ref)) {
+    val ref = link?.ref
+      ?: destination.fdroidPackage?.let(::FDroidApp)
+      ?: GitHubRepoRef(owner = destination.owner.orEmpty(), repo = destination.repo.orEmpty())
+    return when (val result = previews.preview(ref)) {
       is PreviewResult.Found -> {
         loaded = result.preview
         PreviewViewState.Content(
           name = result.preview.displayName,
-          ownerAndRepo = "${result.preview.ref.owner}/${result.preview.ref.repo}",
+          ownerAndRepo = result.preview.ref.label,
           description = result.preview.description,
           latestVersion = result.preview.latestVersion,
           avatarUrl = result.preview.avatarUrl,

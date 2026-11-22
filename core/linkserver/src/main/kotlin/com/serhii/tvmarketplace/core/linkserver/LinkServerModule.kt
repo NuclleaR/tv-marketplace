@@ -51,6 +51,7 @@ private const val MAX_BODY_BYTES = 8 * 1024
 
 private val UNSUPPORTED_EXAMPLES = listOf(
   "https://github.com/owner/repo",
+  "https://f-droid.org/packages/org.example.app",
   "https://github.com/owner/repo/releases",
 )
 

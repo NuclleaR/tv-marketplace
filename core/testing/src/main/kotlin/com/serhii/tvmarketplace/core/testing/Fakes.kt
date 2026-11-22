@@ -1,6 +1,9 @@
 package com.serhii.tvmarketplace.core.testing
 
 import com.serhii.tvmarketplace.core.common.TimeSource
+import com.serhii.tvmarketplace.core.data.AppPreviews
+import com.serhii.tvmarketplace.core.data.FDroidAppSummary
+import com.serhii.tvmarketplace.core.data.FDroidCatalog
 import com.serhii.tvmarketplace.core.data.GitHubOwner
 import com.serhii.tvmarketplace.core.data.GitHubRepoSummary
 import com.serhii.tvmarketplace.core.data.GitHubRepository
@@ -17,6 +20,8 @@ import com.serhii.tvmarketplace.core.data.PreviewResult
 import com.serhii.tvmarketplace.core.data.TrackedApp
 import com.serhii.tvmarketplace.core.data.TrackedAppsRepository
 import com.serhii.tvmarketplace.core.domain.AppPreview
+import com.serhii.tvmarketplace.core.domain.AppSource
+import com.serhii.tvmarketplace.core.domain.FDroidApp
 import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +33,7 @@ class FakeIncomingLinks : IncomingLinksRepository {
 
   override suspend fun receive(
     rawText: String,
-    ref: GitHubRepoRef,
+    ref: AppSource,
     senderPhoneId: String?,
     senderLabel: String,
   ): IncomingLink {
@@ -112,8 +117,7 @@ class FakeTrackedApps(vararg tracked: GitHubRepoRef) : TrackedAppsRepository {
     apps.value = apps.value.map { if (it.id == id) change(it) else it }
   }
 
-  override suspend fun find(ref: GitHubRepoRef): TrackedApp? =
-    apps.value.firstOrNull { it.ref.owner.equals(ref.owner, true) && it.ref.repo.equals(ref.repo, true) }
+  override suspend fun find(ref: AppSource): TrackedApp? = apps.value.firstOrNull { it.ref.key == ref.key }
 
   override suspend fun add(preview: AppPreview): TrackedApp {
     find(preview.ref)?.let { return it }
@@ -134,12 +138,25 @@ class FakeTrackedApps(vararg tracked: GitHubRepoRef) : TrackedAppsRepository {
   }
 }
 
-class FakeGitHub(var result: (GitHubRepoRef) -> PreviewResult = { ref -> PreviewResult.Found(previewOf(ref)) }) : GitHubRepository {
-  val requests = mutableListOf<GitHubRepoRef>()
+class FakeGitHub(var result: (GitHubRepoRef) -> PreviewResult = { ref -> PreviewResult.Found(previewOf(ref)) }) :
+  GitHubRepository,
+  AppPreviews {
+  val requests = mutableListOf<AppSource>()
+
+  // F-Droid apps answer with fDroidResult
+  var fDroidResult: (FDroidApp) -> PreviewResult = { app -> PreviewResult.Found(previewOf(app)) }
 
   override suspend fun preview(ref: GitHubRepoRef): PreviewResult {
     requests += ref
     return result(ref)
+  }
+
+  override suspend fun preview(source: AppSource): PreviewResult = when (source) {
+    is GitHubRepoRef -> preview(ref = source)
+    is FDroidApp -> {
+      requests += source
+      fDroidResult(source)
+    }
   }
 
   var owners: (String) -> LookupResult<List<GitHubOwner>> = { LookupResult.Found(emptyList()) }
@@ -173,6 +190,18 @@ class FakeGitHub(var result: (GitHubRepoRef) -> PreviewResult = { ref -> Preview
   }
 }
 
+class FakeFDroid : FDroidCatalog {
+  var apps: (String) -> LookupResult<List<FDroidAppSummary>> = { LookupResult.Found(emptyList()) }
+  val searches = mutableListOf<String>()
+
+  override suspend fun search(query: String): LookupResult<List<FDroidAppSummary>> {
+    searches += query
+    return apps(query)
+  }
+
+  override suspend fun preview(app: FDroidApp): PreviewResult = PreviewResult.Found(previewOf(app))
+}
+
 fun repoSummary(
   owner: String,
   name: String,
@@ -183,6 +212,9 @@ fun previewOf(
   ref: GitHubRepoRef,
   latestVersion: String? = "v1.0.0",
 ) = AppPreview(ref = ref, displayName = ref.repo, description = "About ${ref.repo}", latestVersion = latestVersion, avatarUrl = null)
+
+fun previewOf(app: FDroidApp) =
+  AppPreview(ref = app, displayName = app.packageName.substringAfterLast('.'), description = null, latestVersion = "1.0", avatarUrl = null)
 
 class MutableTimeSource(var now: Instant = Instant.parse("2026-11-18T12:00:00Z")) : TimeSource {
   override fun now(): Instant = now

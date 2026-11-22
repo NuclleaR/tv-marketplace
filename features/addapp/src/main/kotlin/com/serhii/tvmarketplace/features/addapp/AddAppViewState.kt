@@ -26,10 +26,11 @@ sealed interface SearchResults {
   data object None : SearchResults
   data object KeepTyping : SearchResults
 
-  // repositories named like the text, from anyone, then owners whose login matches it
+  // F-Droid apps matching the text, GitHub repositories named like it from anyone, then owners whose login matches it
   data class Matches(
     val repos: List<Repo>,
     val owners: List<Owner>,
+    val fdroid: List<FDroidApp> = emptyList(),
   ) : SearchResults
   data class Repos(
     val owner: String,
@@ -47,6 +48,15 @@ sealed interface SearchResults {
     val avatarUrl: String?,
     val organization: Boolean,
   )
+
+  data class FDroidApp(
+    val packageName: String,
+    val name: String,
+    val summary: String?,
+    val iconUrl: String?,
+  ) {
+    val key: String get() = "fdroid:$packageName"
+  }
 
   data class Repo(
     val owner: String,

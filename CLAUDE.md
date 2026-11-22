@@ -47,9 +47,13 @@ TV Marketplace is a multi-module Android app in Kotlin with Jetpack Compose, Met
 
 ## Installs and updates
 
-- Releases come from an `AppSource` (`:core:domain`), GitHub only for now, through `ReleaseSource`
-  (`GitHubReleaseSource`). `UpdateChecker` (`:core:data`) asks for each app's latest release with its stored ETag,
-  stops on GitHub's request limit, and only stores what it finds: nothing installs without the user.
+- Releases come from an `AppSource` (`:core:domain`): a GitHub repository (`GitHubRepoRef`) or an f-droid.org app
+  (`FDroidApp`), through `ReleaseSource` (`SourceReleases` picks `GitHubReleaseSource` or `FDroidReleaseSource`).
+  F-Droid is read from its website's small JSON endpoints, not its index; which build is for which ABI is read from
+  each APK's `lib/` entries with ranged requests and written into the file name for `PackageChooser`.
+  `UpdateChecker` (`:core:data`) asks for each app's latest release with its stored ETag, holds GitHub apps back
+  while GitHub limits requests (F-Droid apps are still checked), and only stores what it finds: nothing installs
+  without the user.
 - Picking the package is pure Kotlin in `:core:domain`: `PackageChooser` (ABI, TV, debug from file names, tested
   on `src/test/resources/packages/corpus.json`), `PackagePattern` for the user's remembered choice,
   `VersionComparator`, and `ApkManifestReader`, which reads an APK's package name from three ranged requests.

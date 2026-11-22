@@ -32,6 +32,19 @@ class PackageChooserTest {
   }
 
   @Test
+  fun `F-Droid builds named by the architectures read from them`() {
+    val vlc = arrayOf(
+      "org.videolan.vlc_13070205_armeabi-v7a.apk",
+      "org.videolan.vlc_13070206_x86.apk",
+      "org.videolan.vlc_13070207_x86_64.apk",
+      "org.videolan.vlc_13070208_arm64-v8a.apk",
+    )
+    assertEquals("org.videolan.vlc_13070205_armeabi-v7a.apk", recommended(armv7, *vlc))
+    assertEquals("org.videolan.vlc_13070208_arm64-v8a.apk", recommended(arm64, *vlc))
+    assertEquals("org.videolan.vlc_13070207_x86_64.apk", recommended(x86, *vlc))
+  }
+
+  @Test
   fun `architectures are read however the file names spell them`() {
     assertEquals("a-x86_64.apk", recommended(x86, "a-arm64.apk", "a-x86_64.apk", "a-x86.apk"))
     assertEquals("LocalSend-android-arm64v8.apk", recommended(arm64, "LocalSend-android-arm32v7.apk", "LocalSend-android-arm64v8.apk"))

@@ -16,13 +16,14 @@ sealed interface Destination : NavKey {
   @SerialName("AddApp")
   data object AddApp : Destination
 
-  // from a received link (linkId) or from the search (owner + repo)
+  // from a received link (linkId) or from the search: a GitHub repository (owner + repo) or an F-Droid app
   @Serializable
   @SerialName("Preview")
   data class Preview(
     val linkId: Long? = null,
     val owner: String? = null,
     val repo: String? = null,
+    val fdroidPackage: String? = null,
   ) : Destination
 
   @Serializable

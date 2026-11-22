@@ -46,6 +46,8 @@ import androidx.tv.material3.Text
 import com.serhii.tvmarketplace.core.common.rootGraphAs
 import com.serhii.tvmarketplace.core.data.IncomingLinksRepository
 import com.serhii.tvmarketplace.core.data.TrackedAppsRepository
+import com.serhii.tvmarketplace.core.domain.FDroidApp
+import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import com.serhii.tvmarketplace.core.ui.AppIcon
 import com.serhii.tvmarketplace.core.ui.AppTheme
 import com.serhii.tvmarketplace.core.ui.ListRow
@@ -94,15 +96,18 @@ class InboxViewModel(
     val items by remember {
       combine(incomingLinks.pending(), trackedApps.trackedApps()) { links, apps ->
         // derived when shown, so a link stays correct if its app is added or removed later
-        val tracked = apps.map { it.ref.owner.lowercase() to it.ref.repo.lowercase() }.toSet()
+        val tracked = apps.map { it.ref.key }.toSet()
         links.map { link ->
           InboxViewState.Item(
             id = link.id,
-            name = link.ref.repo,
-            ownerAndRepo = "${link.ref.owner}/${link.ref.repo}",
+            name = when (val ref = link.ref) {
+              is GitHubRepoRef -> ref.repo
+              is FDroidApp -> ref.packageName.substringAfterLast('.')
+            },
+            ownerAndRepo = link.ref.label,
             sender = link.senderLabel,
             receivedAt = link.receivedAt,
-            alreadyTracked = (link.ref.owner.lowercase() to link.ref.repo.lowercase()) in tracked,
+            alreadyTracked = link.ref.key in tracked,
           )
         }
       }

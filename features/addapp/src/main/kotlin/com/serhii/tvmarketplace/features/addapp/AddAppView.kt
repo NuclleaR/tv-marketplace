@@ -74,6 +74,7 @@ internal fun AddAppView(
   onRetry: () -> Unit,
   modifier: Modifier = Modifier,
   onNetworkSettings: () -> Unit = {},
+  onFDroidClick: (SearchResults.FDroidApp) -> Unit = {},
 ) {
   val keyboardFocus = remember { FocusRequester() }
   val openedFocus = remember { FocusRequester() }
@@ -82,7 +83,7 @@ internal fun AddAppView(
   val results = viewState.results
   val openedShown = when (results) {
     is SearchResults.Repos -> results.repos.any { it.key == opened }
-    is SearchResults.Matches -> results.repos.any { it.key == opened }
+    is SearchResults.Matches -> results.repos.any { it.key == opened } || results.fdroid.any { it.key == opened }
     else -> false
   }
   TvScreen(modifier) {
@@ -123,8 +124,26 @@ internal fun AddAppView(
             contentPadding = PaddingValues(vertical = 8.dp, horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
           ) {
+            if (results.fdroid.isNotEmpty()) {
+              item(key = "fdroid", contentType = "heading") { SectionHeading(stringResource(StringsR.string.add_app_section_fdroid)) }
+            }
+            items(results.fdroid, key = { it.key }, contentType = { "fdroid" }) { app ->
+              FDroidRow(
+                app = app,
+                onClick = {
+                  opened = app.key
+                  onFDroidClick(app)
+                },
+                modifier = if (app.key == opened) Modifier.focusRequester(openedFocus) else Modifier,
+              )
+            }
             if (results.repos.isNotEmpty()) {
-              item(key = "repos", contentType = "heading") { SectionHeading(stringResource(StringsR.string.add_app_section_repos)) }
+              item(key = "repos", contentType = "heading") {
+                SectionHeading(
+                  stringResource(StringsR.string.add_app_section_repos),
+                  if (results.fdroid.isNotEmpty()) Modifier.padding(top = 12.dp) else Modifier,
+                )
+              }
             }
             items(results.repos, key = { "repo:${it.key}" }, contentType = { "repo" }) { repo ->
               RepoRow(
@@ -284,6 +303,21 @@ private fun RepoRow(
 }
 
 @Composable
+private fun FDroidRow(
+  app: SearchResults.FDroidApp,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  ListRow(
+    onClick = onClick,
+    modifier = modifier.fillMaxWidth(),
+    leading = { AppIcon(name = app.name, iconUrl = app.iconUrl, size = 40.dp, packageName = app.packageName) },
+    headline = { Text(app.name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+    supporting = app.summary?.let { { Text(it, maxLines = 2, overflow = TextOverflow.Ellipsis) } },
+  )
+}
+
+@Composable
 private fun SectionHeading(
   text: String,
   modifier: Modifier = Modifier,
@@ -431,6 +465,7 @@ private fun AddAppViewMatchesPreview() {
       query = "jellyfin",
       phone = readyPhone,
       results = SearchResults.Matches(
+        fdroid = listOf(SearchResults.FDroidApp("org.jellyfin.mobile", "Jellyfin", "Mobile client for Jellyfin", null)),
         repos = listOf(
           SearchResults.Repo("jellyfin", "jellyfin-androidtv", "Android TV client for Jellyfin"),
           SearchResults.Repo("jellyfin", "jellyfin-android", null),

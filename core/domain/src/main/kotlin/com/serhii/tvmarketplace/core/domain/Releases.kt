@@ -2,20 +2,30 @@ package com.serhii.tvmarketplace.core.domain
 
 import java.time.Instant
 
-// where a tracked app's releases come from; GitHub is the only kind for now, F-Droid is the planned next one
+// where a tracked app's releases come from, and what identifies it: a GitHub repository or an F-Droid package
 sealed interface AppSource {
   // persisted in tracked_app.sourceKind: never change a kind's key
   val kind: String
 
-  data class GitHub(
-    val owner: String,
-    val repo: String,
-  ) : AppSource {
-    override val kind: String get() = KIND
+  // unique among all sources, case-insensitive where the source is; persisted as tracked_app.repoKey
+  val key: String
 
-    companion object {
-      const val KIND = "github"
-    }
+  // the page a person would open for this app
+  val url: String
+
+  // shown under the app's name
+  val label: String
+}
+
+// an app in f-droid.org's main repository, known by its package name
+data class FDroidApp(val packageName: String) : AppSource {
+  override val kind: String get() = KIND
+  override val key: String get() = "fdroid:$packageName"
+  override val url: String get() = "https://f-droid.org/packages/$packageName/"
+  override val label: String get() = "F-Droid · $packageName"
+
+  companion object {
+    const val KIND = "fdroid"
   }
 }
 

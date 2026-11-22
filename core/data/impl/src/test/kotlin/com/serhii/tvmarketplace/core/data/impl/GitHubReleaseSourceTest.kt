@@ -3,6 +3,7 @@ package com.serhii.tvmarketplace.core.data.impl
 import com.serhii.tvmarketplace.core.data.ReleaseResult
 import com.serhii.tvmarketplace.core.domain.AppPackage
 import com.serhii.tvmarketplace.core.domain.AppSource
+import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
 import io.ktor.client.engine.mock.respond
@@ -22,7 +23,7 @@ import kotlin.test.assertNull
 
 class GitHubReleaseSourceTest {
 
-  private val source = AppSource.GitHub("yuliskov", "SmartTube")
+  private val source = GitHubRepoRef("yuliskov", "SmartTube")
   private val requests = mutableListOf<HttpRequestData>()
   private val now = Instant.parse("2026-11-20T12:00:00Z")
 

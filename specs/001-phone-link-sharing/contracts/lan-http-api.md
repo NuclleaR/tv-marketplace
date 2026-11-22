@@ -58,7 +58,7 @@ Request:
 | 202 | `{ "linkId": 17, "normalizedUrl": "https://github.com/owner/repo", "duplicate": false, "deviceToken": "…" }` | Stored as PENDING. `deviceToken` only when `pair: true` and authenticated by session. |
 | 401 | `{ "error": "session_expired" }` | Rescan the QR. |
 | 403 | `{ "error": "device_revoked" }` | Paired phone was removed on TV. |
-| 422 | `{ "error": "unsupported_link", "examples": ["https://github.com/owner/repo", "https://github.com/owner/repo/releases"] }` | No GitHub link found in `text` (FR-008). |
+| 422 | `{ "error": "unsupported_link", "examples": ["https://github.com/owner/repo", "https://f-droid.org/packages/org.example.app", "https://github.com/owner/repo/releases"] }` | No GitHub or F-Droid link found in `text` (FR-008). |
 | 400 | `{ "error": "bad_request" }` | Malformed JSON / missing fields. |
 
 Effects on TV: a `202` creates or refreshes a PENDING `IncomingLink` and, if the app is in the

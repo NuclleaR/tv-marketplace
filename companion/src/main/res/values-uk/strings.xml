@@ -9,11 +9,11 @@
   <string name="companion_pair">Спарити</string>
   <string name="companion_wrong_pin">Неправильний код. Залишилось спроб: %1$d.</string>
   <string name="companion_no_session">Спершу відкрийте «Додати застосунок» на телевізорі.</string>
-  <string name="companion_paired">Спарено з %1$s. Поділіться посиланням на GitHub і виберіть «Надіслати на ТВ».</string>
+  <string name="companion_paired">Спарено з %1$s. Поділіться посиланням на GitHub або F-Droid і виберіть «Надіслати на ТВ».</string>
   <string name="companion_forget">Забути цей телевізор</string>
   <string name="companion_sent">Надіслано на телевізор</string>
   <string name="companion_sent_duplicate">Надіслано. Цей застосунок уже є на телевізорі.</string>
-  <string name="companion_unsupported">Поки підтримуються лише посилання на GitHub</string>
+  <string name="companion_unsupported">Поки підтримуються лише посилання на GitHub і F-Droid</string>
   <string name="companion_unreachable">Телевізор не знайдено. TV Marketplace відкритий і в тій самій Wi-Fi?</string>
   <string name="companion_revoked">Телевізор забув цей телефон. Спарте його знову.</string>
   <string name="companion_not_paired">Спершу спарте телефон із телевізором</string>

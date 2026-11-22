@@ -19,15 +19,15 @@
   <!-- Main screen: the Add app screen isn't open on the TV -->
   <string name="companion_no_session">Open “Add app” on the TV first.</string>
   <!-- Main screen: after pairing. %1$s is the TV name -->
-  <string name="companion_paired">Paired with %1$s. Share a GitHub link and choose Send to TV.</string>
+  <string name="companion_paired">Paired with %1$s. Share a GitHub or F-Droid link and choose Send to TV.</string>
   <!-- Main screen: button that forgets the paired TV -->
   <string name="companion_forget">Forget this TV</string>
   <!-- Share: link sent -->
   <string name="companion_sent">Sent to your TV</string>
   <!-- Share: link sent, the app is already on the TV -->
   <string name="companion_sent_duplicate">Sent. This app is already on your TV.</string>
-  <!-- Share: not a GitHub link -->
-  <string name="companion_unsupported">Only GitHub links are supported for now</string>
+  <!-- Share: not a GitHub or F-Droid link -->
+  <string name="companion_unsupported">Only GitHub and F-Droid links are supported for now</string>
   <!-- Share: TV not found or not reachable -->
   <string name="companion_unreachable">TV not found. Is TV Marketplace open and on the same Wi-Fi?</string>
   <!-- Share: the TV forgot this phone -->

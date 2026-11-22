@@ -77,7 +77,7 @@ class AddAppViewTest {
     compose.setContent { addApp(AddAppViewState(phone = ready)) }
     awaitKeyboard()
     compose.onNodeWithText("a").assertIsFocused()
-    compose.onNodeWithText("Search GitHub: app name, or owner/").assertExists()
+    compose.onNodeWithText("Search F-Droid and GitHub: app name, or owner/").assertExists()
     compose.onNodeWithText("Or open http://192.168.1.42:8765 on your phone and enter the code").assertExists()
     compose.onNodeWithText("482 913").assertExists()
     compose.onNodeWithContentDescription("QR code to send a link from your phone").assertExists()

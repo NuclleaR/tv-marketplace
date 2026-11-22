@@ -60,6 +60,27 @@ object ApkManifestReader {
     return null
   }
 
+  // the architectures the APK has native code for, from its lib/<abi>/ entries; empty: none, so it runs anywhere
+  fun nativeAbis(centralDirectory: ByteArray): Set<String> = entryNames(centralDirectory)
+    .filter { it.startsWith("lib/") }
+    .mapNotNull { it.split("/").getOrNull(1)?.takeIf(String::isNotEmpty) }
+    .toSet()
+
+  fun entryNames(centralDirectory: ByteArray): List<String> {
+    val buffer = ByteBuffer.wrap(centralDirectory).order(ByteOrder.LITTLE_ENDIAN)
+    val names = mutableListOf<String>()
+    var i = 0
+    while (i + 46 <= centralDirectory.size && buffer.getInt(i) == CENTRAL_SIGNATURE) {
+      val nameLength = buffer.getShort(i + 28).toInt() and 0xFFFF
+      val extraLength = buffer.getShort(i + 30).toInt() and 0xFFFF
+      val commentLength = buffer.getShort(i + 32).toInt() and 0xFFFF
+      if (i + 46 + nameLength > centralDirectory.size) break
+      names += String(centralDirectory, i + 46, nameLength, Charsets.UTF_8)
+      i += 46 + nameLength + extraLength + commentLength
+    }
+    return names
+  }
+
   fun manifestEntry(centralDirectory: ByteArray): Entry? {
     val buffer = ByteBuffer.wrap(centralDirectory).order(ByteOrder.LITTLE_ENDIAN)
     var i = 0

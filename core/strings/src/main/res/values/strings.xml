@@ -14,7 +14,7 @@
   <!-- Add app: first step next to the QR code -->
   <string name="add_app_step_scan">Scan the code with your phone camera</string>
   <!-- Add app: second step next to the QR code -->
-  <string name="add_app_step_send">Paste a GitHub link and tap Send</string>
+  <string name="add_app_step_send">Paste a GitHub or F-Droid link and tap Send</string>
   <!-- Add app: manual alternative to scanning. %1$s is an address like http://192.168.1.42:8765, %2$s a 6-digit code -->
   <string name="add_app_manual">Or open %1$s on your phone and enter the code</string>
   <!-- Add app: hint below the QR code -->
@@ -30,14 +30,15 @@
   <!-- Add app: content description of the QR code image -->
   <string name="add_app_qr_description">QR code to send a link from your phone</string>
   <!-- Add app: placeholder of the search field, which the on-screen keyboard fills -->
-  <string name="add_app_search_hint">Search GitHub: app name, or owner/</string>
+  <string name="add_app_search_hint">Search F-Droid and GitHub: app name, or owner/</string>
   <!-- Add app: in the search field while results are loading -->
   <string name="add_app_searching">Searching…</string>
   <!-- Add app: heading of the phone panel shown while nothing is typed -->
   <string name="add_app_phone_title">Or send a link from your phone</string>
   <!-- Add app: shown after one letter of an owner's name -->
   <string name="add_app_keep_typing">Type at least two letters</string>
-  <string name="add_app_section_repos">Repositories</string>
+  <string name="add_app_section_fdroid">F-Droid</string>
+  <string name="add_app_section_repos">GitHub</string>
   <string name="add_app_section_owners">Owners</string>
   <!-- Add app: search found nothing -->
   <string name="add_app_nothing_found">Nothing found</string>
@@ -69,13 +70,13 @@
   <!-- Preview: confirmation after adding. %1$s is the app name -->
   <string name="preview_added">Added %1$s</string>
   <!-- Under the placeholder while the app's details load -->
-  <string name="preview_loading">Loading from GitHub…</string>
+  <string name="preview_loading">Loading…</string>
   <!-- Preview: error when the repository doesn't exist -->
   <string name="preview_not_found">This repository doesn\'t exist or is private.</string>
   <!-- Preview: error when GitHub limits requests -->
   <string name="preview_rate_limited">GitHub is limiting requests right now. Try again in a few minutes.</string>
   <!-- Preview: error without internet -->
-  <string name="preview_network_error">Couldn\'t reach GitHub. Check the TV\'s internet connection.</string>
+  <string name="preview_network_error">Couldn\'t load the app. Check the TV\'s internet connection.</string>
   <!-- Preview: error when an incoming link is gone -->
   <string name="preview_link_missing">This link is no longer available.</string>
   <!-- Preview: who sent the link. %1$s is a device label like "Safari on iPhone" -->

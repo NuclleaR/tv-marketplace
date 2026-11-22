@@ -3,8 +3,8 @@ package com.serhii.tvmarketplace.core.linkserver
 import com.serhii.tvmarketplace.core.common.AppLog
 import com.serhii.tvmarketplace.core.data.IncomingLinksRepository
 import com.serhii.tvmarketplace.core.data.TrackedAppsRepository
-import com.serhii.tvmarketplace.core.domain.GitHubLinkParser
-import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
+import com.serhii.tvmarketplace.core.domain.AppLinks
+import com.serhii.tvmarketplace.core.domain.AppSource
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.Inject
 import dev.zacsweers.metro.SingleIn
@@ -17,7 +17,7 @@ data class ReceivedLink(
   // grows with every received link, so the same link sent twice is still a new event
   val sequence: Long,
   val linkId: Long,
-  val ref: GitHubRepoRef,
+  val ref: AppSource,
   val senderLabel: String,
 )
 
@@ -30,7 +30,7 @@ class IncomingLinkEvents {
 
   fun emit(
     linkId: Long,
-    ref: GitHubRepoRef,
+    ref: AppSource,
     senderLabel: String,
   ) {
     last.value = ReceivedLink(sequence.incrementAndGet(), linkId, ref, senderLabel)
@@ -40,7 +40,7 @@ class IncomingLinkEvents {
 sealed interface ReceiveResult {
   data class Stored(
     val linkId: Long,
-    val ref: GitHubRepoRef,
+    val ref: AppSource,
     val duplicate: Boolean,
   ) : ReceiveResult
   data object Unsupported : ReceiveResult
@@ -58,7 +58,7 @@ class LinkReceiver(
     senderPhoneId: String?,
     senderLabel: String,
   ): ReceiveResult {
-    val ref = GitHubLinkParser.extractFirst(text) ?: return ReceiveResult.Unsupported
+    val ref = AppLinks.extractFirst(text) ?: return ReceiveResult.Unsupported
     val link = incomingLinks.receive(rawText = text, ref = ref, senderPhoneId = senderPhoneId, senderLabel = senderLabel)
     val duplicate = trackedApps.find(ref) != null
     events.emit(link.id, ref, senderLabel)

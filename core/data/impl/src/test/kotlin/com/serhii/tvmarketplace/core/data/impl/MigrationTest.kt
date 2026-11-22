@@ -125,4 +125,20 @@ class MigrationTest {
       }
     }
   }
+
+  @Test
+  fun `links received before version 7 are GitHub links`() {
+    helper.createDatabase("migration-test-7", 6).use { db ->
+      db.execSQL(
+        "INSERT INTO incoming_link (rawText, owner, repo, repoKey, normalizedUrl, senderPhoneId, senderLabel, receivedAt, status) " +
+          "VALUES ('x', 'a', 'b', 'a/b', 'https://github.com/a/b', NULL, 'Phone', 0, 'PENDING')",
+      )
+    }
+    helper.runMigrationsAndValidate("migration-test-7", 7, true).use { db ->
+      db.query("SELECT sourceKind FROM incoming_link").use { cursor ->
+        cursor.moveToFirst()
+        assertEquals("github", cursor.getString(0))
+      }
+    }
+  }
 }

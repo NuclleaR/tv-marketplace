@@ -11,6 +11,8 @@ import com.serhii.tvmarketplace.core.data.impl.db.IncomingLinkEntity
 import com.serhii.tvmarketplace.core.data.impl.db.TrackedAppDao
 import com.serhii.tvmarketplace.core.data.impl.db.TrackedAppEntity
 import com.serhii.tvmarketplace.core.domain.AppPreview
+import com.serhii.tvmarketplace.core.domain.AppSource
+import com.serhii.tvmarketplace.core.domain.FDroidApp
 import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import dev.zacsweers.metro.AppScope
 import dev.zacsweers.metro.ContributesBinding
@@ -19,9 +21,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.time.Instant
 
-internal val GitHubRepoRef.key: String get() = "${owner.lowercase()}/${repo.lowercase()}"
-
 private const val MAX_RAW_TEXT = 4000
+
+// the owner and repo columns: an F-Droid app keeps its package in repo and no owner
+private fun AppSource.ownerAndRepo(): Pair<String, String> = when (this) {
+  is GitHubRepoRef -> owner to repo
+  is FDroidApp -> "" to packageName
+}
+
+private fun source(
+  kind: String,
+  owner: String,
+  repo: String,
+): AppSource = when (kind) {
+  FDroidApp.KIND -> FDroidApp(repo)
+  else -> GitHubRepoRef(owner = owner, repo = repo)
+}
 
 @ContributesBinding(AppScope::class)
 @Inject
@@ -32,15 +47,19 @@ class RoomTrackedAppsRepository(
 
   override fun trackedApps(): Flow<List<TrackedApp>> = dao.all().map { rows -> rows.map { it.toModel() } }
 
-  override suspend fun find(ref: GitHubRepoRef): TrackedApp? = dao.byKey(ref.key)?.toModel()
+  override suspend fun find(ref: AppSource): TrackedApp? = dao.byKey(ref.key)?.toModel()
 
   override suspend fun add(preview: AppPreview): TrackedApp {
     dao.byKey(preview.ref.key)?.let { return it.toModel() }
+    val (owner, repo) = preview.ref.ownerAndRepo()
     val entity = TrackedAppEntity(
-      owner = preview.ref.owner,
-      repo = preview.ref.repo,
+      owner = owner,
+      repo = repo,
       repoKey = preview.ref.key,
       sourceUrl = preview.ref.url,
+      sourceKind = preview.ref.kind,
+      // an F-Droid app is its package
+      packageName = (preview.ref as? FDroidApp)?.packageName,
       displayName = preview.displayName,
       latestVersion = preview.latestVersion,
       avatarUrl = preview.avatarUrl,
@@ -87,7 +106,7 @@ class RoomTrackedAppsRepository(
 
   private fun TrackedAppEntity.toModel() = TrackedApp(
     id = id,
-    ref = GitHubRepoRef(owner = owner, repo = repo),
+    ref = source(sourceKind, owner, repo),
     displayName = displayName,
     latestVersion = latestVersion,
     avatarUrl = avatarUrl,
@@ -110,7 +129,7 @@ class RoomIncomingLinksRepository(
 
   override suspend fun receive(
     rawText: String,
-    ref: GitHubRepoRef,
+    ref: AppSource,
     senderPhoneId: String?,
     senderLabel: String,
   ): IncomingLink {
@@ -118,8 +137,9 @@ class RoomIncomingLinksRepository(
     val entity = IncomingLinkEntity(
       id = existing?.id ?: 0,
       rawText = rawText.take(MAX_RAW_TEXT),
-      owner = ref.owner,
-      repo = ref.repo,
+      owner = ref.ownerAndRepo().first,
+      repo = ref.ownerAndRepo().second,
+      sourceKind = ref.kind,
       repoKey = ref.key,
       normalizedUrl = ref.url,
       senderPhoneId = senderPhoneId,
@@ -144,7 +164,7 @@ class RoomIncomingLinksRepository(
   private fun IncomingLinkEntity.toModel() = IncomingLink(
     id = id,
     rawText = rawText,
-    ref = GitHubRepoRef(owner = owner, repo = repo),
+    ref = source(sourceKind, owner, repo),
     senderPhoneId = senderPhoneId,
     senderLabel = senderLabel,
     receivedAt = receivedAt,

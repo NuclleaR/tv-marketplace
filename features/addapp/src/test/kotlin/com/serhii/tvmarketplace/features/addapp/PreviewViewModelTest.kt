@@ -7,6 +7,7 @@ import com.serhii.tvmarketplace.core.data.CheckResult
 import com.serhii.tvmarketplace.core.data.IncomingLinkStatus
 import com.serhii.tvmarketplace.core.data.PreviewResult
 import com.serhii.tvmarketplace.core.data.UpdateChecker
+import com.serhii.tvmarketplace.core.domain.FDroidApp
 import com.serhii.tvmarketplace.core.domain.GitHubRepoRef
 import com.serhii.tvmarketplace.core.testing.FakeGitHub
 import com.serhii.tvmarketplace.core.testing.FakeIncomingLinks
@@ -51,6 +52,18 @@ class PreviewViewModelTest {
       assertEquals("v1.0.0", content.latestVersion)
       assertEquals("Safari on iPhone", content.sender)
       assertEquals(false, content.alreadyTracked)
+    }
+  }
+
+  @Test
+  fun `an F-Droid app from the search previews and is added under its package`() = runTest {
+    val viewModel = viewModel(Destination.Preview(fdroidPackage = "org.schabi.newpipe"))
+    backgroundScope.launchMolecule(RecompositionMode.Immediate) { viewModel.viewState() }.test {
+      val content = assertIs<PreviewViewState.Content>(awaitMatching { it != PreviewViewState.Loading })
+      assertEquals("F-Droid · org.schabi.newpipe", content.ownerAndRepo)
+      viewModel.onAdd()
+      val _ = awaitMatching { it is PreviewViewState.Added }
+      assertEquals(FDroidApp("org.schabi.newpipe"), trackedApps.apps.value.single().ref)
     }
   }
 

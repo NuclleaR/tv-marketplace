@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.io.IOException
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 
@@ -94,7 +95,14 @@ class DefaultUpdateChecker(
     val release = releases.latest(app.id)?.release ?: return
     val pkg = PackageChooser.choose(release.packages, deviceAbis.abis()).recommended ?: return
     if (!identityAsked.add(pkg.id)) return
-    identity.learn(pkg)?.let { trackedApps.setPackageName(app.id, it) }
+    val name = try {
+      identity.learn(pkg)
+    } catch (_: IOException) {
+      // the network failed, not the package: the next check asks again
+      identityAsked.remove(pkg.id)
+      return
+    }
+    name?.let { trackedApps.setPackageName(app.id, it) }
   }
 
   private suspend fun run(apps: List<TrackedApp>): CheckResult {

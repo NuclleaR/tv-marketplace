@@ -31,6 +31,7 @@ interface UpdateChecker {
 
 // finds out which app a package is without downloading it, so an app installed before it was tracked is recognized
 fun interface PackageIdentity {
-  // the package name, or null when it can't be read this way
+  // the package name, or null when it can't be read this way; throws IOException when the network failed, so it is
+  // asked again on the next check
   suspend fun learn(pkg: AppPackage): String?
 }

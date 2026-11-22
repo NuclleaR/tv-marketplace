@@ -21,6 +21,7 @@ import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import java.io.IOException
 import java.time.Duration
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -35,8 +36,10 @@ class DefaultUpdateCheckerTest {
   private val source = FakeReleaseSource()
   private val time = MutableTimeSource()
   private val learned = mutableListOf<String>()
+  private var offline = false
   private val identity = PackageIdentity { pkg ->
     learned += pkg.fileName
+    if (offline) throw IOException("offline")
     "com.example.${pkg.fileName.substringBefore('.')}"
   }
 
@@ -183,5 +186,17 @@ class DefaultUpdateCheckerTest {
     assertEquals("com.known", trackedApps.get(2)?.packageName)
     // the same package isn't asked for again
     assertEquals(listOf("app-universal-release.apk"), learned)
+  }
+
+  @Test
+  fun `a package name that couldn't be read for the network is asked again on the next check`() = runTest {
+    offline = true
+    val checker = checker()
+    val _ = checker.check(1)
+    assertEquals(null, trackedApps.get(1)?.packageName)
+    offline = false
+    val _ = checker.check(1)
+    assertEquals("com.example.app-universal-release", trackedApps.get(1)?.packageName)
+    assertEquals(2, learned.size)
   }
 }

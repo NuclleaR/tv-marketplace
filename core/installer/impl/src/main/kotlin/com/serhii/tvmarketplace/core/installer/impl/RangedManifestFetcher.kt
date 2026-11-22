@@ -37,8 +37,9 @@ class RangedManifestFetcher(client: HttpClient) : PackageIdentity {
     read(pkg).also { AppLog.event("manifest_read", "found" to if (it != null) 1 else 0) }
   } catch (e: CancellationException) {
     throw e
-  } catch (_: IOException) {
-    null
+  } catch (e: IOException) {
+    AppLog.error("manifest_read_failed", e)
+    throw e
   }
 
   private suspend fun read(pkg: AppPackage): String? {
